@@ -1,48 +1,44 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Ciclista {
     private Integer id;
     private String status;
     private String nome;
     private String nascimento;
     private String cpf;
+    private Passaporte passaporte;
     private String nacionalidade;
     private String email;
     private String urlFotoDocumento;
-    private Passaporte passaporte;
+    private String senha;
+    private MeioDePagamento meioDePagamento;
 
-    @Getter
-    @Setter
-    private static class Passaporte{
-        public Passaporte(){}
-
-        public Passaporte(String numero, String validade, String pais) {
-            this.numero = numero;
-            this.validade = validade;
-            this.pais = pais;
-        }
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public class Passaporte{
 
         private String numero;
         private String validade;
         private String pais;
     }
 
-    public Ciclista() {
-    }
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    private class MeioDePagamento{
 
-    public Ciclista(String status, String nome, String nascimento, String cpf, String nacionalidade, String email, String urlFotoDocumento, Passaporte passaporte) {
-        this.status = status;
-        this.nome = nome;
-        this.nascimento = nascimento;
-        this.cpf = cpf;
-        this.nacionalidade = nacionalidade;
-        this.email = email;
-        this.urlFotoDocumento = urlFotoDocumento;
-        this.passaporte = passaporte;
+        private String nomeDoTitular;
+        private String numero;
+        private String validade;
+        private String cvv;
     }
 }
