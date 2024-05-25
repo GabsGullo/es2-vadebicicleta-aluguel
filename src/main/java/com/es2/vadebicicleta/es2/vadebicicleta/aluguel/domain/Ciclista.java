@@ -22,7 +22,6 @@ public class Ciclista {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    @Builder
     public class Passaporte{
 
         private String numero;
@@ -33,7 +32,6 @@ public class Ciclista {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    @Builder
     private class MeioDePagamento{
 
         private String nomeDoTitular;

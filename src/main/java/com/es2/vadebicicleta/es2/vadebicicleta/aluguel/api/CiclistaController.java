@@ -18,6 +18,7 @@ public class CiclistaController {
     @Autowired
     private CiclistaConverter converter;
 
+
     @GetMapping("/ciclista/{idCiclista}")
     public ResponseEntity <Ciclista> getCiclista(Integer id){
         Ciclista ciclista = service.getById(id);
@@ -26,6 +27,7 @@ public class CiclistaController {
         return ResponseEntity.ok().body(ciclista);
     }
 
+    //CADASTRAR CLIENTE UC01
     @PostMapping("/ciclista")
     public ResponseEntity<CiclistaOutDTO> postCiclista(@RequestBody Ciclista ciclista){
         Ciclista ciclistaCadastrado = service.save(ciclista);
@@ -36,6 +38,7 @@ public class CiclistaController {
         return ResponseEntity.ok().body(ciclistaDTO);
     }
 
+    //ALTERAR DADOS DO CLIENTE UC06
 //    @PutMapping("/ciclista/{idCiclista}")
 //    public ResponseEntity<CiclistaOutDTO> putCiclista(@RequestBody CiclistaInDTO ciclista){
 //
