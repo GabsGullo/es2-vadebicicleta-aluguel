@@ -4,11 +4,12 @@ import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 @Repository
 public class CiclistaRepository {
     private static HashMap<Integer, Ciclista> ciclistas;
-    private static Integer contagem;
+    private static int contagem;
 
     public Ciclista save(Ciclista ciclista){
         contagem += 1;
@@ -20,7 +21,7 @@ public class CiclistaRepository {
         }
         return ciclista;
     }
-    public Ciclista findById(Integer id){
-        return ciclistas.get(id);
+    public Optional<Ciclista> findById(Integer id){
+        return Optional.of(ciclistas.get(id));
     }
 }

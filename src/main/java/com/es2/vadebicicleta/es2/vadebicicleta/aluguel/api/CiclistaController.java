@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @Controller
 public class CiclistaController {
 
@@ -18,13 +20,10 @@ public class CiclistaController {
     @Autowired
     private CiclistaConverter converter;
 
-
     @GetMapping("/ciclista/{idCiclista}")
-    public ResponseEntity <Ciclista> getCiclista(Integer id){
-        Ciclista ciclista = service.getById(id);
-        if(ciclista == null)
-            return ResponseEntity.notFound().build();
-        return ResponseEntity.ok().body(ciclista);
+    public ResponseEntity <CiclistaOutDTO> getCiclista(@PathVariable Integer idCiclista){
+        Optional<Ciclista> ciclista = service.getById(idCiclista);
+        return ciclista.map(value -> ResponseEntity.ok(converter.entityToDTO(value))).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     //CADASTRAR CLIENTE UC01
@@ -39,8 +38,13 @@ public class CiclistaController {
     }
 
     //ALTERAR DADOS DO CLIENTE UC06
-//    @PutMapping("/ciclista/{idCiclista}")
-//    public ResponseEntity<CiclistaOutDTO> putCiclista(@RequestBody CiclistaInDTO ciclista){
-//
-//    }
+    @PutMapping("/ciclista/{idCiclista}")
+    public ResponseEntity<CiclistaOutDTO> putCiclista(@RequestBody CiclistaInDTO ciclistaNovo, @PathVariable Integer idCiclista){
+        Ciclista ciclistaCadastrado = service.update(ciclistaNovo, idCiclista);
+        if(ciclistaCadastrado == null)
+            return ResponseEntity.notFound().build();
+
+        CiclistaOutDTO ciclistaAtualizado = converter.entityToDTO(ciclistaCadastrado);
+        return ResponseEntity.ok().body(ciclistaAtualizado);
+    }
 }
