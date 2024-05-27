@@ -1,4 +1,4 @@
-package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain;
+package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Funcionario {
-    private Integer id;
-    private String matricula;
+public class FuncionarioInDTO {
     private String senha;
     private String confirmacaoSenha;
     private String email;
