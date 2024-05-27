@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public class CiclistaRepository {
     private static HashMap<Integer, Ciclista> registroCiclistas;
-    private static int contagem;
+    private IdGenerator id;
 
     public Ciclista save(Ciclista ciclista){
         if(findById(ciclista.getId()).isPresent()){
@@ -17,10 +17,11 @@ public class CiclistaRepository {
             return ciclista;
         }
 
-        contagem += 1;
+        Integer idCiclista = id.addElement();
+
         try {
-            ciclista.setId(contagem);
-            registroCiclistas.put(contagem, ciclista);
+            ciclista.setId(idCiclista);
+            registroCiclistas.put(idCiclista, ciclista);
         }catch (Exception e){
             return null;
         }

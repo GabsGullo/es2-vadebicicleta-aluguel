@@ -12,7 +12,7 @@ import java.util.Optional;
 public class FuncionarioRepository {
 
     private static HashMap<Integer, Funcionario> registroFuncionarios;
-    private static int contagem;
+    private IdGenerator id;
 
     public Funcionario save(Funcionario funcionario){
         if(findById(funcionario.getId()).isPresent()){
@@ -20,10 +20,10 @@ public class FuncionarioRepository {
             return funcionario;
         }
 
-        contagem += 1;
+        Integer idFuncionario = id.addElement();
         try {
-            funcionario.setId(contagem);
-            registroFuncionarios.put(contagem, funcionario);
+            funcionario.setId(idFuncionario);
+            registroFuncionarios.put(idFuncionario, funcionario);
         }catch (Exception e){
             return null;
         }
@@ -36,7 +36,8 @@ public class FuncionarioRepository {
     }
 
     public List<Funcionario> getAllFuncionarios(){
-        List<Funcionario> listaFuncionarios = new ArrayList<>(registroFuncionarios.values());
+        List<Funcionario> listaFuncionarios = new ArrayList<>();
+        listaFuncionarios.addAll(registroFuncionarios.values());
         return listaFuncionarios;
     }
 
