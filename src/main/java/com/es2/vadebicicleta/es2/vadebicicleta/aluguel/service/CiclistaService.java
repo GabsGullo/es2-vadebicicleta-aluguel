@@ -1,16 +1,13 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service;
 
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.Exception.NotFoundException;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.Exception.UnprocessableEntityException;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.api.CiclistaConverter;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.UnprocessableEntityException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.CiclistaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class CiclistaService {

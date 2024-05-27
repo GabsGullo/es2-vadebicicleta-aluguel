@@ -1,4 +1,4 @@
-package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.Exception;
+package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception;
 
 public class UnprocessableEntityException extends RuntimeException{
 
