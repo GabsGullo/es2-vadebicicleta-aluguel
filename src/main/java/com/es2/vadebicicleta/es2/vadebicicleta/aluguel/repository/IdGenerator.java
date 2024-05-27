@@ -13,6 +13,7 @@ public class IdGenerator {
     private Integer id;
 
     public Integer addElement(){
-        return this.id += 1;
+       this.id = this.id + 1;
+       return this.id;
     }
 }
