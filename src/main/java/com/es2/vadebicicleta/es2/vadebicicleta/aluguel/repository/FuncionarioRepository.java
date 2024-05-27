@@ -13,7 +13,7 @@ public class FuncionarioRepository {
 
     private static HashMap<Integer, Funcionario> registroFuncionarios;
     private IdGenerator id;
-
+    private IdGenerator matricula;
     public Funcionario save(Funcionario funcionario){
         if(findById(funcionario.getId()).isPresent()){
             registroFuncionarios.replace(funcionario.getId(), funcionario);
@@ -21,12 +21,11 @@ public class FuncionarioRepository {
         }
 
         Integer idFuncionario = id.addElement();
-        try {
-            funcionario.setId(idFuncionario);
-            registroFuncionarios.put(idFuncionario, funcionario);
-        }catch (Exception e){
-            return null;
-        }
+        String matriculaNova = matricula.addElement().toString();
+
+        funcionario.setId(idFuncionario);
+        funcionario.setMatricula(matriculaNova);
+        registroFuncionarios.put(idFuncionario, funcionario);
 
         return funcionario;
     }
@@ -42,9 +41,6 @@ public class FuncionarioRepository {
     }
 
     public Object delete(Integer idFuncionario){
-        if(findById(idFuncionario).isEmpty())
-            return registroFuncionarios.remove(idFuncionario);
-        else
-            return null;
+        return registroFuncionarios.remove(idFuncionario);
     }
 }

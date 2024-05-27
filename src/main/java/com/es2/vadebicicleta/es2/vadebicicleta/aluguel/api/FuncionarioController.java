@@ -10,8 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-import java.util.Optional;
-
 @Controller
 public class FuncionarioController {
 
@@ -32,8 +30,8 @@ public class FuncionarioController {
 
     @GetMapping("/funcionario/{idFuncionario}")
     public ResponseEntity<FuncionarioOutDTO> getFuncionario(@PathVariable Integer idFuncionario){
-        Optional<Funcionario> funcionario = service.getById(idFuncionario);
-        return funcionario.map(value -> ResponseEntity.ok(converter.entityToOutDTO(value))).orElseGet(() -> ResponseEntity.notFound().build());
+        Funcionario funcionario = service.getById(idFuncionario);
+        return ResponseEntity.ok().body(converter.entityToOutDTO(funcionario));
     }
 
     @PostMapping("/funcionario")

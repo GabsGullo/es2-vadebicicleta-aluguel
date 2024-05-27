@@ -2,8 +2,11 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Funcionario;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.FuncionarioInDTO;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.UnprocessableEntityException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.FuncionarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,30 +26,32 @@ public class FuncionarioService {
         return repository.getAllFuncionarios();
     }
 
-    public Optional<Funcionario> getById(Integer idFuncionario){return repository.findById(idFuncionario);}
+    public Funcionario getById(Integer idFuncionario){
+        if(idFuncionario < 0)
+            throw new UnprocessableEntityException("Chave invalida", HttpStatus.UNPROCESSABLE_ENTITY.toString());
+
+        return repository.findById(idFuncionario).orElseThrow(
+                () -> new NotFoundException("Funcionario não encontrado", HttpStatus.NOT_FOUND.toString()));
+    }
 
     public Funcionario save(Funcionario funcionario){return repository.save(funcionario);}
 
     public Funcionario update(FuncionarioInDTO funcionarioNovo, Integer idFuncionario){
-        Optional<Funcionario> funcionarioCadastrado = getById(idFuncionario);
-        if(funcionarioCadastrado.isPresent()){
-            Funcionario funcionarioAtualizado = funcionarioCadastrado.get();
+        Funcionario funcionarioCadastrado = getById(idFuncionario);
 
-            funcionarioAtualizado.setSenha(funcionarioNovo.getSenha());
-            funcionarioAtualizado.setConfirmacaoSenha(funcionarioNovo.getConfirmacaoSenha());
-            funcionarioAtualizado.setEmail(funcionarioNovo.getEmail());
-            funcionarioAtualizado.setNome(funcionarioNovo.getNome());
-            funcionarioAtualizado.setIdade(funcionarioNovo.getIdade());
-            funcionarioAtualizado.setFuncao(funcionarioNovo.getFuncao());
-            funcionarioAtualizado.setCpf(funcionarioNovo.getCpf());
+        funcionarioCadastrado.setSenha(funcionarioNovo.getSenha());
+        funcionarioCadastrado.setConfirmacaoSenha(funcionarioNovo.getConfirmacaoSenha());
+        funcionarioCadastrado.setEmail(funcionarioNovo.getEmail());
+        funcionarioCadastrado.setNome(funcionarioNovo.getNome());
+        funcionarioCadastrado.setIdade(funcionarioNovo.getIdade());
+        funcionarioCadastrado.setFuncao(funcionarioNovo.getFuncao());
+        funcionarioCadastrado.setCpf(funcionarioNovo.getCpf());
 
-            return repository.save(funcionarioAtualizado);
-        }
-
-        return null;
+        return repository.save(funcionarioCadastrado);
     }
 
     public Object delete(Integer idFuncionario){
+        Funcionario funcionario = getById(idFuncionario);
         return repository.delete(idFuncionario);
     }
 }
