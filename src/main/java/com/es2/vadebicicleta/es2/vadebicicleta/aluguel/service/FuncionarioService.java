@@ -6,8 +6,7 @@ import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.FuncionarioRep
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,7 +19,7 @@ public class FuncionarioService {
         this.repository = repository;
     }
 
-    public ArrayList<Funcionario> getAllFuncionarios(){
+    public List<Funcionario> getAllFuncionarios(){
         return repository.getAllFuncionarios();
     }
 
