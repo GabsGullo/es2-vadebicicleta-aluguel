@@ -24,7 +24,7 @@ public class CiclistaConverter {
         return dto;
     }
 
-    public Ciclista IndtoToEntity(CiclistaInDTO dto){
+    public Ciclista inDtoToEntity(CiclistaInDTO dto){
         Ciclista ciclista = new Ciclista();
 
         ciclista.setNome(dto.getNome());

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -34,9 +35,8 @@ public class FuncionarioRepository {
         return Optional.of(registroFuncionarios.get(id));
     }
 
-    public ArrayList<Funcionario> getAllFuncionarios(){
-        ArrayList<Funcionario> listaFuncionarios = new ArrayList<Funcionario>(registroFuncionarios.size());
-        listaFuncionarios.addAll(registroFuncionarios.values());
+    public List<Funcionario> getAllFuncionarios(){
+        List<Funcionario> listaFuncionarios = new ArrayList<>(registroFuncionarios.values());
         return listaFuncionarios;
     }
 

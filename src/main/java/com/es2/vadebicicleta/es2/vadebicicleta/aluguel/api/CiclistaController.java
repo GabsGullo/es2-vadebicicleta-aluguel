@@ -31,8 +31,10 @@ public class CiclistaController {
 
     //CADASTRAR CLIENTE UC01
     @PostMapping("/ciclista")
-    public ResponseEntity<CiclistaOutDTO> postCiclista(@RequestBody Ciclista ciclista){
+    public ResponseEntity<CiclistaOutDTO> postCiclista(@RequestBody CiclistaInDTO dto){
+        Ciclista ciclista = converter.inDtoToEntity(dto);
         Ciclista ciclistaCadastrado = service.save(ciclista);
+
         if(ciclistaCadastrado == null)
             return ResponseEntity.notFound().build();
 

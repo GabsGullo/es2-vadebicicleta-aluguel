@@ -10,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Optional;
 
 @Controller
@@ -39,7 +38,7 @@ public class FuncionarioController {
 
     @PostMapping("/funcionario")
     public ResponseEntity<FuncionarioOutDTO> postFuncionario(@RequestBody FuncionarioInDTO dto){
-        Funcionario funcionario = converter.IndtoToEntity(dto);
+        Funcionario funcionario = converter.inDtoToEntity(dto);
         Funcionario funcionarioCadastrado = service.save(funcionario);
 
         if(funcionarioCadastrado == null)
@@ -50,13 +49,13 @@ public class FuncionarioController {
     }
 
     @PutMapping("/funcionario/{idFuncionario}")
-    public ResponseEntity<FuncionarioOutDTO> putFuncionario(@RequestBody FuncionarioInDTO FuncionarioNovo, @PathVariable Integer idFuncionario){
-        Funcionario funcionarioCadastrado = service.update(FuncionarioNovo, idFuncionario);
+    public ResponseEntity<FuncionarioOutDTO> putFuncionario(@RequestBody FuncionarioInDTO funcionarioNovo, @PathVariable Integer idFuncionario){
+        Funcionario funcionarioCadastrado = service.update(funcionarioNovo, idFuncionario);
         if(funcionarioCadastrado == null)
             return ResponseEntity.notFound().build();
 
-        FuncionarioOutDTO FuncionarioAtualizado = converter.entityToOutDTO(funcionarioCadastrado);
-        return ResponseEntity.ok().body(FuncionarioAtualizado);
+        FuncionarioOutDTO funcionarioAtualizado = converter.entityToOutDTO(funcionarioCadastrado);
+        return ResponseEntity.ok().body(funcionarioAtualizado);
     }
 
     @DeleteMapping("/funcionario/{idFuncionario}")

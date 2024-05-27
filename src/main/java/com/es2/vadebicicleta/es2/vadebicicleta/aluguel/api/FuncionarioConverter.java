@@ -23,7 +23,7 @@ public class FuncionarioConverter {
         return dto;
     }
 
-    public Funcionario IndtoToEntity(FuncionarioInDTO dto){
+    public Funcionario inDtoToEntity(FuncionarioInDTO dto){
         Funcionario funcionario = new Funcionario();
 
         funcionario.setSenha(dto.getSenha());
