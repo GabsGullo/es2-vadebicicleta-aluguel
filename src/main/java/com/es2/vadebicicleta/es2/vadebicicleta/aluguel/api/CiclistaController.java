@@ -25,8 +25,8 @@ public class CiclistaController {
 
     @GetMapping("/ciclista/{idCiclista}")
     public ResponseEntity <CiclistaOutDTO> getCiclista(@PathVariable Integer idCiclista){
-        Optional<Ciclista> ciclista = service.getById(idCiclista);
-        return ciclista.map(value -> ResponseEntity.ok(converter.entityToOutDTO(value))).orElseGet(() -> ResponseEntity.notFound().build());
+        Ciclista ciclista = service.getById(idCiclista);
+        return ResponseEntity.ok().body(converter.entityToOutDTO(ciclista));
     }
 
     //CADASTRAR CLIENTE UC01
