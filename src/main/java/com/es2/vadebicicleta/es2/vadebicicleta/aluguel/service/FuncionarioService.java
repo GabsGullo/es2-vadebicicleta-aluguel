@@ -51,7 +51,7 @@ public class FuncionarioService {
     }
 
     public Object delete(Integer idFuncionario){
-        Funcionario funcionario = getById(idFuncionario);
+        getById(idFuncionario);
         return repository.delete(idFuncionario);
     }
 }
