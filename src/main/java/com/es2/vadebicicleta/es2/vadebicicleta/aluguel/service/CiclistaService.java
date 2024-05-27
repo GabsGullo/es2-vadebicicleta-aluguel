@@ -27,28 +27,21 @@ public class CiclistaService {
         return repository.findById(idCiclista).orElseThrow(
             () -> new NotFoundException("Ciclista não encontrado", HttpStatus.NOT_FOUND.toString()));
     }
-
     public Ciclista save(Ciclista ciclista){return repository.save(ciclista);}
 
     public Ciclista update(CiclistaInDTO ciclistaNovo, Integer idCiclista){
+
         Ciclista ciclistaCadastrado = getById(idCiclista);
-        if(ciclistaCadastrado != null){
 
-            Ciclista ciclistaAtualizado = new Ciclista();
-            ciclistaAtualizado.setMeioDePagamento(ciclistaCadastrado.getMeioDePagamento());
-            ciclistaAtualizado.setSenha(ciclistaCadastrado.getSenha());
+        ciclistaCadastrado.setCpf(ciclistaNovo.getCpf());
+        ciclistaCadastrado.setEmail(ciclistaNovo.getEmail());
+        ciclistaCadastrado.setNome(ciclistaNovo.getNome());
+        ciclistaCadastrado.setNacionalidade(ciclistaNovo.getNacionalidade());
+        ciclistaCadastrado.setNascimento(ciclistaNovo.getNascimento());
+        ciclistaCadastrado.setUrlFotoDocumento(ciclistaNovo.getUrlFotoDocumento());
+        ciclistaCadastrado.setPassaporte(ciclistaNovo.getPassaporte());
 
-            ciclistaAtualizado.setCpf(ciclistaNovo.getCpf());
-            ciclistaAtualizado.setEmail(ciclistaNovo.getEmail());
-            ciclistaAtualizado.setNome(ciclistaNovo.getNome());
-            ciclistaAtualizado.setNacionalidade(ciclistaNovo.getNacionalidade());
-            ciclistaAtualizado.setNascimento(ciclistaNovo.getNascimento());
-            ciclistaAtualizado.setUrlFotoDocumento(ciclistaNovo.getUrlFotoDocumento());
-            ciclistaAtualizado.setPassaporte(ciclistaNovo.getPassaporte());
+        return repository.save(ciclistaCadastrado);
 
-            return repository.save(ciclistaAtualizado);
-        }
-
-        return null;
     }
 }

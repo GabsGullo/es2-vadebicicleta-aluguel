@@ -19,12 +19,8 @@ public class CiclistaRepository {
 
         Integer idCiclista = id.addElement();
 
-        try {
-            ciclista.setId(idCiclista);
-            registroCiclistas.put(idCiclista, ciclista);
-        }catch (Exception e){
-            return null;
-        }
+        ciclista.setId(idCiclista);
+        registroCiclistas.put(idCiclista, ciclista);
 
         return ciclista;
     }

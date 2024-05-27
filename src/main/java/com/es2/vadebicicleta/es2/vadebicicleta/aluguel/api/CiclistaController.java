@@ -32,11 +32,7 @@ public class CiclistaController {
     public ResponseEntity<CiclistaOutDTO> postCiclista(@RequestBody CiclistaInDTO dto){
         Ciclista ciclista = converter.inDtoToEntity(dto);
         Ciclista ciclistaCadastrado = service.save(ciclista);
-
-        if(ciclistaCadastrado == null)
-            return ResponseEntity.notFound().build();
-
-        CiclistaOutDTO ciclistaDTO = converter.entityToOutDTO(ciclista);
+        CiclistaOutDTO ciclistaDTO = converter.entityToOutDTO(ciclistaCadastrado);
         return ResponseEntity.ok().body(ciclistaDTO);
     }
 
@@ -44,9 +40,6 @@ public class CiclistaController {
     @PutMapping("/ciclista/{idCiclista}")
     public ResponseEntity<CiclistaOutDTO> putCiclista(@RequestBody CiclistaInDTO ciclistaNovo, @PathVariable Integer idCiclista){
         Ciclista ciclistaCadastrado = service.update(ciclistaNovo, idCiclista);
-        if(ciclistaCadastrado == null)
-            return ResponseEntity.notFound().build();
-
         CiclistaOutDTO ciclistaAtualizado = converter.entityToOutDTO(ciclistaCadastrado);
         return ResponseEntity.ok().body(ciclistaAtualizado);
     }

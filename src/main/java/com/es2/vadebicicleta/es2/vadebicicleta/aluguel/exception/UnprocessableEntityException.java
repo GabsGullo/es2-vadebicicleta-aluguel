@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class UnprocessableEntityException extends RuntimeException{
 
-    private String codigo;
+    private final String codigo;
 
     public UnprocessableEntityException(String mensagem, String codigo) {
         super(mensagem);
