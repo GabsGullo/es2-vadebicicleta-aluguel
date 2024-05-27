@@ -8,20 +8,27 @@ import java.util.Optional;
 
 @Repository
 public class CiclistaRepository {
-    private static HashMap<Integer, Ciclista> ciclistas;
+    private static HashMap<Integer, Ciclista> registroCiclistas;
     private static int contagem;
 
     public Ciclista save(Ciclista ciclista){
+        if(findById(ciclista.getId()).isPresent()){
+            registroCiclistas.replace(ciclista.getId(), ciclista);
+            return ciclista;
+        }
+
         contagem += 1;
         try {
             ciclista.setId(contagem);
-            ciclistas.put(contagem, ciclista);
+            registroCiclistas.put(contagem, ciclista);
         }catch (Exception e){
             return null;
         }
+
         return ciclista;
     }
-    public Optional<Ciclista> findById(Integer id){
-        return Optional.of(ciclistas.get(id));
+
+    public Optional<Ciclista> findById(Integer idCiclista){
+        return Optional.of(registroCiclistas.get(idCiclista));
     }
 }

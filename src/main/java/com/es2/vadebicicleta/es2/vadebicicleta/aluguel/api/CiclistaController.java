@@ -14,16 +14,19 @@ import java.util.Optional;
 @Controller
 public class CiclistaController {
 
-    @Autowired
-    private CiclistaService service;
+    private final CiclistaService service;
 
+    private final CiclistaConverter converter;
     @Autowired
-    private CiclistaConverter converter;
+    public CiclistaController(CiclistaService service, CiclistaConverter converter) {
+        this.service = service;
+        this.converter = converter;
+    }
 
     @GetMapping("/ciclista/{idCiclista}")
     public ResponseEntity <CiclistaOutDTO> getCiclista(@PathVariable Integer idCiclista){
         Optional<Ciclista> ciclista = service.getById(idCiclista);
-        return ciclista.map(value -> ResponseEntity.ok(converter.entityToDTO(value))).orElseGet(() -> ResponseEntity.notFound().build());
+        return ciclista.map(value -> ResponseEntity.ok(converter.entityToOutDTO(value))).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     //CADASTRAR CLIENTE UC01
@@ -33,7 +36,7 @@ public class CiclistaController {
         if(ciclistaCadastrado == null)
             return ResponseEntity.notFound().build();
 
-        CiclistaOutDTO ciclistaDTO = converter.entityToDTO(ciclista);
+        CiclistaOutDTO ciclistaDTO = converter.entityToOutDTO(ciclista);
         return ResponseEntity.ok().body(ciclistaDTO);
     }
 
@@ -44,7 +47,7 @@ public class CiclistaController {
         if(ciclistaCadastrado == null)
             return ResponseEntity.notFound().build();
 
-        CiclistaOutDTO ciclistaAtualizado = converter.entityToDTO(ciclistaCadastrado);
+        CiclistaOutDTO ciclistaAtualizado = converter.entityToOutDTO(ciclistaCadastrado);
         return ResponseEntity.ok().body(ciclistaAtualizado);
     }
 }

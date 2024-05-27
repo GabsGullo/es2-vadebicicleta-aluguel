@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CiclistaConverter {
 
-    public CiclistaOutDTO entityToDTO(Ciclista ciclista){
+    public CiclistaOutDTO entityToOutDTO(Ciclista ciclista){
         CiclistaOutDTO dto = new CiclistaOutDTO();
 
         dto.setId(ciclista.getId());
@@ -24,7 +24,7 @@ public class CiclistaConverter {
         return dto;
     }
 
-    public Ciclista dtoToEntity(CiclistaInDTO dto){
+    public Ciclista IndtoToEntity(CiclistaInDTO dto){
         Ciclista ciclista = new Ciclista();
 
         ciclista.setNome(dto.getNome());
