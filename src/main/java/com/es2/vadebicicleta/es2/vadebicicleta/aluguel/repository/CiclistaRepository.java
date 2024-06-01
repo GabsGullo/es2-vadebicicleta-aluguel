@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public class CiclistaRepository {
-    private static HashMap<Integer, Ciclista> registroCiclistas;
+    private static HashMap<Integer, Ciclista> registroCiclistas = new HashMap<>();
     private IdGenerator id;
 
     public Ciclista save(Ciclista ciclista){
@@ -26,6 +26,6 @@ public class CiclistaRepository {
     }
 
     public Optional<Ciclista> findById(Integer idCiclista){
-        return Optional.of(registroCiclistas.get(idCiclista));
+        return Optional.ofNullable(registroCiclistas.get(idCiclista));
     }
 }

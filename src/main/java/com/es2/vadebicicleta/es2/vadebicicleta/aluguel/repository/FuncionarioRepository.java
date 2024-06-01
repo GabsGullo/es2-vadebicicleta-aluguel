@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public class FuncionarioRepository {
 
-    private static HashMap<Integer, Funcionario> registroFuncionarios;
+    private static HashMap<Integer, Funcionario> registroFuncionarios = new HashMap<>();
     private IdGenerator id;
     private IdGenerator matricula;
     public Funcionario save(Funcionario funcionario){
@@ -31,7 +31,7 @@ public class FuncionarioRepository {
     }
 
     public Optional<Funcionario> findById(Integer id){
-        return Optional.of(registroFuncionarios.get(id));
+        return Optional.ofNullable(registroFuncionarios.get(id));
     }
 
     public List<Funcionario> getAllFuncionarios(){

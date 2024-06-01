@@ -38,30 +38,22 @@ public class FuncionarioController {
     public ResponseEntity<FuncionarioOutDTO> postFuncionario(@RequestBody FuncionarioInDTO dto){
         Funcionario funcionario = converter.inDtoToEntity(dto);
         Funcionario funcionarioCadastrado = service.save(funcionario);
-
-        if(funcionarioCadastrado == null)
-            return ResponseEntity.unprocessableEntity().build();
-
         FuncionarioOutDTO outDTO = converter.entityToOutDTO(funcionarioCadastrado);
+
         return ResponseEntity.ok().body(outDTO);
     }
 
     @PutMapping("/funcionario/{idFuncionario}")
     public ResponseEntity<FuncionarioOutDTO> putFuncionario(@RequestBody FuncionarioInDTO funcionarioNovo, @PathVariable Integer idFuncionario){
         Funcionario funcionarioCadastrado = service.update(funcionarioNovo, idFuncionario);
-        if(funcionarioCadastrado == null)
-            return ResponseEntity.notFound().build();
-
         FuncionarioOutDTO funcionarioAtualizado = converter.entityToOutDTO(funcionarioCadastrado);
+
         return ResponseEntity.ok().body(funcionarioAtualizado);
     }
 
     @DeleteMapping("/funcionario/{idFuncionario}")
     public ResponseEntity<Object> deleteFuncionario(@PathVariable Integer idFuncionario){
-        Object object = service.delete(idFuncionario);
-        if(object == null)
-            return ResponseEntity.notFound().build();
-
+        service.delete(idFuncionario);
         return ResponseEntity.ok().build();
     }
 

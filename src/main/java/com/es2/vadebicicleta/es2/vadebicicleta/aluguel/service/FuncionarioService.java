@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class FuncionarioService {
@@ -27,9 +26,6 @@ public class FuncionarioService {
     }
 
     public Funcionario getById(Integer idFuncionario){
-        if(idFuncionario < 0)
-            throw new UnprocessableEntityException("Chave invalida", HttpStatus.UNPROCESSABLE_ENTITY.toString());
-
         return repository.findById(idFuncionario).orElseThrow(
                 () -> new NotFoundException("Funcionario não encontrado", HttpStatus.NOT_FOUND.toString()));
     }
@@ -51,7 +47,13 @@ public class FuncionarioService {
     }
 
     public Object delete(Integer idFuncionario){
-        getById(idFuncionario);
-        return repository.delete(idFuncionario);
+        if(idFuncionario < 0)
+            throw new UnprocessableEntityException("Chave invalida", HttpStatus.UNPROCESSABLE_ENTITY.toString());
+        Object retorno = repository.delete(idFuncionario);
+        if(retorno == null){
+            throw new NotFoundException("Funcionário não encontrado", HttpStatus.NOT_FOUND.toString());
+        }
+
+        return retorno;
     }
 }

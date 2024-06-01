@@ -20,10 +20,6 @@ public class CiclistaService {
     }
 
     public Ciclista getById(Integer idCiclista){
-        if(idCiclista < 0){
-            throw new UnprocessableEntityException("Chave Invalida", HttpStatus.UNPROCESSABLE_ENTITY.toString());
-        }
-
         return repository.findById(idCiclista).orElseThrow(
             () -> new NotFoundException("Ciclista não encontrado", HttpStatus.NOT_FOUND.toString()));
     }
