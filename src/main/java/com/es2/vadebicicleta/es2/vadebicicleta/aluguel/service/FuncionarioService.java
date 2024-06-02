@@ -35,8 +35,8 @@ public class FuncionarioService {
     public Funcionario update(FuncionarioInDTO funcionarioNovo, Integer idFuncionario){
         Funcionario funcionarioCadastrado = getById(idFuncionario);
 
-        funcionarioCadastrado.setSenha(funcionarioNovo.getSenha());
-        funcionarioCadastrado.setConfirmacaoSenha(funcionarioNovo.getConfirmacaoSenha());
+        funcionarioCadastrado.setSenha(funcionarioNovo.getPassword());
+        funcionarioCadastrado.setConfirmacaoSenha(funcionarioNovo.getConfirmPassword());
         funcionarioCadastrado.setEmail(funcionarioNovo.getEmail());
         funcionarioCadastrado.setNome(funcionarioNovo.getNome());
         funcionarioCadastrado.setIdade(funcionarioNovo.getIdade());

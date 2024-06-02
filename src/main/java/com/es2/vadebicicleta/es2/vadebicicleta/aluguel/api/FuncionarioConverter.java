@@ -26,8 +26,8 @@ public class FuncionarioConverter {
     public Funcionario inDtoToEntity(FuncionarioInDTO dto){
         Funcionario funcionario = new Funcionario();
 
-        funcionario.setSenha(dto.getSenha());
-        funcionario.setConfirmacaoSenha(dto.getConfirmacaoSenha());
+        funcionario.setSenha(dto.getPassword());
+        funcionario.setConfirmacaoSenha(dto.getConfirmPassword());
         funcionario.setEmail(dto.getEmail());
         funcionario.setNome(dto.getNome());
         funcionario.setIdade(dto.getIdade());

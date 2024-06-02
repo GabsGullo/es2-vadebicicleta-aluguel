@@ -1,6 +1,7 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Funcionario;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -12,8 +13,14 @@ import java.util.Optional;
 public class FuncionarioRepository {
 
     private static HashMap<Integer, Funcionario> registroFuncionarios = new HashMap<>();
-    private IdGenerator id;
-    private IdGenerator matricula;
+    private final IdGenerator id;
+    private final IdGenerator matricula;
+
+    public FuncionarioRepository(IdGenerator id, IdGenerator matricula) {
+        this.id = id;
+        this.matricula = matricula;
+    }
+
     public Funcionario save(Funcionario funcionario){
         if(findById(funcionario.getId()).isPresent()){
             registroFuncionarios.replace(funcionario.getId(), funcionario);

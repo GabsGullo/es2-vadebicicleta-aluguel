@@ -4,6 +4,7 @@ import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Funcionario;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.FuncionarioInDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.FuncionarioOutDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.FuncionarioService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -35,7 +36,7 @@ public class FuncionarioController {
     }
 
     @PostMapping("/funcionario")
-    public ResponseEntity<FuncionarioOutDTO> postFuncionario(@RequestBody FuncionarioInDTO dto){
+    public ResponseEntity<FuncionarioOutDTO> postFuncionario(@Valid @RequestBody FuncionarioInDTO dto){
         Funcionario funcionario = converter.inDtoToEntity(dto);
         Funcionario funcionarioCadastrado = service.save(funcionario);
         FuncionarioOutDTO outDTO = converter.entityToOutDTO(funcionarioCadastrado);
@@ -44,7 +45,7 @@ public class FuncionarioController {
     }
 
     @PutMapping("/funcionario/{idFuncionario}")
-    public ResponseEntity<FuncionarioOutDTO> putFuncionario(@RequestBody FuncionarioInDTO funcionarioNovo, @PathVariable Integer idFuncionario){
+    public ResponseEntity<FuncionarioOutDTO> putFuncionario(@Valid @RequestBody FuncionarioInDTO funcionarioNovo, @PathVariable Integer idFuncionario){
         Funcionario funcionarioCadastrado = service.update(funcionarioNovo, idFuncionario);
         FuncionarioOutDTO funcionarioAtualizado = converter.entityToOutDTO(funcionarioCadastrado);
 
