@@ -3,7 +3,6 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
