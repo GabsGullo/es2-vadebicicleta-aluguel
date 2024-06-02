@@ -1,9 +1,8 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.UnprocessableEntityException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInDTO;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInPutDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.CiclistaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +24,7 @@ public class CiclistaService {
     }
     public Ciclista save(Ciclista ciclista){return repository.save(ciclista);}
 
-    public Ciclista update(CiclistaInDTO ciclistaNovo, Integer idCiclista){
+    public Ciclista update(CiclistaInPutDTO ciclistaNovo, Integer idCiclista){
 
         Ciclista ciclistaCadastrado = getById(idCiclista);
 

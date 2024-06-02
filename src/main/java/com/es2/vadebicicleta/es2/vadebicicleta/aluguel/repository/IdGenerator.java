@@ -4,16 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Component
 public class IdGenerator {
-    private Integer id;
+    private Integer id = 0;
 
     public Integer addElement(){
-       this.id = this.id + 1;
-       return this.id;
+       this.id = id + 1;
+       return id;
     }
 }

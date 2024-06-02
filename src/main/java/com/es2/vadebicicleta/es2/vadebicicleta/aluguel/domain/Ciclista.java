@@ -1,5 +1,6 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Data
@@ -22,21 +23,12 @@ public class Ciclista {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public class Passaporte{
-
+    public static class Passaporte{
+        @NotNull
         private String numero;
+        @NotNull
         private String validade;
+        @NotNull
         private String pais;
-    }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    private class MeioDePagamento{
-
-        private String nomeDoTitular;
-        private String numero;
-        private String validade;
-        private String cvv;
     }
 }

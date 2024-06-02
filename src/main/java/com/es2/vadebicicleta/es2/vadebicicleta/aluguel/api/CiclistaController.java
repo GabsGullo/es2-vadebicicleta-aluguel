@@ -1,7 +1,8 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.api;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInDTO;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInPostDTO;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInPutDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaOutDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.CiclistaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,8 @@ public class CiclistaController {
 
     //CADASTRAR CLIENTE UC01
     @PostMapping("/ciclista")
-    public ResponseEntity<CiclistaOutDTO> postCiclista(@RequestBody CiclistaInDTO dto){
-        Ciclista ciclista = converter.inDtoToEntity(dto);
+    public ResponseEntity<CiclistaOutDTO> postCiclista(@RequestBody CiclistaInPostDTO dto){
+        Ciclista ciclista = converter.inPostDtoToEntity(dto);
         Ciclista ciclistaCadastrado = service.save(ciclista);
         CiclistaOutDTO ciclistaDTO = converter.entityToOutDTO(ciclistaCadastrado);
         return ResponseEntity.ok().body(ciclistaDTO);
@@ -38,7 +39,7 @@ public class CiclistaController {
 
     //ALTERAR DADOS DO CLIENTE UC06
     @PutMapping("/ciclista/{idCiclista}")
-    public ResponseEntity<CiclistaOutDTO> putCiclista(@RequestBody CiclistaInDTO ciclistaNovo, @PathVariable Integer idCiclista){
+    public ResponseEntity<CiclistaOutDTO> putCiclista(@RequestBody CiclistaInPutDTO ciclistaNovo, @PathVariable Integer idCiclista){
         Ciclista ciclistaCadastrado = service.update(ciclistaNovo, idCiclista);
         CiclistaOutDTO ciclistaAtualizado = converter.entityToOutDTO(ciclistaCadastrado);
         return ResponseEntity.ok().body(ciclistaAtualizado);

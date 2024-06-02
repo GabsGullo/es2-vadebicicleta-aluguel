@@ -1,7 +1,8 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.api;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInDTO;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInPostDTO;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInPutDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaOutDTO;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +25,7 @@ public class CiclistaConverter {
         return dto;
     }
 
-    public Ciclista inDtoToEntity(CiclistaInDTO dto){
+    public Ciclista inPutDtoToEntity(CiclistaInPutDTO dto){
         Ciclista ciclista = new Ciclista();
 
         ciclista.setNome(dto.getNome());
@@ -34,6 +35,21 @@ public class CiclistaConverter {
         ciclista.setNacionalidade(dto.getNacionalidade());
         ciclista.setEmail(dto.getEmail());
         ciclista.setUrlFotoDocumento(dto.getUrlFotoDocumento());
+
+        return ciclista;
+    }
+
+    public Ciclista inPostDtoToEntity(CiclistaInPostDTO dto){
+        Ciclista ciclista = new Ciclista();
+
+        ciclista.setNome(dto.getNome());
+        ciclista.setNascimento(dto.getNascimento());
+        ciclista.setCpf(dto.getCpf());
+        ciclista.setPassaporte(dto.getPassaporte());
+        ciclista.setNacionalidade(dto.getNacionalidade());
+        ciclista.setEmail(dto.getEmail());
+        ciclista.setUrlFotoDocumento(dto.getUrlFotoDocumento());
+        ciclista.setMeioDePagamento(dto.getMeioDePagamento());
 
         return ciclista;
     }
