@@ -1,6 +1,7 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.api;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.NacionalidadeEnum;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInPostDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInPutDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaOutDTO;
@@ -13,12 +14,12 @@ public class CiclistaConverter {
         CiclistaOutDTO dto = new CiclistaOutDTO();
 
         dto.setId(ciclista.getId());
-        dto.setStatus(ciclista.getStatus());
+        dto.setStatus(String.valueOf(ciclista.getStatus()));
         dto.setNome(ciclista.getNome());
         dto.setNascimento(ciclista.getNascimento());
         dto.setCpf(ciclista.getCpf());
         dto.setPassaporte(ciclista.getPassaporte());
-        dto.setNacionalidade(ciclista.getNacionalidade());
+        dto.setNacionalidade(String.valueOf(ciclista.getNacionalidade()));
         dto.setEmail(ciclista.getEmail());
         dto.setUrlFotoDocumento(ciclista.getUrlFotoDocumento());
 
@@ -32,7 +33,7 @@ public class CiclistaConverter {
         ciclista.setNascimento(dto.getNascimento());
         ciclista.setCpf(dto.getCpf());
         ciclista.setPassaporte(dto.getPassaporte());
-        ciclista.setNacionalidade(dto.getNacionalidade());
+        ciclista.setNacionalidade(NacionalidadeEnum.valueOf(dto.getNacionalidade()));
         ciclista.setEmail(dto.getEmail());
         ciclista.setUrlFotoDocumento(dto.getUrlFotoDocumento());
 
@@ -46,7 +47,7 @@ public class CiclistaConverter {
         ciclista.setNascimento(dto.getNascimento());
         ciclista.setCpf(dto.getCpf());
         ciclista.setPassaporte(dto.getPassaporte());
-        ciclista.setNacionalidade(dto.getNacionalidade());
+        ciclista.setNacionalidade(NacionalidadeEnum.valueOf(dto.getNacionalidade()));
         ciclista.setEmail(dto.getEmail());
         ciclista.setUrlFotoDocumento(dto.getUrlFotoDocumento());
         ciclista.setMeioDePagamento(dto.getMeioDePagamento());

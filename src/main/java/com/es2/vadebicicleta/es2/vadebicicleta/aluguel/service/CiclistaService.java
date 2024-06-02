@@ -1,5 +1,7 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service;
 
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.NacionalidadeEnum;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.StatusEnum;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInPutDTO;
@@ -22,7 +24,10 @@ public class CiclistaService {
         return repository.findById(idCiclista).orElseThrow(
             () -> new NotFoundException("Ciclista não encontrado", HttpStatus.NOT_FOUND.toString()));
     }
-    public Ciclista save(Ciclista ciclista){return repository.save(ciclista);}
+    public Ciclista register(Ciclista ciclista){
+        ciclista.setStatus(StatusEnum.AGUARDANDO_CONFIRMACAO);
+        return repository.save(ciclista);
+    }
 
     public Ciclista update(CiclistaInPutDTO ciclistaNovo, Integer idCiclista){
 
@@ -31,7 +36,7 @@ public class CiclistaService {
         ciclistaCadastrado.setCpf(ciclistaNovo.getCpf());
         ciclistaCadastrado.setEmail(ciclistaNovo.getEmail());
         ciclistaCadastrado.setNome(ciclistaNovo.getNome());
-        ciclistaCadastrado.setNacionalidade(ciclistaNovo.getNacionalidade());
+        ciclistaCadastrado.setNacionalidade(NacionalidadeEnum.valueOf(ciclistaNovo.getNacionalidade()));
         ciclistaCadastrado.setNascimento(ciclistaNovo.getNascimento());
         ciclistaCadastrado.setUrlFotoDocumento(ciclistaNovo.getUrlFotoDocumento());
         ciclistaCadastrado.setPassaporte(ciclistaNovo.getPassaporte());

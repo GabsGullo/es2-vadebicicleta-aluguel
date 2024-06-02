@@ -9,12 +9,12 @@ import lombok.*;
 @Builder
 public class Ciclista {
     private Integer id;
-    private String status;
+    private StatusEnum status;
     private String nome;
     private String nascimento;
     private String cpf;
     private Passaporte passaporte;
-    private String nacionalidade;
+    private NacionalidadeEnum nacionalidade;
     private String email;
     private String urlFotoDocumento;
     private String senha;

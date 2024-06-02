@@ -19,7 +19,6 @@ public class CiclistaInPostDTO {
     private String nascimento;
     @CPF
     private String cpf;
-    @NotNull
     private Ciclista.Passaporte passaporte;
     @NotNull
     private String nacionalidade;

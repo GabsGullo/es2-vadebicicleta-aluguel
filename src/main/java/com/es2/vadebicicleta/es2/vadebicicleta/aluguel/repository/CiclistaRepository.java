@@ -1,6 +1,7 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.StatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -25,7 +26,6 @@ public class CiclistaRepository {
         Integer idCiclista = id.addElement();
 
         ciclista.setId(idCiclista);
-        ciclista.setStatus("AGUARDANDO_CONFIRMACAO");
         registroCiclistas.put(idCiclista, ciclista);
 
         return ciclista;
