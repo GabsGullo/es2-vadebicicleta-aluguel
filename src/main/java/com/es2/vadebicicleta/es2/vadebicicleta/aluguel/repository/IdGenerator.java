@@ -12,10 +12,22 @@ import org.springframework.stereotype.Component;
 @Builder
 @Component
 public class IdGenerator {
-    private Integer id = 0;
+    private Integer idCiclista = 0;
+    private Integer idFuncionario = 0;
+    private Integer matricula = 0;
 
-    public Integer addElement(){
-       this.id = id + 1;
-       return id;
+    public Integer generateIdCiclista(){
+       idCiclista = idCiclista + 1;
+       return idCiclista;
+    }
+
+    public Integer generateIdFuncionario(){
+        idFuncionario = idFuncionario + 1;
+        return idFuncionario;
+    }
+
+    public String generateIdMatricula(){
+        matricula = matricula + 1;
+        return matricula.toString();
     }
 }

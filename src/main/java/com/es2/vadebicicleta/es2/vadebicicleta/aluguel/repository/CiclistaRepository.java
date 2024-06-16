@@ -1,8 +1,6 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.StatusEnum;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -23,7 +21,7 @@ public class CiclistaRepository {
             return ciclista;
         }
 
-        Integer idCiclista = id.addElement();
+        Integer idCiclista = id.generateIdCiclista();
 
         ciclista.setId(idCiclista);
         registroCiclistas.put(idCiclista, ciclista);

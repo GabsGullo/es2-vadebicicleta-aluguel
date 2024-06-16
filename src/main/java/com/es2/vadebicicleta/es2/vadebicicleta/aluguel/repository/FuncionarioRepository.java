@@ -1,7 +1,6 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Funcionario;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -27,8 +26,8 @@ public class FuncionarioRepository {
             return funcionario;
         }
 
-        Integer idFuncionario = id.addElement();
-        String matriculaNova = matricula.addElement().toString();
+        Integer idFuncionario = id.generateIdFuncionario();
+        String matriculaNova = matricula.generateIdMatricula();
 
         funcionario.setId(idFuncionario);
         funcionario.setMatricula(matriculaNova);

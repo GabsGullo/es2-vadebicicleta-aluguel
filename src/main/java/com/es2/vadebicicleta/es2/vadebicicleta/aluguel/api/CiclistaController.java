@@ -45,4 +45,11 @@ public class CiclistaController {
         CiclistaOutDTO ciclistaAtualizado = converter.entityToOutDTO(ciclistaCadastrado);
         return ResponseEntity.ok().body(ciclistaAtualizado);
     }
+
+    @GetMapping("/ciclista/{idCiclista}/ativar")
+    public ResponseEntity<CiclistaOutDTO> ativarCiclista(@PathVariable Integer idCiclista){
+        Ciclista ciclistaAtivado = service.activate(idCiclista);
+        CiclistaOutDTO ciclistaAtualizado = converter.entityToOutDTO(ciclistaAtivado);
+        return ResponseEntity.ok().body(ciclistaAtualizado);
+    }
 }

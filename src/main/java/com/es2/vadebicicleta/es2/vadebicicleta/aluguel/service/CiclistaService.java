@@ -44,4 +44,11 @@ public class CiclistaService {
         return repository.save(ciclistaCadastrado);
 
     }
+
+    public Ciclista activate(Integer idCiclista){
+        Ciclista ciclistaDesativado = getById(idCiclista);
+
+        ciclistaDesativado.setStatus(StatusEnum.ATIVO);
+        return repository.save(ciclistaDesativado);
+    }
 }
