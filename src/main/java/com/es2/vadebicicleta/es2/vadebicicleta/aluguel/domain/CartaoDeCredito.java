@@ -9,9 +9,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MeioDePagamento{
+public class CartaoDeCredito {
     @NotNull
-    private String nomeDoTitular;
+    private Integer id;
+    @NotNull
+    private String nomeTitular;
     @NotNull
     private String numero;
     @NotNull

@@ -1,5 +1,6 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service;
 
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.CartaoDeCredito;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.NacionalidadeEnum;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.StatusEnum;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
@@ -14,18 +15,22 @@ import org.springframework.stereotype.Service;
 public class CiclistaService {
 
     private final CiclistaRepository repository;
+    private final CartaoDeCreditoService cartaoDeCreditoService;
 
     @Autowired
-    public CiclistaService(CiclistaRepository repository) {
+    public CiclistaService(CiclistaRepository repository, CartaoDeCreditoService cartaoDeCreditoService) {
         this.repository = repository;
+        this.cartaoDeCreditoService = cartaoDeCreditoService;
     }
 
     public Ciclista getById(Integer idCiclista){
         return repository.findById(idCiclista).orElseThrow(
             () -> new NotFoundException("Ciclista não encontrado", HttpStatus.NOT_FOUND.toString()));
     }
-    public Ciclista register(Ciclista ciclista){
+    public Ciclista register(Ciclista ciclista, CartaoDeCredito cartaoDeCredito){
         ciclista.setStatus(StatusEnum.AGUARDANDO_CONFIRMACAO);
+        cartaoDeCreditoService.register(cartaoDeCredito);
+
         return repository.save(ciclista);
     }
 

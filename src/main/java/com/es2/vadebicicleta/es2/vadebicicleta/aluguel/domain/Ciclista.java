@@ -18,7 +18,6 @@ public class Ciclista {
     private String email;
     private String urlFotoDocumento;
     private String senha;
-    private MeioDePagamento meioDePagamento;
 
     @Data
     @AllArgsConstructor

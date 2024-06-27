@@ -13,12 +13,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class IdGenerator {
     private Integer idCiclista = 0;
+    private Integer idCartao = 0;
     private Integer idFuncionario = 0;
     private Integer matricula = 0;
 
     public Integer generateIdCiclista(){
        idCiclista = idCiclista + 1;
        return idCiclista;
+    }
+
+    public Integer generateIdCartao(){
+        idCartao =  idCartao + 1;
+        return idCartao;
     }
 
     public Integer generateIdFuncionario(){

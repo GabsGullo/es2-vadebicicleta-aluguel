@@ -50,7 +50,6 @@ public class CiclistaConverter {
         ciclista.setNacionalidade(NacionalidadeEnum.valueOf(dto.getNacionalidade()));
         ciclista.setEmail(dto.getEmail());
         ciclista.setUrlFotoDocumento(dto.getUrlFotoDocumento());
-        ciclista.setMeioDePagamento(dto.getMeioDePagamento());
 
         return ciclista;
     }
