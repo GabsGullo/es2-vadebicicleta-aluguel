@@ -15,5 +15,5 @@ public class RegistoCartaoCiclistaDTO {
     private CiclistaInPostDTO ciclista;
 
     @Valid
-    private CartaoDeCreditoInDTO cartaoDeCredito;
+    private CartaoDeCreditoDTO cartaoDeCredito;
 }

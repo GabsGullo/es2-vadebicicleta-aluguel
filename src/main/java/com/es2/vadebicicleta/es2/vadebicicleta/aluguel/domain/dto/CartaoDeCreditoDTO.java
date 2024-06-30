@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartaoDeCreditoInDTO {
+public class CartaoDeCreditoDTO {
 
     @NotNull
     private String nomeTitular;

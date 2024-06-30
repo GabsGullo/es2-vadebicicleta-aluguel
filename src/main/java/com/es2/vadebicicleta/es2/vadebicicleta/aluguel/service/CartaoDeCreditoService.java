@@ -1,6 +1,7 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.CartaoDeCredito;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CartaoDeCreditoDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.CartaoDeCreditoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,4 +27,14 @@ public class CartaoDeCreditoService {
                 () -> new NotFoundException("Cartão não encontrado", HttpStatus.NOT_FOUND.toString()));
     }
 
+    public void update(CartaoDeCreditoDTO cartaoNovo, Integer idCiclista){
+        CartaoDeCredito cartaoDeCreditoCadastrado = getCartaoByCiclistaId(idCiclista);
+
+        cartaoDeCreditoCadastrado.setNomeTitular(cartaoNovo.getNomeTitular());
+        cartaoDeCreditoCadastrado.setNumero(cartaoNovo.getNumero());
+        cartaoDeCreditoCadastrado.setValidade(cartaoNovo.getValidade());
+        cartaoDeCreditoCadastrado.setCvv(cartaoNovo.getCvv());
+
+        repository.save(cartaoDeCreditoCadastrado);
+    }
 }
