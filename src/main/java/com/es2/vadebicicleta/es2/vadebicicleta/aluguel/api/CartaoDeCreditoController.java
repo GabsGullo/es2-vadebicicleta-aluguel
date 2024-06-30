@@ -15,11 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CartaoDeCreditoController {
 
     private final CartaoDeCreditoService service;
-    private final CartaoDeCreditoConverter converter;
 
-    public CartaoDeCreditoController(CartaoDeCreditoService service, CartaoDeCreditoConverter converter) {
+    public CartaoDeCreditoController(CartaoDeCreditoService service) {
         this.service = service;
-        this.converter = converter;
     }
 
     @GetMapping("cartaoDeCredito/{idCiclista}")
