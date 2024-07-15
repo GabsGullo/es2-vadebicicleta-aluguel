@@ -1,7 +1,6 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.NacionalidadeEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
