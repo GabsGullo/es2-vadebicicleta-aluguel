@@ -52,4 +52,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors);
     }
 
+    @ExceptionHandler(ValidacaoException.class)
+    public ResponseEntity<Object> handleValidacaoException(ValidacaoException ex) {
+        List<ExceptionResponse> errors = new ArrayList<>();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String errorMessage = error.getDefaultMessage();
+            errors.add(new ExceptionResponse(errorMessage, "422"));
+        });
+
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors);
+    }
+
 }

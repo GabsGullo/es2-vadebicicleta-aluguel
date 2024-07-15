@@ -6,10 +6,17 @@ import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.StatusEnum;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInPutDTO;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ValidacaoException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.CiclistaRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @Service
 public class CiclistaService {
@@ -27,7 +34,10 @@ public class CiclistaService {
         return repository.findById(idCiclista).orElseThrow(
             () -> new NotFoundException("Ciclista não encontrado", HttpStatus.NOT_FOUND.toString()));
     }
-    public Ciclista register(Ciclista ciclista, CartaoDeCredito cartaoDeCredito){
+
+    public Ciclista register(@Valid Ciclista ciclista, @Valid CartaoDeCredito cartaoDeCredito){
+        validateCiclista(ciclista);
+
         ciclista.setStatus(StatusEnum.AGUARDANDO_CONFIRMACAO);
         cartaoDeCreditoService.register(cartaoDeCredito);
 
@@ -47,7 +57,6 @@ public class CiclistaService {
         ciclistaCadastrado.setPassaporte(ciclistaNovo.getPassaporte());
 
         return repository.save(ciclistaCadastrado);
-
     }
 
     public Ciclista activate(Integer idCiclista){
@@ -55,5 +64,67 @@ public class CiclistaService {
 
         ciclistaDesativado.setStatus(StatusEnum.ATIVO);
         return repository.save(ciclistaDesativado);
+    }
+
+    private void validateCiclista(Ciclista ciclista){
+        BindingResult result = new BeanPropertyBindingResult(ciclista, "ciclista");
+
+        if (ciclista.getStatus() == null) {
+            result.addError(new FieldError("ciclista", "status", "Status não pode ser nulo"));
+        }
+        if (ciclista.getNome() == null || ciclista.getNome().isEmpty()) {
+            result.addError(new FieldError("ciclista", "nome", "Nome não pode ser nulo ou vazio"));
+        }
+        if (ciclista.getNascimento() == null || ciclista.getNascimento().isEmpty()) {
+            result.addError(new FieldError("ciclista", "nascimento", "Nascimento não pode ser nulo ou vazio"));
+        }
+        if (ciclista.getNacionalidade() == null) {
+            result.addError(new FieldError("ciclista", "nacionalidade", "Nacionalidade não pode ser nula"));
+        }
+        if (ciclista.getEmail() == null || !isValidEmail(ciclista.getEmail())) {
+            result.addError(new FieldError("ciclista", "email", "Email inválido"));
+        }
+        if (ciclista.getSenha() == null || ciclista.getSenha().isEmpty()) {
+            result.addError(new FieldError("ciclista", "senha", "Senha não pode ser nula ou vazia"));
+        }
+
+        boolean temUmDocumentoValido = true;
+        if(ciclista.getCpf() == null && ciclista.getPassaporte() == null){
+            result.addError(new FieldError("ciclista", "cpf", "Nenhum documento informado"));
+            result.addError(new FieldError("ciclista", "passaporte", "Nenhum documento informado"));
+            temUmDocumentoValido = false;
+        }
+        if(ciclista.getCpf() != null && ciclista.getPassaporte() != null){
+            result.addError(new FieldError("ciclista", "cpf", "CPF e passaporte informados"));
+            result.addError(new FieldError("ciclista", "passaporte", "CPF e passaporte informados"));
+        }
+        if (ciclista.getCpf() != null && !isValidCPF(ciclista.getCpf())) {
+            result.addError(new FieldError("ciclista", "cpf", "CPF inválido"));
+        }
+        if (ciclista.getPassaporte() != null) {
+            if (ciclista.getPassaporte().getNumero() == null || ciclista.getPassaporte().getNumero().isEmpty()) {
+                result.addError(new FieldError("ciclista", "passaporte.numero", "Número do passaporte não pode ser nulo ou vazio"));
+            }
+            if (ciclista.getPassaporte().getValidade() == null || ciclista.getPassaporte().getValidade().isEmpty()) {
+                result.addError(new FieldError("ciclista", "passaporte.validade", "Validade do passaporte não pode ser nula ou vazia"));
+            }
+            if (ciclista.getPassaporte().getPais() == null || ciclista.getPassaporte().getPais().isEmpty()) {
+                result.addError(new FieldError("ciclista", "passaporte.pais", "País do passaporte não pode ser nulo ou vazio"));
+            }
+        }
+
+        if (result.hasErrors()) {
+            throw new ValidacaoException(result);
+        }
+    }
+
+    private boolean isValidCPF(String cpf) {
+        // Implementação fictícia, substitua pela sua lógica de validação de CPF
+        return cpf != null && cpf.matches("\\d{11}");
+    }
+
+    private boolean isValidEmail(String email) {
+        // Implementação fictícia, substitua pela sua lógica de validação de Email
+        return email != null && email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
     }
 }

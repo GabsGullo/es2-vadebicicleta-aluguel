@@ -4,6 +4,7 @@ import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.CartaoDeCredito;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CartaoDeCreditoDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.CartaoDeCreditoRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ public class CartaoDeCreditoService {
         this.repository = repository;
     }
 
-    public void register(CartaoDeCredito cartaoDeCredito){
+    public void register(@Valid CartaoDeCredito cartaoDeCredito){
         repository.save(cartaoDeCredito);
     }
 
