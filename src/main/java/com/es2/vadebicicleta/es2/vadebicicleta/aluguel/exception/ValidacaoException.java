@@ -14,7 +14,7 @@ import org.springframework.validation.ObjectError;
 
 public class ValidacaoException extends RuntimeException implements BindingResult {
 
-    private transient final BindingResult bindingResult;
+    private final transient BindingResult bindingResult;
 
     public ValidacaoException(BindingResult bindingResult) {
         this.bindingResult = bindingResult;
