@@ -1,12 +1,10 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service;
 
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.CartaoDeCredito;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.NacionalidadeEnum;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.StatusEnum;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.*;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInPutDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ValidacaoException;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao.ExternoClient;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.CiclistaRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +21,15 @@ public class CiclistaService {
 
     public static final String OBJECT_NAME = "ciclista";
     public static final String PASSAPORTE = "passaporte";
+    private final ExternoClient externoClient;
     private final CiclistaRepository repository;
     private final CartaoDeCreditoService cartaoDeCreditoService;
 
     @Autowired
-    public CiclistaService(CiclistaRepository repository, CartaoDeCreditoService cartaoDeCreditoService) {
+    public CiclistaService(CiclistaRepository repository, CartaoDeCreditoService cartaoDeCreditoService, ExternoClient externoClient) {
         this.repository = repository;
         this.cartaoDeCreditoService = cartaoDeCreditoService;
+        this.externoClient = externoClient;
     }
 
     public Ciclista getById(Integer idCiclista){
@@ -43,7 +43,21 @@ public class CiclistaService {
         ciclista.setStatus(StatusEnum.AGUARDANDO_CONFIRMACAO);
         cartaoDeCreditoService.register(cartaoDeCredito);
 
-        return repository.save(ciclista);
+        Ciclista ciclistaCadastrado = repository.save(ciclista);
+
+        enviarEmail(ciclista);
+
+        return ciclistaCadastrado;
+    }
+
+    private void enviarEmail(Ciclista ciclista) {
+
+        EnderecoEmail email = new EnderecoEmail();
+        email.setAssunto("Cadastro");
+        email.setMensagem("Cadastro concluido com sucesso");
+        email.setEmail(ciclista.getEmail());
+        externoClient.enviarEmail(email);
+
     }
 
     public Ciclista update(CiclistaInPutDTO ciclistaNovo, Integer idCiclista){
