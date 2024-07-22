@@ -8,6 +8,7 @@ import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.NacionalidadeEnum;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.StatusEnum;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ValidacaoException;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao.ExternoClient;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.CiclistaRepository;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.CartaoDeCreditoService;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.CiclistaService;
@@ -25,6 +26,9 @@ class CiclistaServiceTest {
 
 	@Mock
 	private CartaoDeCreditoService cartaoDeCreditoService;
+
+	@Mock
+	private ExternoClient externoClient;
 
 	@InjectMocks
 	private CiclistaService ciclistaService;
