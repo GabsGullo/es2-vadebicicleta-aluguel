@@ -22,6 +22,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 public class CiclistaService {
 
     public static final String OBJECT_NAME = "ciclista";
+    public static final String PASSAPORTE = "passaporte";
     private final CiclistaRepository repository;
     private final CartaoDeCreditoService cartaoDeCreditoService;
 
@@ -118,21 +119,21 @@ public class CiclistaService {
         }
 
         if(ciclista.getCpf() != null && ciclista.getNacionalidade() != NacionalidadeEnum.BRASILEIRO){
-            result.addError(new FieldError(OBJECT_NAME, "passaporte", "Passaporte precisa ser informado"));
+            result.addError(new FieldError(OBJECT_NAME, PASSAPORTE, "Passaporte precisa ser informado"));
             result.addError(new FieldError(OBJECT_NAME, "cpf", "CPF não deve ser informado"));
         }
 
         if(ciclista.getPassaporte() != null && ciclista.getNacionalidade() != NacionalidadeEnum.ESTRANGEIRO){
-            result.addError(new FieldError(OBJECT_NAME, "passaporte", "Passaporte  não precisa ser informado"));
+            result.addError(new FieldError(OBJECT_NAME, PASSAPORTE, "Passaporte  não precisa ser informado"));
             result.addError(new FieldError(OBJECT_NAME, "cpf", "CPF precisa ser informado"));
         }
 
         if (ciclista.getCpf() == null && ciclista.getPassaporte() == null) {
             result.addError(new FieldError(OBJECT_NAME, "cpf", "Nenhum documento informado"));
-            result.addError(new FieldError(OBJECT_NAME, "passaporte", "Nenhum documento informado"));
+            result.addError(new FieldError(OBJECT_NAME, PASSAPORTE, "Nenhum documento informado"));
         } else if (ciclista.getCpf() != null && ciclista.getPassaporte() != null) {
             result.addError(new FieldError(OBJECT_NAME, "cpf", "CPF e passaporte informados"));
-            result.addError(new FieldError(OBJECT_NAME, "passaporte", "CPF e passaporte informados"));
+            result.addError(new FieldError(OBJECT_NAME, PASSAPORTE, "CPF e passaporte informados"));
         } else {
             validateCpf(ciclista, result);
             validatePassaporte(ciclista, result);

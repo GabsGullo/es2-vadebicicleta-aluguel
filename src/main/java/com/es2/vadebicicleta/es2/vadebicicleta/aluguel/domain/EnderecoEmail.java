@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Email {
+public class EnderecoEmail {
 
     private String assunto;
     private Long id;
