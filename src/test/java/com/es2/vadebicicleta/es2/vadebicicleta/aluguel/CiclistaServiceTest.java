@@ -30,7 +30,7 @@ class CiclistaServiceTest {
 	private CiclistaService ciclistaService;
 
 
-	private Ciclista createCiclistaComPassaporte(Integer id, StatusEnum status, String nome, String nascimento,
+	private Ciclista createCiclistaComPassaporte(Integer id, String nome, String nascimento,
 												 String email, String urlFotoDocumento,
 												 String senha, String numeroPassaporte, String validadePassaporte,
 												 String paisPassaporte, NacionalidadeEnum nacionalidade) {
@@ -42,7 +42,6 @@ class CiclistaServiceTest {
 
 		return Ciclista.builder()
 				.id(id)
-				.status(status)
 				.nome(nome)
 				.nascimento(nascimento)
 				.email(email)
@@ -53,13 +52,12 @@ class CiclistaServiceTest {
 				.build();
 	}
 
-	private Ciclista createCiclistaSemPassaporte(Integer id, StatusEnum status, String nome, String nascimento,
+	private Ciclista createCiclistaSemPassaporte(Integer id, String nome, String nascimento,
 									String cpf, String email, String urlFotoDocumento,
 									String senha,NacionalidadeEnum nacionalidade) {
 
 		return Ciclista.builder()
 				.id(id)
-				.status(status)
 				.nome(nome)
 				.nascimento(nascimento)
 				.cpf(cpf)
@@ -86,9 +84,9 @@ class CiclistaServiceTest {
 	void testRegisterComPassaporte() {
 		// Inicializando objetos dentro do método de teste
 		Ciclista ciclista = createCiclistaComPassaporte(
-				1, StatusEnum.AGUARDANDO_CONFIRMACAO, "Arrascaeta", "1990-01-01",
+				1, "Arrascaeta", "1990-01-01",
 				"arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
-				"password", "A1234567", "2025-12-31", "Brasil", NacionalidadeEnum.BRASILEIRO);
+				"password", "A1234567", "2025-12-31", "Brasil", NacionalidadeEnum.ESTRANGEIRO);
 
 		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
 				"12/25", "123");
@@ -103,7 +101,6 @@ class CiclistaServiceTest {
 		// Verificando o resultado
 		assertNotNull(result);
 		assertEquals(1, result.getId());
-		assertEquals(StatusEnum.AGUARDANDO_CONFIRMACAO, result.getStatus());
 		assertEquals("Arrascaeta", result.getNome());
 		assertEquals("1990-01-01", result.getNascimento());
 		assertEquals("arrascaeta@flamengo.com", result.getEmail());
@@ -124,8 +121,8 @@ class CiclistaServiceTest {
 	void testRegisterSemPassaporte() {
 		// Inicializando objetos dentro do método de teste
 		Ciclista ciclista = createCiclistaSemPassaporte(
-				1, StatusEnum.AGUARDANDO_CONFIRMACAO, "Arrascaeta", "1990-01-01",
-				"12345678900", "arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
+				1, "Arrascaeta", "1990-01-01",
+				"17970421733", "arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
 				"password", NacionalidadeEnum.BRASILEIRO);
 
 		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
@@ -144,7 +141,7 @@ class CiclistaServiceTest {
 		assertEquals(StatusEnum.AGUARDANDO_CONFIRMACAO, result.getStatus());
 		assertEquals("Arrascaeta", result.getNome());
 		assertEquals("1990-01-01", result.getNascimento());
-		assertEquals("12345678900", result.getCpf());
+		assertEquals("17970421733", result.getCpf());
 		assertEquals("arrascaeta@flamengo.com", result.getEmail());
 		assertEquals("http://exemplo.com/foto.jpg", result.getUrlFotoDocumento());
 		assertEquals("password", result.getSenha());
@@ -159,7 +156,7 @@ class CiclistaServiceTest {
 		Ciclista ciclista = createCiclistaComPassaporte(
 				1, null, null, null,
 				null, null, null,
-				null, null, null, null);
+				null, null, null);
 		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, null, null, null, null);
 
 		// Testando o método a ser testado com uma exceção esperada
@@ -177,7 +174,7 @@ class CiclistaServiceTest {
 		Ciclista ciclista = createCiclistaSemPassaporte(
 				1, null, null, null,
 				null, null, null,
-				null, null);
+				null);
 		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, null, null, null, null);
 
 		// Testando o método a ser testado com uma exceção esperada
@@ -188,6 +185,7 @@ class CiclistaServiceTest {
 		// Verificando que o método repository.save não foi chamado
 		verify(repository, never()).save(any(Ciclista.class));
 	}
+
 
 
 }

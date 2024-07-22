@@ -12,7 +12,6 @@ import org.hibernate.validator.constraints.br.CPF;
 @Builder
 public class Ciclista {
     private Integer id;
-    @NotNull
     private StatusEnum status;
     @NotNull
     private String nome;

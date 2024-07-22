@@ -70,7 +70,6 @@ public class CiclistaService {
     private void validateCiclista(Ciclista ciclista) {
         BindingResult result = new BeanPropertyBindingResult(ciclista, OBJECT_NAME);
 
-        validateStatus(ciclista, result);
         validateNome(ciclista, result);
         validateNascimento(ciclista, result);
         validateNacionalidade(ciclista, result);
@@ -80,12 +79,6 @@ public class CiclistaService {
 
         if (result.hasErrors()) {
             throw new ValidacaoException(result);
-        }
-    }
-
-    private void validateStatus(Ciclista ciclista, BindingResult result) {
-        if (ciclista.getStatus() == null) {
-            result.addError(new FieldError(OBJECT_NAME, "status", "Status não pode ser nulo"));
         }
     }
 
@@ -120,6 +113,20 @@ public class CiclistaService {
     }
 
     private void validateDocumentos(Ciclista ciclista, BindingResult result) {
+        if(ciclista.getCpf() == null && ciclista.getNacionalidade() == NacionalidadeEnum.BRASILEIRO){
+            result.addError(new FieldError(OBJECT_NAME, "cpf", "CPF precisa ser informado"));
+        }
+
+        if(ciclista.getCpf() != null && ciclista.getNacionalidade() != NacionalidadeEnum.BRASILEIRO){
+            result.addError(new FieldError(OBJECT_NAME, "passaporte", "Passaporte precisa ser informado"));
+            result.addError(new FieldError(OBJECT_NAME, "cpf", "CPF não deve ser informado"));
+        }
+
+        if(ciclista.getPassaporte() != null && ciclista.getNacionalidade() != NacionalidadeEnum.ESTRANGEIRO){
+            result.addError(new FieldError(OBJECT_NAME, "passaporte", "Passaporte  não precisa ser informado"));
+            result.addError(new FieldError(OBJECT_NAME, "cpf", "CPF precisa ser informado"));
+        }
+
         if (ciclista.getCpf() == null && ciclista.getPassaporte() == null) {
             result.addError(new FieldError(OBJECT_NAME, "cpf", "Nenhum documento informado"));
             result.addError(new FieldError(OBJECT_NAME, "passaporte", "Nenhum documento informado"));
@@ -153,8 +160,42 @@ public class CiclistaService {
     }
 
     private boolean isValidCPF(String cpf) {
-        // Implementação fictícia, substitua pela sua lógica de validação de CPF
-        return cpf != null && cpf.matches("\\d{11}");
+        // Remove caracteres não numéricos
+        cpf = cpf.replaceAll("[^\\d]", "");
+
+        // Verifica se o CPF tem 11 dígitos
+        if (cpf.length() != 11) {
+            return false;
+        }
+
+        try {
+            // Cálculo do primeiro dígito verificador
+            int sum1 = 0;
+            for (int i = 0; i < 9; i++) {
+                sum1 += Character.getNumericValue(cpf.charAt(i)) * (10 - i);
+            }
+            int check1 = 11 - (sum1 % 11);
+            if (check1 >= 10) {
+                check1 = 0;
+            }
+
+            // Cálculo do segundo dígito verificador
+            int sum2 = 0;
+            for (int i = 0; i < 10; i++) {
+                sum2 += Character.getNumericValue(cpf.charAt(i)) * (11 - i);
+            }
+            int check2 = 11 - (sum2 % 11);
+            if (check2 >= 10) {
+                check2 = 0;
+            }
+
+            // Verifica se os dígitos verificadores calculados são iguais aos informados
+            return (check1 == Character.getNumericValue(cpf.charAt(9)) &&
+                    check2 == Character.getNumericValue(cpf.charAt(10)));
+
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private boolean isValidEmail(String email) {

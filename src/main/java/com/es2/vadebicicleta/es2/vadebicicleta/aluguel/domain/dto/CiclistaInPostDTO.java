@@ -3,6 +3,7 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,14 +13,14 @@ import org.hibernate.validator.constraints.br.CPF;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CiclistaInPostDTO {
-    @NotBlank
+    @NotNull
     private String nome;
-    @NotBlank
+    @NotNull
     private String nascimento;
     @CPF
     private String cpf;
     private Ciclista.Passaporte passaporte;
-    @NotBlank
+    @NotNull
     private String nacionalidade;
     @Email
     private String email;
