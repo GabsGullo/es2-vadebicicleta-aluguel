@@ -54,6 +54,10 @@ resource "aws_instance" "example_app" {
   lifecycle {
     create_before_destroy = true
   }
+
+  tags = {
+      Name = "${local.app_name}"
+  }
 }
 
 output "app_dns" { value = aws_instance.example_app.public_dns }

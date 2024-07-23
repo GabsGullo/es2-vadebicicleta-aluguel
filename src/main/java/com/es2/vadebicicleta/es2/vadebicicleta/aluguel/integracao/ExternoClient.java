@@ -20,7 +20,11 @@ public class ExternoClient {
     }
 
     public EnderecoEmail enviarEmail(EnderecoEmail email) {
-        ResponseEntity<EnderecoEmail> response = template.postForEntity(url+"/enviarEmail", email, EnderecoEmail.class);
-        return response.getBody();
+        if(url.isEmpty()){
+            ResponseEntity<EnderecoEmail> response = template.postForEntity(url+"/enviarEmail", email, EnderecoEmail.class);
+            return response.getBody();
+        }
+
+        return email;
     }
 }
