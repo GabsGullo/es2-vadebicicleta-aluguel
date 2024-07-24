@@ -287,8 +287,10 @@ class CiclistaServiceTest {
 
 		when(repository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
 
-		assertThrows(ValidacaoException.class,
-				() -> ciclistaService.update(ciclistaNovo, existingCiclista.getId()));
+		Integer ciclistaId = existingCiclista.getId();
+		assertThrows(ValidacaoException.class, () -> {
+			ciclistaService.update(ciclistaNovo, ciclistaId);
+		});
 
 		verify(repository, never()).save(any(Ciclista.class));
 	}
@@ -312,8 +314,10 @@ class CiclistaServiceTest {
 
 		when(repository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
 
-		assertThrows(ValidacaoException.class,
-				() -> ciclistaService.update(ciclistaNovo, existingCiclista.getId()));
+		Integer ciclistaId = existingCiclista.getId();
+		assertThrows(ValidacaoException.class, () -> {
+			ciclistaService.update(ciclistaNovo, ciclistaId);
+		});
 
 		verify(repository, never()).save(any(Ciclista.class));
 	}
@@ -331,8 +335,10 @@ class CiclistaServiceTest {
 
 		when(repository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
 
-		assertThrows(ValidacaoException.class,
-				() -> ciclistaService.update(ciclistaNovo, existingCiclista.getId()));
+		Integer ciclistaId = existingCiclista.getId();
+		assertThrows(ValidacaoException.class, () -> {
+			ciclistaService.update(ciclistaNovo, ciclistaId);
+		});
 
 		verify(repository, never()).save(any(Ciclista.class));
 	}
