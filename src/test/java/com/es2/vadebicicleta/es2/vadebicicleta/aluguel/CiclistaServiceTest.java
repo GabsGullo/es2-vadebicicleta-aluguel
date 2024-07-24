@@ -7,16 +7,20 @@ import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.CartaoDeCredito;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.NacionalidadeEnum;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.StatusEnum;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInPutDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ValidacaoException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao.ExternoClient;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.CiclistaRepository;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.CartaoDeCreditoService;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.CiclistaService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class CiclistaServiceTest {
@@ -33,8 +37,10 @@ class CiclistaServiceTest {
 	@InjectMocks
 	private CiclistaService ciclistaService;
 
+	private Ciclista existingCiclista;
 
-	private Ciclista createCiclistaComPassaporte(Integer id, String nome, String nascimento,
+
+    private Ciclista createCiclistaComPassaporte(Integer id, String nome, String nascimento,
 												 String email, String urlFotoDocumento,
 												 String senha, String numeroPassaporte, String validadePassaporte,
 												 String paisPassaporte, NacionalidadeEnum nacionalidade) {
@@ -82,6 +88,19 @@ class CiclistaServiceTest {
 		cartaoDeCredito.setValidade(validade);
 		cartaoDeCredito.setCvv(cvv);
 		return cartaoDeCredito;
+	}
+
+	@BeforeEach
+	void setUp() {
+        existingCiclista = Ciclista.builder()
+                .id(1)
+                .nome("Existing Name")
+                .nascimento("1990-01-01")
+                .email("existingemail@example.com")
+                .nacionalidade(NacionalidadeEnum.BRASILEIRO)
+                .urlFotoDocumento("http://existingurl.com/photo.jpg")
+				.senha("12345")
+                .build();
 	}
 
 	@Test
@@ -174,22 +193,148 @@ class CiclistaServiceTest {
 
 	@Test
 	void testRegisterSemPassaporteAtributosInvalidos() {
-		// Inicializando objetos dentro do método de teste
 		Ciclista ciclista = createCiclistaSemPassaporte(
 				1, null, null, null,
 				null, null, null,
 				null);
 		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, null, null, null, null);
 
-		// Testando o método a ser testado com uma exceção esperada
 		assertThrows(ValidacaoException.class, () -> {
 			ciclistaService.register(ciclista, cartaoDeCredito);
 		});
 
-		// Verificando que o método repository.save não foi chamado
 		verify(repository, never()).save(any(Ciclista.class));
 	}
 
+	@Test
+	void testUpdateCiclistaComPassaporte() {
 
+		CiclistaInPutDTO ciclistaNovo = new CiclistaInPutDTO();
+		ciclistaNovo.setNome("Alex");
+		ciclistaNovo.setNascimento("1995-05-05");
+		ciclistaNovo.setEmail("alex@foreigner.com");
+		ciclistaNovo.setNacionalidade(NacionalidadeEnum.ESTRANGEIRO.name());
+		ciclistaNovo.setUrlFotoDocumento("alex-foreigner-photo.jpg");
+
+		Ciclista.Passaporte passaporte = new Ciclista.Passaporte();
+		passaporte.setNumero("987654321");
+		passaporte.setValidade("2030-01-01");
+		passaporte.setPais("Canada");
+		ciclistaNovo.setPassaporte(passaporte);
+
+		when(repository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
+		when(repository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+		Ciclista updatedCiclista = ciclistaService.update(ciclistaNovo, existingCiclista.getId());
+
+		assertNotNull(updatedCiclista);
+		assertEquals("Alex", updatedCiclista.getNome());
+		assertEquals("1995-05-05", updatedCiclista.getNascimento());
+		assertEquals("alex@foreigner.com", updatedCiclista.getEmail());
+		assertEquals(NacionalidadeEnum.ESTRANGEIRO, updatedCiclista.getNacionalidade());
+		assertEquals("alex-foreigner-photo.jpg", updatedCiclista.getUrlFotoDocumento());
+
+		assertNotNull(updatedCiclista.getPassaporte());
+		assertEquals("987654321", updatedCiclista.getPassaporte().getNumero());
+		assertEquals("2030-01-01", updatedCiclista.getPassaporte().getValidade());
+		assertEquals("Canada", updatedCiclista.getPassaporte().getPais());
+
+		verify(repository, times(1)).save(updatedCiclista);
+	}
+
+	@Test
+	void testUpdateCiclistaComCPF() {
+
+		CiclistaInPutDTO ciclistaNovo = new CiclistaInPutDTO();
+		ciclistaNovo.setNome("Lucas");
+		ciclistaNovo.setNascimento("2002-10-14");
+		ciclistaNovo.setCpf("02001599099");
+		ciclistaNovo.setEmail("lucas@brasil.com");
+		ciclistaNovo.setNacionalidade(NacionalidadeEnum.BRASILEIRO.name());
+		ciclistaNovo.setUrlFotoDocumento("lucas-brasil-photo.jpg");
+
+		when(repository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
+		when(repository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+		Ciclista updatedCiclista = ciclistaService.update(ciclistaNovo, existingCiclista.getId());
+
+		assertNotNull(updatedCiclista);
+		assertEquals("Lucas", updatedCiclista.getNome());
+		assertEquals("2002-10-14", updatedCiclista.getNascimento());
+		assertEquals("02001599099", updatedCiclista.getCpf());
+		assertEquals("lucas@brasil.com", updatedCiclista.getEmail());
+		assertEquals(NacionalidadeEnum.BRASILEIRO, updatedCiclista.getNacionalidade());
+		assertEquals("lucas-brasil-photo.jpg", updatedCiclista.getUrlFotoDocumento());
+
+		verify(repository, times(1)).save(updatedCiclista);
+	}
+
+	@Test
+	void testUpdateCiclistaComPassaporteSemCPFParaBrasileiro() {
+
+		CiclistaInPutDTO ciclistaNovo = new CiclistaInPutDTO();
+		ciclistaNovo.setNome("Lucas");
+		ciclistaNovo.setNascimento("2002-10-14");
+		ciclistaNovo.setEmail("xqdl@gmail.com");
+		ciclistaNovo.setNacionalidade(NacionalidadeEnum.BRASILEIRO.name());
+		ciclistaNovo.setUrlFotoDocumento("asdasdasd.jpg");
+
+		Ciclista.Passaporte passaporte = new Ciclista.Passaporte();
+		passaporte.setNumero("2223322");
+		passaporte.setValidade("2024-06-01");
+		passaporte.setPais("EUA");
+		ciclistaNovo.setPassaporte(passaporte);
+
+		when(repository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
+
+		assertThrows(ValidacaoException.class,
+				() -> ciclistaService.update(ciclistaNovo, existingCiclista.getId()));
+
+		verify(repository, never()).save(any(Ciclista.class));
+	}
+
+	@Test
+	void testUpdateCiclistaComCPFAndPassaporte() {
+
+		CiclistaInPutDTO ciclistaNovo = new CiclistaInPutDTO();
+		ciclistaNovo.setNome("Rafael");
+		ciclistaNovo.setNascimento("2002-10-14");
+		ciclistaNovo.setCpf("02001599099");
+		ciclistaNovo.setEmail("xqdl@gmail.com");
+		ciclistaNovo.setNacionalidade(NacionalidadeEnum.BRASILEIRO.name());
+		ciclistaNovo.setUrlFotoDocumento("asdasdasd.jpg");
+
+		Ciclista.Passaporte passaporte = new Ciclista.Passaporte();
+		passaporte.setNumero("2223322");
+		passaporte.setValidade("2024-06-01");
+		passaporte.setPais("EUA");
+		ciclistaNovo.setPassaporte(passaporte);
+
+		when(repository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
+
+		assertThrows(ValidacaoException.class,
+				() -> ciclistaService.update(ciclistaNovo, existingCiclista.getId()));
+
+		verify(repository, never()).save(any(Ciclista.class));
+	}
+
+	@Test
+	void testUpdateCiclistaComCPFSemPassaporteParaEstrangeiro() {
+
+		CiclistaInPutDTO ciclistaNovo = new CiclistaInPutDTO();
+		ciclistaNovo.setNome("Carlos");
+		ciclistaNovo.setNascimento("1998-08-08");
+		ciclistaNovo.setCpf("17970421733");
+		ciclistaNovo.setEmail("carlos@foreign.com");
+		ciclistaNovo.setNacionalidade(NacionalidadeEnum.ESTRANGEIRO.name());
+		ciclistaNovo.setUrlFotoDocumento("carlos-foreign-photo.jpg");
+
+		when(repository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
+
+		assertThrows(ValidacaoException.class,
+				() -> ciclistaService.update(ciclistaNovo, existingCiclista.getId()));
+
+		verify(repository, never()).save(any(Ciclista.class));
+	}
 
 }
