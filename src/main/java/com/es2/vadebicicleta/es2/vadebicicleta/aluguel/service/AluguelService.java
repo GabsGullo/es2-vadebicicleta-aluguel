@@ -2,6 +2,10 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Aluguel;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.AluguelAtivoException;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ExceptionResponse;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.GlobalExceptionHandler;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ValidacaoException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.AluguelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,12 +27,16 @@ public class AluguelService {
         this.ciclistaService = ciclistaService;
     }
 
-    public Aluguel realizarAluguel(int ciclista, int tranca){
-        //validar tranca
+    public Aluguel realizarAluguel(Integer ciclista, Integer tranca){
+        //verifica a tranca
         validateTranca(tranca);
+
+        //verificar se bicicleta esta em uso
         int bicicleta = getBicicleta(tranca);
+        validateBicicleta(bicicleta);
 
-
+        //verifica o ciclista
+        verificarAluguelCiclista(ciclista);
 
         //realiza cobranca
         int cobranca = realizarCobranca(ciclista);
@@ -40,11 +48,26 @@ public class AluguelService {
                 .ciclista(ciclista)
                 .bicicleta(bicicleta);
 
+        //alterar status bicicleta
+        alterarStatusBicicleta(bicicleta);
+
+        //alterar status ciclista
+        ciclistaService.alterarStatusAluguel(ciclista);
+
         return repository.register(Aluguel.builder().build());
     }
 
-    private void validateTranca(int tranca){
+    private void verificarAluguelCiclista(Integer ciclista) {
+        if(ciclistaService.getById(ciclista).getAluguelAtivo()){
+            throw new AluguelAtivoException("Ciclista já possui um aluguel ativo");
+        }
     }
+
+    private void validateTranca(int tranca){}
+
+    private void validateBicicleta(int bicicleta){}
+
+    private void alterarStatusBicicleta(int bicicleta){}
 
     private int realizarCobranca(int ciclista){
         Random random = new Random();

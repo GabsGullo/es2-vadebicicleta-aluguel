@@ -27,6 +27,7 @@ public class Ciclista {
     private String urlFotoDocumento;
     @NotBlank
     private String senha;
+    private Boolean aluguelAtivo;
 
     @Data
     @AllArgsConstructor

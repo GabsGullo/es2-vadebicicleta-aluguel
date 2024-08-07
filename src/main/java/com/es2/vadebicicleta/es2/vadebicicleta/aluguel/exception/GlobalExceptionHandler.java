@@ -63,4 +63,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors);
     }
 
+    @ExceptionHandler(AluguelAtivoException.class)
+    public ResponseEntity<Object> handleAluguelAtivoException(AluguelAtivoException ex) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(ex.getMessage(), "422");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exceptionResponse);
+    }
+
 }

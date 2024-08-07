@@ -41,6 +41,7 @@ public class CiclistaService {
         validateCiclista(ciclista);
 
         ciclista.setStatus(StatusEnum.AGUARDANDO_CONFIRMACAO);
+        ciclista.setAluguelAtivo(false);
         cartaoDeCreditoService.register(cartaoDeCredito);
 
         Ciclista ciclistaCadastrado = repository.save(ciclista);
@@ -82,6 +83,13 @@ public class CiclistaService {
 
         ciclistaDesativado.setStatus(StatusEnum.ATIVO);
         return repository.save(ciclistaDesativado);
+    }
+
+    public Ciclista alterarStatusAluguel(Integer idCiclista){
+        Ciclista ciclista = getById(idCiclista);
+
+        ciclista.setAluguelAtivo(true);
+        return repository.save(ciclista);
     }
 
     private void validateCiclista(Ciclista ciclista) {
