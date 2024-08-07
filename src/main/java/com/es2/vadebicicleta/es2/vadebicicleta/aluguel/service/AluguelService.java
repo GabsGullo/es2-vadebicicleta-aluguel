@@ -30,7 +30,7 @@ public class AluguelService {
         validateTranca();
 
         //verificar se bicicleta esta em uso
-        int bicicleta = getBicicleta(tranca);
+        int bicicleta = getBicicleta();
         validateUsoBicicleta();
 
         //verifica o ciclista
