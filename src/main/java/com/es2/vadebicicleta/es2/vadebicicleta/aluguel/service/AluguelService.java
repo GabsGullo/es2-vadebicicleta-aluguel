@@ -77,7 +77,7 @@ public class AluguelService {
         return random.nextInt(100);
     }
 
-    private int getBicicleta(int tranca){
+    private int getBicicleta(){
         return random.nextInt(100);
     }
 
