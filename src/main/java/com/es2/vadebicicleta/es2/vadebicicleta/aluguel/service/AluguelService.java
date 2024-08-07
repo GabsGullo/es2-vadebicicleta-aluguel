@@ -1,11 +1,7 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Aluguel;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.AluguelAtivoException;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ExceptionResponse;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.GlobalExceptionHandler;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ValidacaoException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.AluguelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +29,7 @@ public class AluguelService {
 
         //verificar se bicicleta esta em uso
         int bicicleta = getBicicleta(tranca);
-        validateBicicleta(bicicleta);
+        validateUsoBicicleta(bicicleta);
 
         //verifica o ciclista
         verificarAluguelCiclista(ciclista);
@@ -63,11 +59,17 @@ public class AluguelService {
         }
     }
 
-    private void validateTranca(int tranca){}
+    private void validateTranca(int tranca){
+        //metodo vazio pois a validacao so sera feita apos a integracao
+    }
 
-    private void validateBicicleta(int bicicleta){}
+    private void validateUsoBicicleta(int bicicleta){
+        //metodo vazio pois a validacao so sera feita apos a integracao
+    }
 
-    private void alterarStatusBicicleta(int bicicleta){}
+    private void alterarStatusBicicleta(int bicicleta){
+        //metodo vazio pois a alteracao do status so sera feita apos a integracao
+    }
 
     private int realizarCobranca(int ciclista){
         Random random = new Random();
