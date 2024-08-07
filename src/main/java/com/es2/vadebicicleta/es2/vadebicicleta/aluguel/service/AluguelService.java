@@ -17,6 +17,8 @@ public class AluguelService {
     private final AluguelRepository repository;
     private final CiclistaService ciclistaService;
 
+    private final Random random = new Random();
+
     @Autowired
     public AluguelService(AluguelRepository repository, CiclistaService ciclistaService){
         this.repository = repository;
@@ -25,17 +27,17 @@ public class AluguelService {
 
     public Aluguel realizarAluguel(Integer ciclista, Integer tranca){
         //verifica a tranca
-        validateTranca(tranca);
+        validateTranca();
 
         //verificar se bicicleta esta em uso
         int bicicleta = getBicicleta(tranca);
-        validateUsoBicicleta(bicicleta);
+        validateUsoBicicleta();
 
         //verifica o ciclista
         verificarAluguelCiclista(ciclista);
 
         //realiza cobranca
-        int cobranca = realizarCobranca(ciclista);
+        int cobranca = realizarCobranca();
 
         Aluguel.builder()
                 .trancaInicio(tranca)
@@ -45,7 +47,7 @@ public class AluguelService {
                 .bicicleta(bicicleta);
 
         //alterar status bicicleta
-        alterarStatusBicicleta(bicicleta);
+        alterarStatusBicicleta();
 
         //alterar status ciclista
         ciclistaService.alterarStatusAluguel(ciclista);
@@ -59,25 +61,23 @@ public class AluguelService {
         }
     }
 
-    private void validateTranca(int tranca){
+    private void validateTranca(){
         //metodo vazio pois a validacao so sera feita apos a integracao
     }
 
-    private void validateUsoBicicleta(int bicicleta){
+    private void validateUsoBicicleta(){
         //metodo vazio pois a validacao so sera feita apos a integracao
     }
 
-    private void alterarStatusBicicleta(int bicicleta){
+    private void alterarStatusBicicleta(){
         //metodo vazio pois a alteracao do status so sera feita apos a integracao
     }
 
-    private int realizarCobranca(int ciclista){
-        Random random = new Random();
+    private int realizarCobranca(){
         return random.nextInt(100);
     }
 
     private int getBicicleta(int tranca){
-        Random random = new Random();
         return random.nextInt(100);
     }
 
