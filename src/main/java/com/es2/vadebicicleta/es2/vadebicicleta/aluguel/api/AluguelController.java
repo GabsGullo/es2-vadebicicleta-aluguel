@@ -29,8 +29,8 @@ public class AluguelController {
     }
 
     @PostMapping("/devolucao")
-    public ResponseEntity<AluguelDevolucaoDTO> realizarDevolucao(Integer idBicicleta){
-        Aluguel aluguelFinalizado = service.realizarDevolucao(idBicicleta);
+    public ResponseEntity<AluguelDevolucaoDTO> realizarDevolucao(Integer idTranca, Integer idBicicleta){
+        Aluguel aluguelFinalizado = service.realizarDevolucao(idTranca, idBicicleta);
         AluguelDevolucaoDTO devolucaoDTO = converter.aluguelToDevolucao(aluguelFinalizado);
         return ResponseEntity.ok().body(devolucaoDTO);
     }

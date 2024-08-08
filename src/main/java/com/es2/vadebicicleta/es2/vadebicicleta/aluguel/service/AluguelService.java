@@ -67,7 +67,7 @@ public class AluguelService {
         return repository.register(Aluguel.builder().build());
     }
 
-    public Aluguel realizarDevolucao(Integer idBicicleta){
+    public Aluguel realizarDevolucao(Integer idTranca, Integer idBicicleta){
         //valida bicicleta
         validateUsoBicicleta();
 
