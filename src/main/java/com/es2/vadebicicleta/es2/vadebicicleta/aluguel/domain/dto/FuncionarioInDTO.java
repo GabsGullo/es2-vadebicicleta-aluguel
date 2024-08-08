@@ -5,16 +5,10 @@ import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ConfirmPassword
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.br.CPF;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @ConfirmPassword
 public class FuncionarioInDTO implements ConfirmPasswordInterface {
     @NotBlank
