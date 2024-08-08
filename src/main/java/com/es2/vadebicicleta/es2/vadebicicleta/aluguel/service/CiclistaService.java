@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @Service
 public class CiclistaService {
@@ -85,11 +83,11 @@ public class CiclistaService {
         return repository.save(ciclistaDesativado);
     }
 
-    public Ciclista alterarStatusAluguel(Integer idCiclista){
+    public void alterarStatusAluguel(Integer idCiclista){
         Ciclista ciclista = getById(idCiclista);
 
         ciclista.setAluguelAtivo(true);
-        return repository.save(ciclista);
+        repository.save(ciclista);
     }
 
     private void validateCiclista(Ciclista ciclista) {
