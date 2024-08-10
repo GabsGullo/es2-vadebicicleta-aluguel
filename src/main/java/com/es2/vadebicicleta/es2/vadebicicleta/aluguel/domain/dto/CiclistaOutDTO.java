@@ -1,12 +1,10 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
