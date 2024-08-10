@@ -1,9 +1,10 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Setter
+@Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class ExceptionResponse {
 

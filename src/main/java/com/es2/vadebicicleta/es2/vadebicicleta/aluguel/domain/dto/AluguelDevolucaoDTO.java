@@ -1,11 +1,14 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.*;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class AluguelDevolucaoDTO {
 
     @NotNull

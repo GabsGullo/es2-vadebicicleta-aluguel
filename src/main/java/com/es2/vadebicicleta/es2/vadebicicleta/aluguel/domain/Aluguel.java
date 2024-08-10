@@ -1,11 +1,13 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.math.BigDecimal;
 
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Builder
 public class Aluguel {
 
