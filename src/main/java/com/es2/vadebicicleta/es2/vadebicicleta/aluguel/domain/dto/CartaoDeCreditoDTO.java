@@ -2,9 +2,12 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
 public class CartaoDeCreditoDTO {
 
     @NotNull

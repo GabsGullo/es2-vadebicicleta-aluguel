@@ -1,8 +1,11 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class FuncionarioOutDTO {
         private String matricula;
         private String senha;
