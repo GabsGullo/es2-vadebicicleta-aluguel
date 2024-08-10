@@ -14,6 +14,7 @@ public class IdGenerator {
     private Integer idCartao = 0;
     private Integer idFuncionario = 0;
     private Integer matricula = 0;
+    private Integer idAluguel = 0;
 
     public Integer generateIdCiclista(){
        idCiclista = idCiclista + 1;
@@ -33,6 +34,11 @@ public class IdGenerator {
     public String generateIdMatricula(){
         matricula = matricula + 1;
         return matricula.toString();
+    }
+
+    public Integer generateIdAluguel(){
+        idAluguel = idAluguel + 1;
+        return idAluguel;
     }
 
 }

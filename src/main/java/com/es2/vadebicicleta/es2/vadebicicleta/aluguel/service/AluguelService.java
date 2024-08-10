@@ -71,21 +71,22 @@ public class AluguelService {
         //valida bicicleta
         validateUsoBicicleta();
 
-        Aluguel aluguel = getById(idBicicleta);
+        Aluguel aluguel = getByIdBicicleta(idBicicleta);
 
         //calcular cobranca extra
         LocalDateTime horaDevolucao = LocalDateTime.now();
-        String horaInicio = aluguel.getHoraInicio();
+        String horaFim = aluguel.getHoraFim();
 
         //realiza cobranca
-        BigDecimal valor = calculaValorExtra(horaInicio, horaDevolucao);
+        BigDecimal valor = calculaValorExtra(horaFim, horaDevolucao);
         if(valor.floatValue() != 0){
             realizarCobranca(valor);
         }
 
         //atualizar aluguel
         aluguel.setHoraFim(getLocalDateToIso(horaDevolucao));
-        aluguel.setCobranca(valor);
+        aluguel.setCobranca(aluguel.getCobranca().add(valor));
+        aluguel.setTrancaFim(idTranca);
         repository.register(aluguel);
 
         alterarStatusBicicleta();
@@ -95,9 +96,11 @@ public class AluguelService {
     }
 
     private void verificarAluguelCiclista(Integer ciclista) {
-        if(ciclistaService.getById(ciclista).getAluguelAtivo()){
+        boolean aptoAluguel = ciclistaService.getById(ciclista).getAluguelAtivo();
+        if(aptoAluguel){
             throw new AluguelAtivoException("Ciclista já possui um aluguel ativo");
         }
+
     }
 
     private void validateTranca(){
@@ -153,8 +156,8 @@ public class AluguelService {
         return OffsetDateTime.parse(isoString, formatter).toLocalDateTime();
     }
 
-    public Aluguel getById(Integer idBicicleta){
-        return repository.findById(idBicicleta).orElseThrow(
+    public Aluguel getByIdBicicleta(Integer idBicicleta){
+        return repository.findByBicicletaId(idBicicleta).orElseThrow(
                 () -> new NotFoundException("Aluguel não encontrado", HttpStatus.NOT_FOUND.toString()));
     }
 }

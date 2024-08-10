@@ -2,6 +2,7 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.api;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Aluguel;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.AluguelDevolucaoDTO;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.AluguelOutDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.AluguelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,10 @@ public class AluguelController {
     }
 
     @PostMapping("/aluguel")
-    public ResponseEntity<Aluguel> realizarAluguel(Integer ciclista, Integer tranca){
+    public ResponseEntity<AluguelOutDTO> realizarAluguel(Integer ciclista, Integer tranca){
         Aluguel aluguelRealizado = service.realizarAluguel(ciclista, tranca);
-        return ResponseEntity.ok().body(aluguelRealizado);
+        AluguelOutDTO aluguelOutDTO = converter.aluguelToOutDTO(aluguelRealizado);
+        return ResponseEntity.ok().body(aluguelOutDTO);
     }
 
     @PostMapping("/devolucao")

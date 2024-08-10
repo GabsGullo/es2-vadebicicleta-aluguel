@@ -2,6 +2,7 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.api;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Aluguel;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.AluguelDevolucaoDTO;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.AluguelOutDTO;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,5 +19,20 @@ public class AluguelDevolucaoConverter {
         devolucaoDTO.setCiclista(aluguel.getCiclista());
 
         return devolucaoDTO;
+    }
+
+    public AluguelOutDTO aluguelToOutDTO(Aluguel aluguel){
+
+        AluguelOutDTO aluguelOutDTO = new AluguelOutDTO();
+
+        aluguelOutDTO.setBicicleta(aluguel.getBicicleta());
+        aluguelOutDTO.setCiclista(aluguel.getCiclista());
+        aluguelOutDTO.setCobranca(aluguel.getCobranca());
+        aluguelOutDTO.setTrancaFim(aluguel.getTrancaFim());
+        aluguelOutDTO.setHoraInicio(aluguel.getHoraInicio());
+        aluguelOutDTO.setHoraFim(aluguel.getHoraFim());
+        aluguelOutDTO.setTrancaInicio(aluguel.getTrancaInicio());
+
+        return aluguelOutDTO;
     }
 }

@@ -1,4 +1,4 @@
-package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain;
+package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto;
 
 import lombok.*;
 
@@ -6,13 +6,11 @@ import java.math.BigDecimal;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 @Setter
+@Getter
 @Builder
-public class Aluguel {
+public class AluguelOutDTO {
 
-    private Integer idAluguel;
-    private Boolean aluguelAtivo;
     private Integer bicicleta;
     private String horaInicio;
     private Integer trancaFim;
@@ -21,4 +19,3 @@ public class Aluguel {
     private Integer ciclista;
     private Integer trancaInicio;
 }
-
