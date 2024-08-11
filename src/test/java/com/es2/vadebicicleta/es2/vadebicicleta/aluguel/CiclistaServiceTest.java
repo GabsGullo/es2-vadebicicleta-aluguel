@@ -3,35 +3,29 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.Validator.Validator;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.*;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInPutDTO;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.UnprocessableEntityException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ValidacaoException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao.ExternoClient;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.CiclistaRepository;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.FuncionarioRepository;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.CartaoDeCreditoService;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.CiclistaService;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.FuncionarioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.autoconfigure.batch.BatchDataSourceScriptDatabaseInitializer;
 
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class CiclistaServiceTest {
-
+	@Mock
+	private Validator validator;
 	@Mock
 	private CiclistaRepository ciclistaRepository;
-
-	@Mock
-	private FuncionarioRepository funcionarioRepository;
 
 	@Mock
 	private CartaoDeCreditoService cartaoDeCreditoService;
@@ -41,9 +35,6 @@ class CiclistaServiceTest {
 
 	@InjectMocks
 	private CiclistaService ciclistaService;
-
-	@InjectMocks
-	private FuncionarioService funcionarioService;
 
 	private Ciclista existingCiclista;
 
@@ -96,22 +87,6 @@ class CiclistaServiceTest {
 		cartaoDeCredito.setValidade(validade);
 		cartaoDeCredito.setCvv(cvv);
 		return cartaoDeCredito;
-	}
-
-	private Funcionario createFuncionario(Integer id, String matricula, String senha, String confirmacaoSenha, String email,
-										  String nome, Integer idade, FuncaoEnum funcao, String cpf){
-
-		return Funcionario.builder()
-				.id(id)
-				.matricula(matricula)
-				.senha(senha)
-				.confirmacaoSenha(confirmacaoSenha)
-				.email(email)
-				.nome(nome)
-				.idade(idade)
-				.funcao(funcao)
-				.cpf(cpf)
-				.build();
 	}
 
 	@BeforeEach
@@ -205,6 +180,7 @@ class CiclistaServiceTest {
 				null, null, null,
 				null, null, null);
 		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, null, null, null, null);
+		doThrow(ValidacaoException.class).when(validator).validateCiclista(any(Ciclista.class));
 
 		// Testando o método a ser testado com uma exceção esperada
 		assertThrows(ValidacaoException.class, () -> {
@@ -222,6 +198,7 @@ class CiclistaServiceTest {
 				null, null, null,
 				null);
 		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, null, null, null, null);
+		doThrow(ValidacaoException.class).when(validator).validateCiclista(ciclista);
 
 		assertThrows(ValidacaoException.class, () -> {
 			ciclistaService.register(ciclista, cartaoDeCredito);
@@ -233,30 +210,23 @@ class CiclistaServiceTest {
 	@Test
 	void testUpdateCiclistaComPassaporte() {
 
-		CiclistaInPutDTO ciclistaNovo = new CiclistaInPutDTO();
-		ciclistaNovo.setNome("Alex");
-		ciclistaNovo.setNascimento("1995-05-05");
-		ciclistaNovo.setEmail("alex@foreigner.com");
-		ciclistaNovo.setNacionalidade(NacionalidadeEnum.ESTRANGEIRO.name());
-		ciclistaNovo.setUrlFotoDocumento("alex-foreigner-photo.jpg");
-
-		Ciclista.Passaporte passaporte = new Ciclista.Passaporte();
-		passaporte.setNumero("987654321");
-		passaporte.setValidade("2030-01-01");
-		passaporte.setPais("Canada");
-		ciclistaNovo.setPassaporte(passaporte);
+		Ciclista ciclistaNovo = createCiclistaComPassaporte(1, "Rafael", "2002-10-14",
+				"xqdl@gmail.com" ,"asdasdasd.jpg", "123", "987654321",
+				"2030-01-01", "Canada", NacionalidadeEnum.ESTRANGEIRO);
 
 		when(ciclistaRepository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
 		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
 		Ciclista updatedCiclista = ciclistaService.update(ciclistaNovo, existingCiclista.getId());
 
+
 		assertNotNull(updatedCiclista);
-		assertEquals("Alex", updatedCiclista.getNome());
-		assertEquals("1995-05-05", updatedCiclista.getNascimento());
-		assertEquals("alex@foreigner.com", updatedCiclista.getEmail());
+		assertEquals("Rafael", updatedCiclista.getNome());
+		assertEquals("2002-10-14", updatedCiclista.getNascimento());
+		assertEquals("xqdl@gmail.com", updatedCiclista.getEmail());
+		assertEquals("123", updatedCiclista.getSenha());
 		assertEquals(NacionalidadeEnum.ESTRANGEIRO, updatedCiclista.getNacionalidade());
-		assertEquals("alex-foreigner-photo.jpg", updatedCiclista.getUrlFotoDocumento());
+		assertEquals("asdasdasd.jpg", updatedCiclista.getUrlFotoDocumento());
 
 		assertNotNull(updatedCiclista.getPassaporte());
 		assertEquals("987654321", updatedCiclista.getPassaporte().getNumero());
@@ -269,13 +239,8 @@ class CiclistaServiceTest {
 	@Test
 	void testUpdateCiclistaComCPF() {
 
-		CiclistaInPutDTO ciclistaNovo = new CiclistaInPutDTO();
-		ciclistaNovo.setNome("Lucas");
-		ciclistaNovo.setNascimento("2002-10-14");
-		ciclistaNovo.setCpf("02001599099");
-		ciclistaNovo.setEmail("lucas@brasil.com");
-		ciclistaNovo.setNacionalidade(NacionalidadeEnum.BRASILEIRO.name());
-		ciclistaNovo.setUrlFotoDocumento("lucas-brasil-photo.jpg");
+		Ciclista ciclistaNovo = createCiclistaSemPassaporte(1, "Rafael", "2002-10-14", "02001599099",
+				"xqdl@gmail.com" ,"asdasdasd.jpg", "123", NacionalidadeEnum.BRASILEIRO);
 
 		when(ciclistaRepository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
 		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -283,12 +248,13 @@ class CiclistaServiceTest {
 		Ciclista updatedCiclista = ciclistaService.update(ciclistaNovo, existingCiclista.getId());
 
 		assertNotNull(updatedCiclista);
-		assertEquals("Lucas", updatedCiclista.getNome());
+		assertEquals("Rafael", updatedCiclista.getNome());
 		assertEquals("2002-10-14", updatedCiclista.getNascimento());
 		assertEquals("02001599099", updatedCiclista.getCpf());
-		assertEquals("lucas@brasil.com", updatedCiclista.getEmail());
+		assertEquals("xqdl@gmail.com", updatedCiclista.getEmail());
+		assertEquals("123", updatedCiclista.getSenha());
 		assertEquals(NacionalidadeEnum.BRASILEIRO, updatedCiclista.getNacionalidade());
-		assertEquals("lucas-brasil-photo.jpg", updatedCiclista.getUrlFotoDocumento());
+		assertEquals("asdasdasd.jpg", updatedCiclista.getUrlFotoDocumento());
 
 		verify(ciclistaRepository, times(1)).save(updatedCiclista);
 	}
@@ -296,12 +262,9 @@ class CiclistaServiceTest {
 	@Test
 	void testUpdateCiclistaComPassaporteSemCPFParaBrasileiro() {
 
-		CiclistaInPutDTO ciclistaNovo = new CiclistaInPutDTO();
-		ciclistaNovo.setNome("Lucas");
-		ciclistaNovo.setNascimento("2002-10-14");
-		ciclistaNovo.setEmail("xqdl@gmail.com");
-		ciclistaNovo.setNacionalidade(NacionalidadeEnum.BRASILEIRO.name());
-		ciclistaNovo.setUrlFotoDocumento("asdasdasd.jpg");
+		Ciclista ciclistaNovo = createCiclistaComPassaporte(1, "Rafael", "2002-10-14",
+				"xqdl@gmail.com" ,"asdasdasd.jpg", "123", "2223322", "2024-06-01",
+				"EUA", NacionalidadeEnum.BRASILEIRO);
 
 		Ciclista.Passaporte passaporte = new Ciclista.Passaporte();
 		passaporte.setNumero("2223322");
@@ -310,6 +273,7 @@ class CiclistaServiceTest {
 		ciclistaNovo.setPassaporte(passaporte);
 
 		when(ciclistaRepository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
+		doThrow(ValidacaoException.class).when(validator).validateCiclista(any(Ciclista.class));
 
 		Integer ciclistaId = existingCiclista.getId();
 		assertThrows(ValidacaoException.class, () -> {
@@ -322,13 +286,8 @@ class CiclistaServiceTest {
 	@Test
 	void testUpdateCiclistaComCPFAndPassaporte() {
 
-		CiclistaInPutDTO ciclistaNovo = new CiclistaInPutDTO();
-		ciclistaNovo.setNome("Rafael");
-		ciclistaNovo.setNascimento("2002-10-14");
-		ciclistaNovo.setCpf("02001599099");
-		ciclistaNovo.setEmail("xqdl@gmail.com");
-		ciclistaNovo.setNacionalidade(NacionalidadeEnum.BRASILEIRO.name());
-		ciclistaNovo.setUrlFotoDocumento("asdasdasd.jpg");
+		Ciclista ciclistaNovo = createCiclistaSemPassaporte(1, "Rafael", "2002-10-14", "02001599099",
+				"xqdl@gmail.com" ,"asdasdasd.jpg", "123", NacionalidadeEnum.BRASILEIRO);
 
 		Ciclista.Passaporte passaporte = new Ciclista.Passaporte();
 		passaporte.setNumero("2223322");
@@ -337,6 +296,7 @@ class CiclistaServiceTest {
 		ciclistaNovo.setPassaporte(passaporte);
 
 		when(ciclistaRepository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
+		doThrow(ValidacaoException.class).when(validator).validateCiclista(any(Ciclista.class));
 
 		Integer ciclistaId = existingCiclista.getId();
 		assertThrows(ValidacaoException.class, () -> {
@@ -349,15 +309,11 @@ class CiclistaServiceTest {
 	@Test
 	void testUpdateCiclistaComCPFSemPassaporteParaEstrangeiro() {
 
-		CiclistaInPutDTO ciclistaNovo = new CiclistaInPutDTO();
-		ciclistaNovo.setNome("Carlos");
-		ciclistaNovo.setNascimento("1998-08-08");
-		ciclistaNovo.setCpf("17970421733");
-		ciclistaNovo.setEmail("carlos@foreign.com");
-		ciclistaNovo.setNacionalidade(NacionalidadeEnum.ESTRANGEIRO.name());
-		ciclistaNovo.setUrlFotoDocumento("carlos-foreign-photo.jpg");
+		Ciclista ciclistaNovo = createCiclistaSemPassaporte(1, "Rafael", "2002-10-14", "02001599099",
+				"xqdl@gmail.com" ,"asdasdasd.jpg", "123", NacionalidadeEnum.ESTRANGEIRO);
 
 		when(ciclistaRepository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
+		doThrow(ValidacaoException.class).when(validator).validateCiclista(any(Ciclista.class));
 
 		Integer ciclistaId = existingCiclista.getId();
 		assertThrows(ValidacaoException.class, () -> {
@@ -493,6 +449,8 @@ class CiclistaServiceTest {
 		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
 				"12/25", "123");
 
+		doThrow(ValidacaoException.class).when(validator).validateCiclista(any(Ciclista.class));
+
 		// Verificação e exceção esperada
 		assertThrows(ValidacaoException.class, () -> {
 			ciclistaService.register(ciclista, cartaoDeCredito);
@@ -512,6 +470,8 @@ class CiclistaServiceTest {
 
 		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
 				"12/25", "123");
+
+		doThrow(ValidacaoException.class).when(validator).validateCiclista(any(Ciclista.class));
 
 		// Verificação e exceção esperada
 		assertThrows(ValidacaoException.class, () -> {
@@ -544,193 +504,6 @@ class CiclistaServiceTest {
 		assertTrue(result != null && result.getCpf().equals("123.456.789-09"), "Ciclista deveria ser registrado com CPF válido e formatado");
 		verify(cartaoDeCreditoService, times(1)).register(cartaoDeCredito);
 		verify(ciclistaRepository, times(1)).save(any(Ciclista.class));
-	}
-
-	@Test
-	void testSaveFuncionario() {
-
-		Funcionario funcionario = createFuncionario(1, "1", "123", "123", "arrascaeta@flamengo.com", "Arrascaeta",
-				28, FuncaoEnum.REPARADOR, "123.456.789-09");
-
-		when(funcionarioRepository.save(any(Funcionario.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-		Funcionario result = funcionarioService.save(funcionario);
-
-		assertEquals(funcionario.getId(), result.getId());
-		assertEquals(funcionario.getMatricula(), result.getMatricula());
-		assertEquals(funcionario.getConfirmacaoSenha(), result.getConfirmacaoSenha());
-		assertEquals(funcionario.getSenha(), result.getSenha());
-		assertEquals(funcionario.getEmail(), result.getEmail());
-		assertEquals(funcionario.getNome(), result.getNome());
-		assertEquals(funcionario.getIdade(), result.getIdade());
-		assertEquals(funcionario.getFuncao(), result.getFuncao());
-		assertEquals(funcionario.getCpf(), result.getCpf());
-
-		verify(funcionarioRepository, times(1)).save(any(Funcionario.class));
-	}
-
-	@Test
-	void testSaveFuncionarioTodosCamposNulos() {
-		// Cria um Funcionario com todos os campos nulos ou inválidos
-		Funcionario funcionario = createFuncionario(
-				1,
-				null,                // Matricula nula
-				null,                // Senha nula
-				null,                // ConfirmacaoSenha nula
-				null,                // Email nulo
-				null,                // Nome nulo
-				null,                // Idade nula
-				null,                // Funcao nula
-				null                 // CPF nulo
-		);
-
-		// Espera uma exceção de validação
-		assertThrows(ValidacaoException.class, () -> funcionarioService.save(funcionario));
-	}
-
-	@Test
-	void testSaveFuncionarioComConfirmacaoSenhaDiferente() {
-		Funcionario funcionario = createFuncionario(1, "1", "123", "456", "arrascaeta@flamengo.com", "Arrascaeta",
-				28, FuncaoEnum.REPARADOR, "123.456.789-09");
-
-		// Espera uma exceção de validação
-		assertThrows(ValidacaoException.class, () -> funcionarioService.save(funcionario));
-	}
-
-	@Test
-	void testNotfindFuncionarioById(){
-
-		assertThrows(NotFoundException.class, () -> {
-			funcionarioService.getById(1);
-		});
-	}
-
-	@Test
-	void testFindFuncionarioById() {
-		Funcionario funcionario = createFuncionario(1, "1", "123", "123", "arrascaeta@flamengo.com", "Arrascaeta",
-				28, FuncaoEnum.REPARADOR, "123.456.789-09");
-
-		when(funcionarioRepository.findById(funcionario.getId())).thenReturn(Optional.of(funcionario));
-
-		Funcionario result = funcionarioService.getById(1);
-
-		assertEquals(funcionario.getId(), result.getId());
-		assertEquals(funcionario.getMatricula(), result.getMatricula());
-		assertEquals(funcionario.getConfirmacaoSenha(), result.getConfirmacaoSenha());
-		assertEquals(funcionario.getSenha(), result.getSenha());
-		assertEquals(funcionario.getEmail(), result.getEmail());
-		assertEquals(funcionario.getNome(), result.getNome());
-		assertEquals(funcionario.getIdade(), result.getIdade());
-		assertEquals(funcionario.getFuncao(), result.getFuncao());
-		assertEquals(funcionario.getCpf(), result.getCpf());
-	}
-
-	@Test
-	void testUpdateFuncionario() {
-		Funcionario funcionarioNovo = createFuncionario(
-				1,"1","novaSenha",
-				"novaSenha",
-				"novoEmail@exemplo.com",
-				"Novo Nome",
-				31,
-				FuncaoEnum.ADMINISTRATIVO,
-				"110.089.390-30"
-		);
-
-		Funcionario funcionarioExistente = createFuncionario(
-				1,
-				"123",
-				"senha",
-				"senha",
-				"email@exemplo.com",
-				"Nome",
-				30,
-				FuncaoEnum.REPARADOR,
-				"123.456.789-09"
-		);
-
-		when(funcionarioRepository.findById(1)).thenReturn(Optional.of(funcionarioExistente));
-		when(funcionarioRepository.save(any(Funcionario.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-		Funcionario result = funcionarioService.update(funcionarioNovo, 1);
-
-		assertEquals(funcionarioNovo.getSenha(), result.getSenha());
-		assertEquals(funcionarioNovo.getConfirmacaoSenha(), result.getConfirmacaoSenha());
-		assertEquals(funcionarioNovo.getEmail(), result.getEmail());
-		assertEquals(funcionarioNovo.getNome(), result.getNome());
-		assertEquals(funcionarioNovo.getIdade(), result.getIdade());
-		assertEquals(funcionarioNovo.getFuncao(), result.getFuncao());
-		assertEquals(funcionarioNovo.getCpf(), result.getCpf());
-
-		verify(funcionarioRepository, times(1)).save(any(Funcionario.class));
-	}
-
-	@Test
-	void testUpdateFuncionarioNotFound() {
-		Funcionario funcionarioNovo = createFuncionario(
-				1,"1","novaSenha",
-				"novaConfirmacaoSenha",
-				"novoEmail@exemplo.com",
-				"Novo Nome",
-				31,
-				FuncaoEnum.ADMINISTRATIVO,
-				"123.456.789-10"
-		);
-
-		when(funcionarioRepository.findById(1)).thenReturn(Optional.empty());
-
-		assertThrows(NotFoundException.class, () -> funcionarioService.update(funcionarioNovo, 1));
-	}
-
-	@Test
-	void testUpdateFuncionarioInvalidData() {
-		Funcionario funcionarioNovo = createFuncionario(
-				1,
-				null,
-				null,
-				null,
-				null,
-				null, null,null,
-				null
-		);
-
-		Funcionario funcionarioExistente = createFuncionario(
-				1,
-				"123",
-				"senha",
-				"senha",
-				"email@exemplo.com",
-				"Nome",
-				30,
-				FuncaoEnum.REPARADOR,
-				"123.456.789-09"
-		);
-
-		when(funcionarioRepository.findById(1)).thenReturn(Optional.of(funcionarioExistente));
-
-		assertThrows(ValidacaoException.class, () -> funcionarioService.update(funcionarioNovo, 1));
-	}
-
-	@Test
-	void testDeleteFuncionario() {
-		when(funcionarioRepository.delete(1)).thenReturn(new Object());
-
-		Object result = funcionarioService.delete(1);
-
-		assertNotNull(result);
-		verify(funcionarioRepository, times(1)).delete(1);
-	}
-
-	@Test
-	void testDeleteFuncionarioIdInvalido() {
-		assertThrows(UnprocessableEntityException.class, () -> funcionarioService.delete(-1));
-	}
-
-	@Test
-	void testDeleteFuncionarioNotFound() {
-		when(funcionarioRepository.delete(1)).thenReturn(null);
-
-		assertThrows(NotFoundException.class, () -> funcionarioService.delete(1));
 	}
 
 }

@@ -46,7 +46,8 @@ public class CiclistaController {
 
     //ALTERAR DADOS DO CLIENTE UC06
     @PutMapping("/ciclista/{idCiclista}")
-    public ResponseEntity<CiclistaOutDTO> putCiclista(@Valid @RequestBody CiclistaInPutDTO ciclistaNovo, @PathVariable Integer idCiclista){
+    public ResponseEntity<CiclistaOutDTO> putCiclista(@Valid @RequestBody CiclistaInPutDTO ciclistaInPutDTO, @PathVariable Integer idCiclista){
+        Ciclista ciclistaNovo = ciclistaConverter.inPutDtoToEntity(ciclistaInPutDTO);
         Ciclista ciclistaCadastrado = service.update(ciclistaNovo, idCiclista);
         CiclistaOutDTO ciclistaAtualizado = ciclistaConverter.entityToOutDTO(ciclistaCadastrado);
         return ResponseEntity.ok().body(ciclistaAtualizado);
