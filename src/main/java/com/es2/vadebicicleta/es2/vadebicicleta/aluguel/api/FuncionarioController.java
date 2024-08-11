@@ -45,7 +45,8 @@ public class FuncionarioController {
     }
 
     @PutMapping("/funcionario/{idFuncionario}")
-    public ResponseEntity<FuncionarioOutDTO> putFuncionario(@Valid @RequestBody FuncionarioInDTO funcionarioNovo, @PathVariable Integer idFuncionario){
+    public ResponseEntity<FuncionarioOutDTO> putFuncionario(@Valid @RequestBody FuncionarioInDTO funcionarioNovoDTO, @PathVariable Integer idFuncionario){
+        Funcionario funcionarioNovo = converter.inDtoToEntity(funcionarioNovoDTO);
         Funcionario funcionarioCadastrado = service.update(funcionarioNovo, idFuncionario);
         FuncionarioOutDTO funcionarioAtualizado = converter.entityToOutDTO(funcionarioCadastrado);
 

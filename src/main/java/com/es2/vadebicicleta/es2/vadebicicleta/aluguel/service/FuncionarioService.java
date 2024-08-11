@@ -1,10 +1,7 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service;
 
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.FuncaoEnum;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Funcionario;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.NacionalidadeEnum;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.FuncionarioInDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.UnprocessableEntityException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ValidacaoException;
@@ -43,16 +40,18 @@ public class FuncionarioService {
         return repository.save(funcionario);
     }
 
-    public Funcionario update(FuncionarioInDTO funcionarioNovo, Integer idFuncionario){
+    public Funcionario update(Funcionario funcionarioNovo, Integer idFuncionario){
         Funcionario funcionarioCadastrado = getById(idFuncionario);
 
-        funcionarioCadastrado.setSenha(funcionarioNovo.getPassword());
-        funcionarioCadastrado.setConfirmacaoSenha(funcionarioNovo.getConfirmPassword());
+        funcionarioCadastrado.setSenha(funcionarioNovo.getSenha());
+        funcionarioCadastrado.setConfirmacaoSenha(funcionarioNovo.getConfirmacaoSenha());
         funcionarioCadastrado.setEmail(funcionarioNovo.getEmail());
         funcionarioCadastrado.setNome(funcionarioNovo.getNome());
         funcionarioCadastrado.setIdade(funcionarioNovo.getIdade());
         funcionarioCadastrado.setFuncao(funcionarioNovo.getFuncao());
         funcionarioCadastrado.setCpf(funcionarioNovo.getCpf());
+
+        validateFuncionario(funcionarioCadastrado);
 
         return repository.save(funcionarioCadastrado);
     }

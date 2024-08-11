@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.*;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInPutDTO;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.UnprocessableEntityException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ValidacaoException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao.ExternoClient;
@@ -595,4 +596,141 @@ class CiclistaServiceTest {
 		// Espera uma exceção de validação
 		assertThrows(ValidacaoException.class, () -> funcionarioService.save(funcionario));
 	}
+
+	@Test
+	void testNotfindFuncionarioById(){
+
+		assertThrows(NotFoundException.class, () -> {
+			funcionarioService.getById(1);
+		});
+	}
+
+	@Test
+	void testFindFuncionarioById() {
+		Funcionario funcionario = createFuncionario(1, "1", "123", "123", "arrascaeta@flamengo.com", "Arrascaeta",
+				28, FuncaoEnum.REPARADOR, "123.456.789-09");
+
+		when(funcionarioRepository.findById(funcionario.getId())).thenReturn(Optional.of(funcionario));
+
+		Funcionario result = funcionarioService.getById(1);
+
+		assertEquals(funcionario.getId(), result.getId());
+		assertEquals(funcionario.getMatricula(), result.getMatricula());
+		assertEquals(funcionario.getConfirmacaoSenha(), result.getConfirmacaoSenha());
+		assertEquals(funcionario.getSenha(), result.getSenha());
+		assertEquals(funcionario.getEmail(), result.getEmail());
+		assertEquals(funcionario.getNome(), result.getNome());
+		assertEquals(funcionario.getIdade(), result.getIdade());
+		assertEquals(funcionario.getFuncao(), result.getFuncao());
+		assertEquals(funcionario.getCpf(), result.getCpf());
+	}
+
+	@Test
+	void testUpdateFuncionario() {
+		Funcionario funcionarioNovo = createFuncionario(
+				1,"1","novaSenha",
+				"novaSenha",
+				"novoEmail@exemplo.com",
+				"Novo Nome",
+				31,
+				FuncaoEnum.ADMINISTRATIVO,
+				"110.089.390-30"
+		);
+
+		Funcionario funcionarioExistente = createFuncionario(
+				1,
+				"123",
+				"senha",
+				"senha",
+				"email@exemplo.com",
+				"Nome",
+				30,
+				FuncaoEnum.REPARADOR,
+				"123.456.789-09"
+		);
+
+		when(funcionarioRepository.findById(1)).thenReturn(Optional.of(funcionarioExistente));
+		when(funcionarioRepository.save(any(Funcionario.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+		Funcionario result = funcionarioService.update(funcionarioNovo, 1);
+
+		assertEquals(funcionarioNovo.getSenha(), result.getSenha());
+		assertEquals(funcionarioNovo.getConfirmacaoSenha(), result.getConfirmacaoSenha());
+		assertEquals(funcionarioNovo.getEmail(), result.getEmail());
+		assertEquals(funcionarioNovo.getNome(), result.getNome());
+		assertEquals(funcionarioNovo.getIdade(), result.getIdade());
+		assertEquals(funcionarioNovo.getFuncao(), result.getFuncao());
+		assertEquals(funcionarioNovo.getCpf(), result.getCpf());
+
+		verify(funcionarioRepository, times(1)).save(any(Funcionario.class));
+	}
+
+	@Test
+	void testUpdateFuncionarioNotFound() {
+		Funcionario funcionarioNovo = createFuncionario(
+				1,"1","novaSenha",
+				"novaConfirmacaoSenha",
+				"novoEmail@exemplo.com",
+				"Novo Nome",
+				31,
+				FuncaoEnum.ADMINISTRATIVO,
+				"123.456.789-10"
+		);
+
+		when(funcionarioRepository.findById(1)).thenReturn(Optional.empty());
+
+		assertThrows(NotFoundException.class, () -> funcionarioService.update(funcionarioNovo, 1));
+	}
+
+	@Test
+	void testUpdateFuncionarioInvalidData() {
+		Funcionario funcionarioNovo = createFuncionario(
+				1,
+				null,
+				null,
+				null,
+				null,
+				null, null,null,
+				null
+		);
+
+		Funcionario funcionarioExistente = createFuncionario(
+				1,
+				"123",
+				"senha",
+				"senha",
+				"email@exemplo.com",
+				"Nome",
+				30,
+				FuncaoEnum.REPARADOR,
+				"123.456.789-09"
+		);
+
+		when(funcionarioRepository.findById(1)).thenReturn(Optional.of(funcionarioExistente));
+
+		assertThrows(ValidacaoException.class, () -> funcionarioService.update(funcionarioNovo, 1));
+	}
+
+	@Test
+	void testDeleteFuncionario() {
+		when(funcionarioRepository.delete(1)).thenReturn(new Object());
+
+		Object result = funcionarioService.delete(1);
+
+		assertNotNull(result);
+		verify(funcionarioRepository, times(1)).delete(1);
+	}
+
+	@Test
+	void testDeleteFuncionarioIdInvalido() {
+		assertThrows(UnprocessableEntityException.class, () -> funcionarioService.delete(-1));
+	}
+
+	@Test
+	void testDeleteFuncionarioNotFound() {
+		when(funcionarioRepository.delete(1)).thenReturn(null);
+
+		assertThrows(NotFoundException.class, () -> funcionarioService.delete(1));
+	}
+
 }
