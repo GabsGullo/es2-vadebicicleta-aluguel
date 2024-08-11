@@ -3,23 +3,23 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.CartaoDeCredito;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.NacionalidadeEnum;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.StatusEnum;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.*;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInPutDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ValidacaoException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao.ExternoClient;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.CiclistaRepository;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.FuncionarioRepository;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.CartaoDeCreditoService;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.CiclistaService;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.FuncionarioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.autoconfigure.batch.BatchDataSourceScriptDatabaseInitializer;
 
 import java.util.Optional;
 
@@ -27,7 +27,10 @@ import java.util.Optional;
 class CiclistaServiceTest {
 
 	@Mock
-	private CiclistaRepository repository;
+	private CiclistaRepository ciclistaRepository;
+
+	@Mock
+	private FuncionarioRepository funcionarioRepository;
 
 	@Mock
 	private CartaoDeCreditoService cartaoDeCreditoService;
@@ -37,6 +40,9 @@ class CiclistaServiceTest {
 
 	@InjectMocks
 	private CiclistaService ciclistaService;
+
+	@InjectMocks
+	private FuncionarioService funcionarioService;
 
 	private Ciclista existingCiclista;
 
@@ -91,6 +97,22 @@ class CiclistaServiceTest {
 		return cartaoDeCredito;
 	}
 
+	private Funcionario createFuncionario(Integer id, String matricula, String senha, String confirmacaoSenha, String email,
+										  String nome, Integer idade, FuncaoEnum funcao, String cpf){
+
+		return Funcionario.builder()
+				.id(id)
+				.matricula(matricula)
+				.senha(senha)
+				.confirmacaoSenha(confirmacaoSenha)
+				.email(email)
+				.nome(nome)
+				.idade(idade)
+				.funcao(funcao)
+				.cpf(cpf)
+				.build();
+	}
+
 	@BeforeEach
 	void setUp() {
         existingCiclista = Ciclista.builder()
@@ -116,7 +138,7 @@ class CiclistaServiceTest {
 				"12/25", "123");
 
 		// Configurando mocks
-		when(repository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
 		doNothing().when(cartaoDeCreditoService).register(cartaoDeCredito);
 
 		// Chamando o método a ser testado
@@ -137,7 +159,7 @@ class CiclistaServiceTest {
 		assertEquals("2025-12-31", result.getPassaporte().getValidade());
 		assertEquals("Brasil", result.getPassaporte().getPais());
 
-		verify(repository, times(1)).save(ciclista);
+		verify(ciclistaRepository, times(1)).save(ciclista);
 		verify(cartaoDeCreditoService, times(1)).register(cartaoDeCredito);
 	}
 
@@ -153,7 +175,7 @@ class CiclistaServiceTest {
 				"12/25", "123");
 
 		// Configurando mocks
-		when(repository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
 		doNothing().when(cartaoDeCreditoService).register(cartaoDeCredito);
 
 		// Chamando o método a ser testado
@@ -170,7 +192,7 @@ class CiclistaServiceTest {
 		assertEquals("http://exemplo.com/foto.jpg", result.getUrlFotoDocumento());
 		assertEquals("password", result.getSenha());
 
-		verify(repository, times(1)).save(ciclista);
+		verify(ciclistaRepository, times(1)).save(ciclista);
 		verify(cartaoDeCreditoService, times(1)).register(cartaoDeCredito);
 	}
 
@@ -189,7 +211,7 @@ class CiclistaServiceTest {
 		});
 
 		// Verificando que o método repository.save não foi chamado
-		verify(repository, never()).save(any(Ciclista.class));
+		verify(ciclistaRepository, never()).save(any(Ciclista.class));
 	}
 
 	@Test
@@ -204,7 +226,7 @@ class CiclistaServiceTest {
 			ciclistaService.register(ciclista, cartaoDeCredito);
 		});
 
-		verify(repository, never()).save(any(Ciclista.class));
+		verify(ciclistaRepository, never()).save(any(Ciclista.class));
 	}
 
 	@Test
@@ -223,8 +245,8 @@ class CiclistaServiceTest {
 		passaporte.setPais("Canada");
 		ciclistaNovo.setPassaporte(passaporte);
 
-		when(repository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
-		when(repository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(ciclistaRepository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
+		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
 		Ciclista updatedCiclista = ciclistaService.update(ciclistaNovo, existingCiclista.getId());
 
@@ -240,7 +262,7 @@ class CiclistaServiceTest {
 		assertEquals("2030-01-01", updatedCiclista.getPassaporte().getValidade());
 		assertEquals("Canada", updatedCiclista.getPassaporte().getPais());
 
-		verify(repository, times(1)).save(updatedCiclista);
+		verify(ciclistaRepository, times(1)).save(updatedCiclista);
 	}
 
 	@Test
@@ -254,8 +276,8 @@ class CiclistaServiceTest {
 		ciclistaNovo.setNacionalidade(NacionalidadeEnum.BRASILEIRO.name());
 		ciclistaNovo.setUrlFotoDocumento("lucas-brasil-photo.jpg");
 
-		when(repository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
-		when(repository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(ciclistaRepository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
+		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
 		Ciclista updatedCiclista = ciclistaService.update(ciclistaNovo, existingCiclista.getId());
 
@@ -267,7 +289,7 @@ class CiclistaServiceTest {
 		assertEquals(NacionalidadeEnum.BRASILEIRO, updatedCiclista.getNacionalidade());
 		assertEquals("lucas-brasil-photo.jpg", updatedCiclista.getUrlFotoDocumento());
 
-		verify(repository, times(1)).save(updatedCiclista);
+		verify(ciclistaRepository, times(1)).save(updatedCiclista);
 	}
 
 	@Test
@@ -286,14 +308,14 @@ class CiclistaServiceTest {
 		passaporte.setPais("EUA");
 		ciclistaNovo.setPassaporte(passaporte);
 
-		when(repository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
+		when(ciclistaRepository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
 
 		Integer ciclistaId = existingCiclista.getId();
 		assertThrows(ValidacaoException.class, () -> {
 			ciclistaService.update(ciclistaNovo, ciclistaId);
 		});
 
-		verify(repository, never()).save(any(Ciclista.class));
+		verify(ciclistaRepository, never()).save(any(Ciclista.class));
 	}
 
 	@Test
@@ -313,14 +335,14 @@ class CiclistaServiceTest {
 		passaporte.setPais("EUA");
 		ciclistaNovo.setPassaporte(passaporte);
 
-		when(repository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
+		when(ciclistaRepository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
 
 		Integer ciclistaId = existingCiclista.getId();
 		assertThrows(ValidacaoException.class, () -> {
 			ciclistaService.update(ciclistaNovo, ciclistaId);
 		});
 
-		verify(repository, never()).save(any(Ciclista.class));
+		verify(ciclistaRepository, never()).save(any(Ciclista.class));
 	}
 
 	@Test
@@ -334,14 +356,14 @@ class CiclistaServiceTest {
 		ciclistaNovo.setNacionalidade(NacionalidadeEnum.ESTRANGEIRO.name());
 		ciclistaNovo.setUrlFotoDocumento("carlos-foreign-photo.jpg");
 
-		when(repository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
+		when(ciclistaRepository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
 
 		Integer ciclistaId = existingCiclista.getId();
 		assertThrows(ValidacaoException.class, () -> {
 			ciclistaService.update(ciclistaNovo, ciclistaId);
 		});
 
-		verify(repository, never()).save(any(Ciclista.class));
+		verify(ciclistaRepository, never()).save(any(Ciclista.class));
 	}
 
 	@Test
@@ -366,8 +388,8 @@ class CiclistaServiceTest {
 				"12/25", "123");
 
 		// Configurando mocks
-		when(repository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
-		when(repository.findById(ciclista.getId())).thenReturn(Optional.of(ciclista));
+		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(ciclistaRepository.findById(ciclista.getId())).thenReturn(Optional.of(ciclista));
 		doNothing().when(cartaoDeCreditoService).register(cartaoDeCredito);
 
 		// Chamando o método a ser testado
@@ -377,7 +399,7 @@ class CiclistaServiceTest {
 		// Verificações
 		assertEquals(StatusEnum.ATIVO, result.getStatus());
 		verify(cartaoDeCreditoService, times(1)).register(cartaoDeCredito);
-		verify(repository, times(2)).save(any(Ciclista.class));
+		verify(ciclistaRepository, times(2)).save(any(Ciclista.class));
 	}
 
 	@Test
@@ -393,8 +415,8 @@ class CiclistaServiceTest {
 				"12/25", "123");
 
 		// Configurando mocks
-		when(repository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
-		when(repository.findById(ciclista.getId())).thenReturn(Optional.of(ciclista));
+		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(ciclistaRepository.findById(ciclista.getId())).thenReturn(Optional.of(ciclista));
 		doNothing().when(cartaoDeCreditoService).register(cartaoDeCredito);
 
 		// Chamando o método a ser testado
@@ -404,7 +426,7 @@ class CiclistaServiceTest {
 		// Verificações
 		assertEquals(Boolean.TRUE, result.getAluguelAtivo());
 		verify(cartaoDeCreditoService, times(1)).register(cartaoDeCredito);
-		verify(repository, times(2)).save(any(Ciclista.class));
+		verify(ciclistaRepository, times(2)).save(any(Ciclista.class));
 	}
 
 	@Test
@@ -420,8 +442,8 @@ class CiclistaServiceTest {
 				"12/25", "123");
 
 		// Configurando mocks
-		when(repository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
-		when(repository.findById(ciclista.getId())).thenReturn(Optional.of(ciclista));
+		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(ciclistaRepository.findById(ciclista.getId())).thenReturn(Optional.of(ciclista));
 		doNothing().when(cartaoDeCreditoService).register(cartaoDeCredito);
 
 		// Chamando o método a ser testado
@@ -432,7 +454,7 @@ class CiclistaServiceTest {
 		// Verificações
 		assertEquals(Boolean.FALSE, result.getAluguelAtivo());
 		verify(cartaoDeCreditoService, times(1)).register(cartaoDeCredito);
-		verify(repository, times(3)).save(any(Ciclista.class));
+		verify(ciclistaRepository, times(3)).save(any(Ciclista.class));
 	}
 
 	@Test
@@ -447,7 +469,7 @@ class CiclistaServiceTest {
 				"12/25", "123");
 
 		// Configurando mocks
-		when(repository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
 		doNothing().when(cartaoDeCreditoService).register(cartaoDeCredito);
 
 		// Chamando o método a ser testado
@@ -456,7 +478,7 @@ class CiclistaServiceTest {
 		// Verificação
 		assertTrue(result != null && result.getCpf().equals(ciclista.getCpf()), "Ciclista deveria ser registrado com CPF válido");
 		verify(cartaoDeCreditoService, times(1)).register(cartaoDeCredito);
-		verify(repository, times(1)).save(any(Ciclista.class));
+		verify(ciclistaRepository, times(1)).save(any(Ciclista.class));
 	}
 
 	@Test
@@ -476,7 +498,7 @@ class CiclistaServiceTest {
 		}, "CPF inválido deveria lançar uma exceção");
 
 		verify(cartaoDeCreditoService, never()).register(any(CartaoDeCredito.class));
-		verify(repository, never()).save(any(Ciclista.class));
+		verify(ciclistaRepository, never()).save(any(Ciclista.class));
 	}
 
 	@Test
@@ -496,7 +518,7 @@ class CiclistaServiceTest {
 		}, "CPF nulo deveria lançar uma exceção");
 
 		verify(cartaoDeCreditoService, never()).register(any(CartaoDeCredito.class));
-		verify(repository, never()).save(any(Ciclista.class));
+		verify(ciclistaRepository, never()).save(any(Ciclista.class));
 	}
 
 	@Test
@@ -511,7 +533,7 @@ class CiclistaServiceTest {
 				"12/25", "123");
 
 		// Configurando mocks
-		when(repository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
 		doNothing().when(cartaoDeCreditoService).register(cartaoDeCredito);
 
 		// Chamando o método a ser testado
@@ -520,8 +542,57 @@ class CiclistaServiceTest {
 		// Verificação
 		assertTrue(result != null && result.getCpf().equals("123.456.789-09"), "Ciclista deveria ser registrado com CPF válido e formatado");
 		verify(cartaoDeCreditoService, times(1)).register(cartaoDeCredito);
-		verify(repository, times(1)).save(any(Ciclista.class));
+		verify(ciclistaRepository, times(1)).save(any(Ciclista.class));
 	}
 
+	@Test
+	void testSaveFuncionario() {
 
+		Funcionario funcionario = createFuncionario(1, "1", "123", "123", "arrascaeta@flamengo.com", "Arrascaeta",
+				28, FuncaoEnum.REPARADOR, "123.456.789-09");
+
+		when(funcionarioRepository.save(any(Funcionario.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+		Funcionario result = funcionarioService.save(funcionario);
+
+		assertEquals(funcionario.getId(), result.getId());
+		assertEquals(funcionario.getMatricula(), result.getMatricula());
+		assertEquals(funcionario.getConfirmacaoSenha(), result.getConfirmacaoSenha());
+		assertEquals(funcionario.getSenha(), result.getSenha());
+		assertEquals(funcionario.getEmail(), result.getEmail());
+		assertEquals(funcionario.getNome(), result.getNome());
+		assertEquals(funcionario.getIdade(), result.getIdade());
+		assertEquals(funcionario.getFuncao(), result.getFuncao());
+		assertEquals(funcionario.getCpf(), result.getCpf());
+
+		verify(funcionarioRepository, times(1)).save(any(Funcionario.class));
+	}
+
+	@Test
+	void testSaveFuncionarioTodosCamposNulos() {
+		// Cria um Funcionario com todos os campos nulos ou inválidos
+		Funcionario funcionario = createFuncionario(
+				1,
+				null,                // Matricula nula
+				null,                // Senha nula
+				null,                // ConfirmacaoSenha nula
+				null,                // Email nulo
+				null,                // Nome nulo
+				null,                // Idade nula
+				null,                // Funcao nula
+				null                 // CPF nulo
+		);
+
+		// Espera uma exceção de validação
+		assertThrows(ValidacaoException.class, () -> funcionarioService.save(funcionario));
+	}
+
+	@Test
+	void testSaveFuncionarioComConfirmacaoSenhaDiferente() {
+		Funcionario funcionario = createFuncionario(1, "1", "123", "456", "arrascaeta@flamengo.com", "Arrascaeta",
+				28, FuncaoEnum.REPARADOR, "123.456.789-09");
+
+		// Espera uma exceção de validação
+		assertThrows(ValidacaoException.class, () -> funcionarioService.save(funcionario));
+	}
 }

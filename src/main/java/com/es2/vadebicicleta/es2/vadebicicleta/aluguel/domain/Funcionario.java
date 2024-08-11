@@ -15,6 +15,6 @@ public class Funcionario {
     private String email;
     private String nome;
     private Integer idade;
-    private String funcao;
+    private FuncaoEnum funcao;
     private String cpf;
 }
