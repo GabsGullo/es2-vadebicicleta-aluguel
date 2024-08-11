@@ -63,6 +63,14 @@ public class CiclistaService {
 
         Ciclista ciclistaCadastrado = getById(idCiclista);
 
+        alterarDados(ciclistaNovo, ciclistaCadastrado);
+
+        validateCiclista(ciclistaCadastrado);
+
+        return repository.save(ciclistaCadastrado);
+    }
+
+    private static void alterarDados(CiclistaInPutDTO ciclistaNovo, Ciclista ciclistaCadastrado) {
         ciclistaCadastrado.setCpf(ciclistaNovo.getCpf());
         ciclistaCadastrado.setEmail(ciclistaNovo.getEmail());
         ciclistaCadastrado.setNome(ciclistaNovo.getNome());
@@ -70,10 +78,6 @@ public class CiclistaService {
         ciclistaCadastrado.setNascimento(ciclistaNovo.getNascimento());
         ciclistaCadastrado.setUrlFotoDocumento(ciclistaNovo.getUrlFotoDocumento());
         ciclistaCadastrado.setPassaporte(ciclistaNovo.getPassaporte());
-
-        validateCiclista(ciclistaCadastrado);
-
-        return repository.save(ciclistaCadastrado);
     }
 
     public Ciclista activate(Integer idCiclista){

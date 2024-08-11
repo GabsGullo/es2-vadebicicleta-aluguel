@@ -43,6 +43,14 @@ public class FuncionarioService {
     public Funcionario update(Funcionario funcionarioNovo, Integer idFuncionario){
         Funcionario funcionarioCadastrado = getById(idFuncionario);
 
+        alterarDados(funcionarioNovo, funcionarioCadastrado);
+
+        validateFuncionario(funcionarioCadastrado);
+
+        return repository.save(funcionarioCadastrado);
+    }
+
+    private static void alterarDados(Funcionario funcionarioNovo, Funcionario funcionarioCadastrado) {
         funcionarioCadastrado.setSenha(funcionarioNovo.getSenha());
         funcionarioCadastrado.setConfirmacaoSenha(funcionarioNovo.getConfirmacaoSenha());
         funcionarioCadastrado.setEmail(funcionarioNovo.getEmail());
@@ -50,10 +58,6 @@ public class FuncionarioService {
         funcionarioCadastrado.setIdade(funcionarioNovo.getIdade());
         funcionarioCadastrado.setFuncao(funcionarioNovo.getFuncao());
         funcionarioCadastrado.setCpf(funcionarioNovo.getCpf());
-
-        validateFuncionario(funcionarioCadastrado);
-
-        return repository.save(funcionarioCadastrado);
     }
 
     public Object delete(Integer idFuncionario){
