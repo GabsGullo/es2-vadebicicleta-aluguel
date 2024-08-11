@@ -8,6 +8,7 @@ import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.NacionalidadeEnum;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.StatusEnum;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInPutDTO;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ValidacaoException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao.ExternoClient;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.CiclistaRepository;
@@ -343,4 +344,94 @@ class CiclistaServiceTest {
 		verify(repository, never()).save(any(Ciclista.class));
 	}
 
+	@Test
+	void testNotfindCiclistaById(){
+
+		assertThrows(NotFoundException.class, () -> {
+			ciclistaService.getById(1);
+		});
+
+	}
+
+	@Test
+	void testActivateCiclista(){
+
+		// Criando Ciclista e Cartão de Crédito
+		Ciclista ciclista = createCiclistaSemPassaporte(
+				1, "Arrascaeta", "1990-01-01",
+				"17970421733", "arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
+				"password", NacionalidadeEnum.BRASILEIRO);
+
+		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
+				"12/25", "123");
+
+		// Configurando mocks
+		when(repository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(repository.findById(ciclista.getId())).thenReturn(Optional.of(ciclista));
+		doNothing().when(cartaoDeCreditoService).register(cartaoDeCredito);
+
+		// Chamando o método a ser testado
+		ciclistaService.register(ciclista, cartaoDeCredito);
+		Ciclista result = ciclistaService.activate(ciclista.getId());
+
+		// Verificações
+		assertEquals(StatusEnum.ATIVO, result.getStatus());
+		verify(cartaoDeCreditoService, times(1)).register(cartaoDeCredito);
+		verify(repository, times(2)).save(any(Ciclista.class));
+	}
+
+	@Test
+	void testAlterarStatusAluguelTrueCiclista(){
+
+		// Criando Ciclista e Cartão de Crédito
+		Ciclista ciclista = createCiclistaSemPassaporte(
+				1, "Arrascaeta", "1990-01-01",
+				"17970421733", "arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
+				"password", NacionalidadeEnum.BRASILEIRO);
+
+		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
+				"12/25", "123");
+
+		// Configurando mocks
+		when(repository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(repository.findById(ciclista.getId())).thenReturn(Optional.of(ciclista));
+		doNothing().when(cartaoDeCreditoService).register(cartaoDeCredito);
+
+		// Chamando o método a ser testado
+		ciclistaService.register(ciclista, cartaoDeCredito);
+		Ciclista result = ciclistaService.alterarStatusAluguel(ciclista.getId());
+
+		// Verificações
+		assertEquals(Boolean.TRUE, result.getAluguelAtivo());
+		verify(cartaoDeCreditoService, times(1)).register(cartaoDeCredito);
+		verify(repository, times(2)).save(any(Ciclista.class));
+	}
+
+	@Test
+	void testAlterarStatusAluguelFalseCiclista(){
+
+		// Criando Ciclista e Cartão de Crédito
+		Ciclista ciclista = createCiclistaSemPassaporte(
+				1, "Arrascaeta", "1990-01-01",
+				"17970421733", "arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
+				"password", NacionalidadeEnum.BRASILEIRO);
+
+		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
+				"12/25", "123");
+
+		// Configurando mocks
+		when(repository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(repository.findById(ciclista.getId())).thenReturn(Optional.of(ciclista));
+		doNothing().when(cartaoDeCreditoService).register(cartaoDeCredito);
+
+		// Chamando o método a ser testado
+		ciclistaService.register(ciclista, cartaoDeCredito);
+		ciclistaService.alterarStatusAluguel(ciclista.getId());
+		Ciclista result = ciclistaService.alterarStatusAluguel(ciclista.getId());
+
+		// Verificações
+		assertEquals(Boolean.FALSE, result.getAluguelAtivo());
+		verify(cartaoDeCreditoService, times(1)).register(cartaoDeCredito);
+		verify(repository, times(3)).save(any(Ciclista.class));
+	}
 }

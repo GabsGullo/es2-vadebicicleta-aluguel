@@ -4,7 +4,6 @@ import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.br.CPF;

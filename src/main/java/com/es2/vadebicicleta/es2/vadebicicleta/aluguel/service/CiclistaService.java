@@ -83,11 +83,15 @@ public class CiclistaService {
         return repository.save(ciclistaDesativado);
     }
 
-    public void alterarStatusAluguel(Integer idCiclista){
+    public Ciclista alterarStatusAluguel(Integer idCiclista){
         Ciclista ciclista = getById(idCiclista);
 
-        ciclista.setAluguelAtivo(true);
-        repository.save(ciclista);
+        if(ciclista.getAluguelAtivo())
+            ciclista.setAluguelAtivo(Boolean.FALSE);
+        else
+            ciclista.setAluguelAtivo(Boolean.TRUE);
+
+        return repository.save(ciclista);
     }
 
     private void validateCiclista(Ciclista ciclista) {

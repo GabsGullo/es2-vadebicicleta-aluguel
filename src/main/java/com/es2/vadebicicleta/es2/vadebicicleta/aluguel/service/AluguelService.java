@@ -89,6 +89,7 @@ public class AluguelService {
         aluguel.setTrancaFim(idTranca);
         repository.register(aluguel);
 
+        ciclistaService.alterarStatusAluguel(aluguel.getCiclista());
         alterarStatusBicicleta();
         solicitarFechamentoTranca();
 
