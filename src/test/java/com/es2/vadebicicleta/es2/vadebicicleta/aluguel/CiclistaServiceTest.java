@@ -434,4 +434,94 @@ class CiclistaServiceTest {
 		verify(cartaoDeCreditoService, times(1)).register(cartaoDeCredito);
 		verify(repository, times(3)).save(any(Ciclista.class));
 	}
+
+	@Test
+	void testRegisterWithValidCPF() {
+		// Configurando os dados de entrada
+		Ciclista ciclista = createCiclistaSemPassaporte(
+				1, "Arrascaeta", "1990-01-01",
+				"12345678909", "arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
+				"password", NacionalidadeEnum.BRASILEIRO);
+
+		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
+				"12/25", "123");
+
+		// Configurando mocks
+		when(repository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		doNothing().when(cartaoDeCreditoService).register(cartaoDeCredito);
+
+		// Chamando o método a ser testado
+		Ciclista result = ciclistaService.register(ciclista, cartaoDeCredito);
+
+		// Verificação
+		assertTrue(result != null && result.getCpf().equals(ciclista.getCpf()), "Ciclista deveria ser registrado com CPF válido");
+		verify(cartaoDeCreditoService, times(1)).register(cartaoDeCredito);
+		verify(repository, times(1)).save(any(Ciclista.class));
+	}
+
+	@Test
+	void testRegisterWithInvalidCPF() {
+		// Configurando os dados de entrada
+		Ciclista ciclista = createCiclistaSemPassaporte(
+				1, "Arrascaeta", "1990-01-01",
+				"12345678900", "arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
+				"password", NacionalidadeEnum.BRASILEIRO);
+
+		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
+				"12/25", "123");
+
+		// Verificação e exceção esperada
+		assertThrows(ValidacaoException.class, () -> {
+			ciclistaService.register(ciclista, cartaoDeCredito);
+		}, "CPF inválido deveria lançar uma exceção");
+
+		verify(cartaoDeCreditoService, never()).register(any(CartaoDeCredito.class));
+		verify(repository, never()).save(any(Ciclista.class));
+	}
+
+	@Test
+	void testRegisterWithNullCPF() {
+		// Configurando os dados de entrada
+		Ciclista ciclista = createCiclistaSemPassaporte(
+				1, "Arrascaeta", "1990-01-01",
+				null, "arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
+				"password", NacionalidadeEnum.BRASILEIRO);
+
+		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
+				"12/25", "123");
+
+		// Verificação e exceção esperada
+		assertThrows(ValidacaoException.class, () -> {
+			ciclistaService.register(ciclista, cartaoDeCredito);
+		}, "CPF nulo deveria lançar uma exceção");
+
+		verify(cartaoDeCreditoService, never()).register(any(CartaoDeCredito.class));
+		verify(repository, never()).save(any(Ciclista.class));
+	}
+
+	@Test
+	void testRegisterWithPontuacaoCPF() {
+		// Configurando os dados de entrada
+		Ciclista ciclista = createCiclistaSemPassaporte(
+				1, "Arrascaeta", "1990-01-01",
+				"123.456.789-09", "arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
+				"password", NacionalidadeEnum.BRASILEIRO);
+
+		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
+				"12/25", "123");
+
+		// Configurando mocks
+		when(repository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		doNothing().when(cartaoDeCreditoService).register(cartaoDeCredito);
+
+		// Chamando o método a ser testado
+		Ciclista result = ciclistaService.register(ciclista, cartaoDeCredito);
+
+		// Verificação
+		assertTrue(result != null && result.getCpf().equals("123.456.789-09"), "Ciclista deveria ser registrado com CPF válido e formatado");
+		verify(cartaoDeCreditoService, times(1)).register(cartaoDeCredito);
+		verify(repository, times(1)).save(any(Ciclista.class));
+	}
+
+
 }

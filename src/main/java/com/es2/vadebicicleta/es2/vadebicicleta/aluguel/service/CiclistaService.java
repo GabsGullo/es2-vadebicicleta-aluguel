@@ -85,8 +85,9 @@ public class CiclistaService {
 
     public Ciclista alterarStatusAluguel(Integer idCiclista){
         Ciclista ciclista = getById(idCiclista);
+        Boolean aluguelAtivo = ciclista.getAluguelAtivo();
 
-        if(ciclista.getAluguelAtivo())
+        if(aluguelAtivo)
             ciclista.setAluguelAtivo(Boolean.FALSE);
         else
             ciclista.setAluguelAtivo(Boolean.TRUE);
