@@ -3,7 +3,7 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.Validator.Validator;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.validator.Validator;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.*;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ValidacaoException;

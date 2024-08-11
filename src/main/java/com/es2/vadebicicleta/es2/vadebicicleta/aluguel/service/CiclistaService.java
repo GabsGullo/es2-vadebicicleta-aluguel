@@ -1,9 +1,8 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service;
 
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.Validator.Validator;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.validator.Validator;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.*;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInPutDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao.ExternoClient;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.CiclistaRepository;
 import jakarta.validation.Valid;

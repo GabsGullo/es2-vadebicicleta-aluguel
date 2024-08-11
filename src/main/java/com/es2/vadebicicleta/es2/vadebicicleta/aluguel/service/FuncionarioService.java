@@ -1,6 +1,6 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service;
 
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.Validator.Validator;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.validator.Validator;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Funcionario;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.UnprocessableEntityException;

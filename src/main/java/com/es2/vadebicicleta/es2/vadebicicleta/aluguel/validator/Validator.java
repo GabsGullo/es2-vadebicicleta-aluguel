@@ -1,4 +1,4 @@
-package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.Validator;
+package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.validator;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.FuncaoEnum;
