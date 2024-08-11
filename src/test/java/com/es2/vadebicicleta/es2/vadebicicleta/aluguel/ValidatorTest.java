@@ -8,10 +8,7 @@ import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.validator.Validator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindingResult;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
