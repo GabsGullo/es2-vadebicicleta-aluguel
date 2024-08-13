@@ -50,13 +50,14 @@ public class AluguelService {
         // Hora de fim (2 horas após o início)
         LocalDateTime horaFim = horaInicio.plusHours(2);
 
-        Aluguel.builder()
+        Aluguel aluguel = Aluguel.builder()
                 .trancaInicio(tranca)
                 .horaInicio(getLocalDateToIso(horaInicio))
                 .horaFim(getLocalDateToIso(horaFim))
                 .cobranca(cobranca)
                 .ciclista(ciclista)
-                .bicicleta(bicicleta);
+                .bicicleta(bicicleta)
+                .build();
 
         //alterar status bicicleta
         alterarStatusBicicleta();
@@ -64,7 +65,7 @@ public class AluguelService {
         //alterar status ciclista
         ciclistaService.alterarStatusAluguel(ciclista);
 
-        return repository.register(Aluguel.builder().build());
+        return repository.register(aluguel);
     }
 
     public Aluguel realizarDevolucao(Integer idTranca, Integer idBicicleta){
@@ -87,6 +88,7 @@ public class AluguelService {
         aluguel.setHoraFim(getLocalDateToIso(horaDevolucao));
         aluguel.setCobranca(aluguel.getCobranca().add(valor));
         aluguel.setTrancaFim(idTranca);
+        aluguel.setAluguelAtivo(false);
         repository.register(aluguel);
 
         ciclistaService.alterarStatusAluguel(aluguel.getCiclista());
@@ -129,27 +131,22 @@ public class AluguelService {
         return random.nextInt(100);
     }
 
-    private String getLocalDateToIso(LocalDateTime dateTime) {
+    public String getLocalDateToIso(LocalDateTime dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
         return dateTime.atOffset(ZoneOffset.UTC).format(formatter);
     }
 
     private BigDecimal calculaValorExtra(String horaFimIso, LocalDateTime horaDevolucao){
         LocalDateTime horaFim = parseIsoToLocalDateTime(horaFimIso);
+        long minutosTotais = ChronoUnit.MINUTES.between(horaFim.plusHours(2), horaDevolucao);
 
-        // Calcula a diferença em minutos entre a hora de devolução e a hora de fim
-        long minutosTotais = ChronoUnit.MINUTES.between(horaFim, horaDevolucao);
-
-        // Se a devolução for antes da hora de fim, não há cobrança extra
         if (minutosTotais <= 0) {
             return BigDecimal.ZERO;
         }
 
-        // Calcula o número de períodos de meia hora (30 minutos) nos minutos excedentes
-        long periodosMeiaHoraExcedentes = (minutosTotais + 29) / 30;
+        BigDecimal periodosMeiaHoraExcedentes = BigDecimal.valueOf(minutosTotais / 30);
 
-        // Calcula o valor extra a pagar como BigDecimal
-        return BigDecimal.valueOf(periodosMeiaHoraExcedentes).multiply(BigDecimal.valueOf(5));
+        return periodosMeiaHoraExcedentes.multiply(BigDecimal.valueOf(5));
     }
 
     private LocalDateTime parseIsoToLocalDateTime(String isoString) {
