@@ -14,7 +14,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Random;
 
 @Service
 public class AluguelService {
@@ -33,7 +32,7 @@ public class AluguelService {
         validateTranca();
 
         //verificar se bicicleta esta em uso
-        int bicicleta = getBicicleta();
+        int bicicleta = getBicicleta(1);
         validateUsoBicicleta();
 
         //verifica o ciclista
@@ -125,8 +124,8 @@ public class AluguelService {
         return valor;
     }
 
-    private int getBicicleta(){
-        return 1;
+    private int getBicicleta(Integer idBicicleta){
+        return idBicicleta;
     }
 
     public String getLocalDateToIso(LocalDateTime dateTime) {
