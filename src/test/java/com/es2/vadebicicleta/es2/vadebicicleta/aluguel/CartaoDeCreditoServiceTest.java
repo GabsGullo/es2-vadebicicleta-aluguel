@@ -4,6 +4,7 @@ import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.CartaoDeCredito;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ValidacaoException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.CartaoDeCreditoRepository;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.CartaoDeCreditoService;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.validator.Validator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,6 +21,8 @@ class CartaoDeCreditoServiceTest {
 
     @Mock
     private CartaoDeCreditoRepository repository;
+    @Mock
+    private Validator validator;
 
     @InjectMocks
     private CartaoDeCreditoService service;
@@ -43,6 +46,7 @@ class CartaoDeCreditoServiceTest {
                 "13/25",
                 "12"
         );
+        doThrow(ValidacaoException.class).when(validator).validateCartaoDeCredito(any(CartaoDeCredito.class));
 
         assertThrows(ValidacaoException.class, () -> service.register(cartao));
     }
@@ -56,6 +60,7 @@ class CartaoDeCreditoServiceTest {
                 "12/25",
                 "123"
         );
+        when(repository.save(any(CartaoDeCredito.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         service.register(cartao);
 
@@ -81,6 +86,7 @@ class CartaoDeCreditoServiceTest {
         );
 
         when(repository.findById(1)).thenReturn(Optional.of(cartaoCadastrado));
+        doThrow(ValidacaoException.class).when(validator).validateCartaoDeCredito(any(CartaoDeCredito.class));
 
         assertThrows(ValidacaoException.class, () -> service.update(cartaoNovo, 1));
     }
