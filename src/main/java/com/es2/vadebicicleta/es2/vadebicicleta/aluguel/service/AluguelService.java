@@ -22,8 +22,6 @@ public class AluguelService {
     private final AluguelRepository repository;
     private final CiclistaService ciclistaService;
 
-    private final Random random = new Random();
-
     @Autowired
     public AluguelService(AluguelRepository repository, CiclistaService ciclistaService){
         this.repository = repository;
@@ -128,7 +126,7 @@ public class AluguelService {
     }
 
     private int getBicicleta(){
-        return random.nextInt(100);
+        return 1;
     }
 
     public String getLocalDateToIso(LocalDateTime dateTime) {
