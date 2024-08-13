@@ -88,10 +88,11 @@ public class CiclistaService {
         Ciclista ciclista = getById(idCiclista);
         Boolean aluguelAtivo = ciclista.getAluguelAtivo();
 
-        if(aluguelAtivo)
-            ciclista.setAluguelAtivo(Boolean.FALSE);
-        else
+        if (aluguelAtivo != null) {
+            ciclista.setAluguelAtivo(!aluguelAtivo);
+        } else {
             ciclista.setAluguelAtivo(Boolean.TRUE);
+        }
 
         return repository.save(ciclista);
     }
