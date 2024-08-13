@@ -4,6 +4,7 @@ import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.CartaoDeCredito;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CartaoDeCreditoDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.CartaoDeCreditoService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CartaoDeCreditoController {
 
     private final CartaoDeCreditoService service;
-
-    public CartaoDeCreditoController(CartaoDeCreditoService service) {
+    private final CartaoDeCreditoConverter converter;
+    @Autowired
+    public CartaoDeCreditoController(CartaoDeCreditoService service, CartaoDeCreditoConverter converter) {
         this.service = service;
+        this.converter = converter;
     }
 
     @GetMapping("cartaoDeCredito/{idCiclista}")
@@ -27,7 +30,8 @@ public class CartaoDeCreditoController {
     }
 
     @PutMapping("cartaoDeCredito/{idCiclista}")
-    public ResponseEntity<CartaoDeCreditoDTO> putCartaoDeCredito(@Valid @RequestBody CartaoDeCreditoDTO cartaoNovo, @PathVariable Integer idCiclista){
+    public ResponseEntity<CartaoDeCreditoDTO> putCartaoDeCredito(@Valid @RequestBody CartaoDeCreditoDTO cartaoNovoDTO, @PathVariable Integer idCiclista){
+        CartaoDeCredito cartaoNovo = converter.inDtoToEntity(cartaoNovoDTO);
         service.update(cartaoNovo, idCiclista);
         return ResponseEntity.ok().build();
     }

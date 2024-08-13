@@ -1,8 +1,5 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.FuncaoEnum;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Funcionario;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.NacionalidadeEnum;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.*;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ValidacaoException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.validator.Validator;
 import org.junit.jupiter.api.BeforeEach;
@@ -237,4 +234,48 @@ class ValidatorTest {
         assertThrows(ValidacaoException.class, () -> validator.validateCiclista(ciclista));
     }
 
+    @Test
+    void testValidateCartaoDeCreditoComNumeroInvalido() {
+        CartaoDeCredito cartao = new CartaoDeCredito();
+        cartao.setNomeTitular("João Silva");
+        cartao.setNumero("12345");  // Número inválido
+        cartao.setValidade("12/25");
+        cartao.setCvv("123");
+
+        assertThrows(ValidacaoException.class, () -> validator.validateCartaoDeCredito(cartao));
+    }
+
+    @Test
+    void testValidateCartaoDeCreditoComValidadeInvalida() {
+        CartaoDeCredito cartao = new CartaoDeCredito();
+        cartao.setNomeTitular("João Silva");
+        cartao.setNumero("1234567812345678");
+        cartao.setValidade("2025-12");  // Validade inválida
+        cartao.setCvv("123");
+
+        assertThrows(ValidacaoException.class, () -> validator.validateCartaoDeCredito(cartao));
+    }
+
+    @Test
+    void testValidateCartaoDeCreditoComCvvInvalido() {
+        CartaoDeCredito cartao = new CartaoDeCredito();
+        cartao.setNomeTitular("João Silva");
+        cartao.setNumero("1234567812345678");
+        cartao.setValidade("12/25");
+        cartao.setCvv("12");  // CVV inválido
+
+        assertThrows(ValidacaoException.class, () -> validator.validateCartaoDeCredito(cartao));
+    }
+
+    @Test
+    void testValidateCartaoDeCreditoComCamposValidos() {
+        CartaoDeCredito cartao = new CartaoDeCredito();
+        cartao.setNomeTitular("João Silva");
+        cartao.setNumero("1234567812345678");
+        cartao.setValidade("12/25");
+        cartao.setCvv("123");
+
+        // Este não deve lançar uma exceção
+        validator.validateCartaoDeCredito(cartao);
+    }
 }

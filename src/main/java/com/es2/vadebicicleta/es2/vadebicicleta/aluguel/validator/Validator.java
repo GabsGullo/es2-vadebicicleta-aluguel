@@ -1,9 +1,6 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.validator;
 
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.FuncaoEnum;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Funcionario;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.NacionalidadeEnum;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.*;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ValidacaoException;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -13,7 +10,7 @@ import org.springframework.validation.FieldError;
 @Component
 public class Validator {
     public static final String CICLISTA = "ciclista";
-
+    public static final String CARTAO = "cartao";
     public static final String FUNCIONARIO = "funcionario";
     public static final String PASSAPORTE = "passaporte";
 
@@ -44,6 +41,19 @@ public class Validator {
         validateDocumentos(ciclista.getCpf(), ciclista.getPassaporte(), ciclista.getNacionalidade(), result);
 
         if (result.hasErrors()) {
+            throw new ValidacaoException(result);
+        }
+    }
+
+    public void validateCartaoDeCredito(CartaoDeCredito cartaoDeCredito) {
+        BindingResult result = new BeanPropertyBindingResult(cartaoDeCredito, CARTAO);
+
+        validateNomeTitular(cartaoDeCredito.getNomeTitular(), result);
+        validateNumero(cartaoDeCredito.getNumero(), result);
+        validateValidade(cartaoDeCredito.getValidade(), result);
+        validateCvv(cartaoDeCredito.getCvv(), result);
+
+        if (result.hasErrors()){
             throw new ValidacaoException(result);
         }
     }
@@ -182,6 +192,42 @@ public class Validator {
             if (passaporte.getPais() == null || passaporte.getPais().isEmpty()) {
                 result.addError(new FieldError(CICLISTA, "passaporte.pais", "País do passaporte não pode ser nulo ou vazio"));
             }
+        }
+    }
+
+    private void validateNomeTitular(String nomeTitular, BindingResult result) {
+        if (nomeTitular == null || nomeTitular.trim().isEmpty()) {
+            result.addError(new FieldError(CARTAO, "nomeTitular", "O nome do titular não pode ser nulo ou vazio"));
+        }
+    }
+
+    private void validateNumero(String numero, BindingResult result) {
+        if (numero == null || numero.trim().isEmpty()) {
+            result.addError(new FieldError(CARTAO, "numero", "O número do cartão de crédito não pode ser nulo ou vazio"));
+        }
+        assert numero != null;
+        if (!numero.matches("\\d{16}")) {
+            result.addError(new FieldError(CARTAO, "numero", "O número do cartão de crédito deve conter exatamente 16 dígitos"));
+        }
+    }
+
+    private void validateValidade(String validade, BindingResult result) {
+        if (validade == null || validade.trim().isEmpty()) {
+            result.addError(new FieldError(CARTAO, "validade", "A data de validade não pode ser nula ou vazia"));
+        }
+        assert validade != null;
+        if (!validade.matches("(0[1-9]|1[0-2])/\\d{2}")) {
+            result.addError(new FieldError(CARTAO, "validade", "A data de validade deve estar no formato MM/YY"));
+        }
+    }
+
+    private void validateCvv(String cvv, BindingResult result) {
+        if (cvv == null || cvv.trim().isEmpty()) {
+            result.addError(new FieldError(CARTAO, "cvv", "O CVV não pode ser nulo ou vazio"));
+        }
+        assert cvv != null;
+        if (!cvv.matches("\\d{3}")) {
+            result.addError(new FieldError(CARTAO, "cvv", "O CVV deve conter exatamente 3 dígitos"));
         }
     }
 }
