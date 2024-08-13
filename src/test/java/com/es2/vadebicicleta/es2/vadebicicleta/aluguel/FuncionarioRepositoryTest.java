@@ -21,10 +21,10 @@ class FuncionarioRepositoryTest {
     private FuncionarioRepository funcionarioRepository;
 
     @Spy
-    private IdGenerator idGenerator; // Usando spy para manter o comportamento real
+    private IdGenerator idGenerator;
 
     @Spy
-    private IdGenerator matriculaGenerator; // Usando spy para manter o comportamento real
+    private IdGenerator matriculaGenerator;
 
     @Test
     void testSave_NewFuncionario() {
@@ -54,9 +54,6 @@ class FuncionarioRepositoryTest {
 
     @Test
     void testSave_UpdateExistingFuncionario() {
-        // Configura os valores iniciais para garantir que o ID e matrícula sejam gerados corretamente
-        idGenerator.setIdFuncionario(1);
-        matriculaGenerator.setMatricula(1);
 
         Funcionario funcionario = new Funcionario();
         funcionarioRepository.save(funcionario);
@@ -64,9 +61,6 @@ class FuncionarioRepositoryTest {
         Funcionario updatedFuncionario = new Funcionario();
         updatedFuncionario.setId(1);
         updatedFuncionario.setMatricula("MAT-002");
-
-        // Atualiza a matrícula
-        matriculaGenerator.setMatricula(2);
 
         Funcionario savedFuncionario = funcionarioRepository.save(updatedFuncionario);
 
@@ -100,10 +94,6 @@ class FuncionarioRepositoryTest {
 
     @Test
     void testDelete_FuncionarioExists() {
-        // Configura os valores iniciais para garantir que o ID e matrícula sejam gerados corretamente
-        idGenerator.setIdFuncionario(1);
-        matriculaGenerator.setMatricula(1);
-
         Funcionario funcionario = new Funcionario();
         funcionarioRepository.save(funcionario);
 
