@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class CiclistaService {
 
-    public static final String OBJECT_NAME = "ciclista";
-    public static final String PASSAPORTE = "passaporte";
     private final ExternoClient externoClient;
     private final CiclistaRepository repository;
     private final CartaoDeCreditoService cartaoDeCreditoService;
