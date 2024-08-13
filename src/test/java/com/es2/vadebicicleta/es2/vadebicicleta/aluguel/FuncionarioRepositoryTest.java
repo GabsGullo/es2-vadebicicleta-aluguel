@@ -34,7 +34,7 @@ class FuncionarioRepositoryTest {
 
         assertNotNull(savedFuncionario.getId());
         assertNotNull(savedFuncionario.getMatricula());
-        assertEquals(" 1", savedFuncionario.getMatricula());
+        assertEquals("1", savedFuncionario.getMatricula());
         assertEquals(1, savedFuncionario.getId());
 
         Optional<Funcionario> retrievedFuncionario = funcionarioRepository.findById(1);
