@@ -10,16 +10,15 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-public class Aluguel {
+public class Devolucao {
 
+    private Integer id;
     private Integer idAluguel;
-    private Integer bicicleta;
-    private LocalDateTime horaInicio;
-    private Integer trancaFim;
-    private LocalDateTime horaFim;
-    private BigDecimal cobranca;
-    private Integer ciclista;
-    private Integer trancaInicio;
+    private Integer numeroBicicleta;
+    private Integer numeroTranca;
+    private LocalDateTime horaDevolucao;
     private LocalDateTime horaCobranca;
-}
+    private BigDecimal valorExtra;
+    private CartaoDeCredito cartaoDeCredito;
 
+}

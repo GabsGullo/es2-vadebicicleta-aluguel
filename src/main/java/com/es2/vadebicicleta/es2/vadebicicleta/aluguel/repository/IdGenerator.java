@@ -15,10 +15,16 @@ public class IdGenerator {
     private Integer idFuncionario = 0;
     private Integer matricula = 0;
     private Integer idAluguel = 0;
+    private Integer idDevolucao = 0;
 
     public Integer generateIdCiclista(){
        idCiclista = idCiclista + 1;
        return idCiclista;
+    }
+
+    public Integer generateIdDevolucao(){
+        idDevolucao = idDevolucao + 1;
+        return idDevolucao;
     }
 
     public Integer generateIdCartao(){

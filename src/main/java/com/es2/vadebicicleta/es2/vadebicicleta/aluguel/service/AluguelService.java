@@ -1,10 +1,12 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Aluguel;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Devolucao;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.EnderecoEmail;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao.ExternoClient;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.AluguelRepository;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.DevolucaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,12 +21,16 @@ public class AluguelService {
     private final ExternoClient externoClient;
     private final AluguelRepository repository;
     private final CiclistaService ciclistaService;
+    private final CartaoDeCreditoService cartaoDeCreditoService;
+    private final DevolucaoRepository devolucaoRepository;
 
     @Autowired
-    public AluguelService(AluguelRepository repository, CiclistaService ciclistaService, ExternoClient externoClient){
+    public AluguelService(AluguelRepository repository, CiclistaService ciclistaService, ExternoClient externoClient, DevolucaoRepository devolucaoRepository, CartaoDeCreditoService cartaoDeCreditoService){
         this.repository = repository;
         this.ciclistaService = ciclistaService;
         this.externoClient = externoClient;
+        this.devolucaoRepository = devolucaoRepository;
+        this.cartaoDeCreditoService = cartaoDeCreditoService;
     }
 
     public Aluguel realizarAluguel(Integer ciclista, Integer tranca){
@@ -98,8 +104,37 @@ public class AluguelService {
         aluguel.setTrancaFim(idTranca);
         repository.register(aluguel);
 
+        //registra devolucao
+        Devolucao devolucao = Devolucao.builder()
+                .idAluguel(aluguel.getIdAluguel())
+                .horaDevolucao(horaDevolucao)
+                .horaCobranca(aluguel.getHoraInicio())
+                .valorExtra(valor)
+                .cartaoDeCredito(cartaoDeCreditoService.getCartaoByCiclistaId(aluguel.getCiclista()))
+                .numeroTranca(idTranca)
+                .numeroBicicleta(idBicicleta)
+                .build();
+
+        devolucaoRepository.register(devolucao);
+
         alterarStatusBicicleta();
         solicitarFechamentoTranca();
+
+        // Enviar mensagem ao ciclista
+        EnderecoEmail enderecoEmail = new EnderecoEmail();
+        enderecoEmail.setAssunto("Devolução Realizada com Sucesso");
+
+        String mensagem = "Dados da Devolução:\n" +
+                "Hora de Devolução: " + devolucao.getHoraDevolucao() + "\n" +
+                "Hora da Cobrança: " + devolucao.getHoraCobranca() + "\n" +
+                "Valor Extra: " + devolucao.getValorExtra() + "\n" +
+                "Cartão de Crédito: " + devolucao.getCartaoDeCredito() + "\n" +
+                "Número da Tranca: " + devolucao.getNumeroTranca() + "\n" +
+                "Número da Bicicleta: " + devolucao.getNumeroBicicleta();
+
+        enderecoEmail.setMensagem(mensagem);
+        enderecoEmail.setEmail(ciclistaService.getById(aluguel.getCiclista()).getEmail());
+        externoClient.enviarEmail(enderecoEmail);
 
         return aluguel;
     }
