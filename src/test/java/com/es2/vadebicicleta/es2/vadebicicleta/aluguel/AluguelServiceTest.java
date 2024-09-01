@@ -2,8 +2,11 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Aluguel;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao.ExternoClient;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.AluguelRepository;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.DevolucaoRepository;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.AluguelService;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.CartaoDeCreditoService;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.CiclistaService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +29,16 @@ class AluguelServiceTest {
     private AluguelRepository repository;
 
     @Mock
+    private DevolucaoRepository devolucaoRepository;
+
+    @Mock
+    private ExternoClient externoClient;
+
+    @Mock
     private CiclistaService ciclistaService;
+
+    @Mock
+    private CartaoDeCreditoService cartaoDeCreditoService;
 
     @InjectMocks
     private AluguelService aluguelService;
@@ -66,12 +78,12 @@ class AluguelServiceTest {
         Integer tranca = 123;
         Integer bicicleta = 456;
         LocalDateTime horaInicio = LocalDateTime.now().minusHours(3);
-        LocalDateTime horaFim = LocalDateTime.now().minusHours(3);
         BigDecimal valorExtra = BigDecimal.valueOf(10);
 
-        Aluguel aluguel = criarAluguel(tranca, 1, bicicleta, BigDecimal.TEN, horaInicio, horaFim);
+        Aluguel aluguel = criarAluguel(tranca, 1, bicicleta, BigDecimal.TEN, horaInicio, null);
 
-        when(repository.findByBicicletaIdHoraFimAluguel(bicicleta, horaFim)).thenReturn(Optional.of(aluguel));
+        when(repository.findByBicicletaIdHoraFimAluguel(bicicleta, null)).thenReturn(Optional.of(aluguel));
+        when(ciclistaService.getById(any(Integer.class))).thenReturn(Ciclista.builder().build());
         when(repository.register(any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Aluguel resultado = aluguelService.realizarDevolucao(tranca, bicicleta);

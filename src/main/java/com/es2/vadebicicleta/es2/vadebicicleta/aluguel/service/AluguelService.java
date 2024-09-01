@@ -90,7 +90,7 @@ public class AluguelService {
 
         //calcular cobranca extra
         LocalDateTime horaDevolucao = LocalDateTime.now();
-        LocalDateTime horaFim = aluguel.getHoraInicio().plusHours(2);
+        LocalDateTime horaFim = aluguel.getHoraInicio();
 
         //realiza cobranca
         BigDecimal valor = calculaValorExtra(horaFim, horaDevolucao);
