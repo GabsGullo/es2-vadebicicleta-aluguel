@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,7 +17,7 @@ public class CartaoDeCredito {
     @NotNull
     private String numero;
     @NotNull
-    private String validade;
+    private LocalDate validade;
     @Size(min = 3,max = 3)
     private String cvv;
 }

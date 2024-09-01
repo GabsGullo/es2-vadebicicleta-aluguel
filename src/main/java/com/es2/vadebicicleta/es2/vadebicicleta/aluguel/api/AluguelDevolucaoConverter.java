@@ -12,9 +12,9 @@ public class AluguelDevolucaoConverter {
         AluguelDevolucaoDTO devolucaoDTO = new AluguelDevolucaoDTO();
 
         devolucaoDTO.setBicicleta(aluguel.getBicicleta());
-        devolucaoDTO.setHoraInicio(aluguel.getHoraInicio());
+        devolucaoDTO.setHoraInicio(aluguel.getHoraInicio().toString());
         devolucaoDTO.setTrancaFim(aluguel.getTrancaFim());
-        devolucaoDTO.setHoraFim(aluguel.getHoraFim());
+        devolucaoDTO.setHoraFim(aluguel.getHoraFim().toString());
         devolucaoDTO.setCobranca(aluguel.getCobranca());
         devolucaoDTO.setCiclista(aluguel.getCiclista());
 
@@ -29,8 +29,8 @@ public class AluguelDevolucaoConverter {
         aluguelOutDTO.setCiclista(aluguel.getCiclista());
         aluguelOutDTO.setCobranca(aluguel.getCobranca());
         aluguelOutDTO.setTrancaFim(aluguel.getTrancaFim());
-        aluguelOutDTO.setHoraInicio(aluguel.getHoraInicio());
-        aluguelOutDTO.setHoraFim(aluguel.getHoraFim());
+        aluguelOutDTO.setHoraInicio(aluguel.getHoraInicio().toString());
+        aluguelOutDTO.setHoraFim(aluguel.getHoraFim().toString());
         aluguelOutDTO.setTrancaInicio(aluguel.getTrancaInicio());
 
         return aluguelOutDTO;

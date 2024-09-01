@@ -5,6 +5,7 @@ import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Aluguel;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.AluguelAtivoException;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -35,13 +36,20 @@ public class AluguelRepository {
         return Optional.ofNullable(registroAlugueis.get(id));
     }
 
-    public Optional<Aluguel> findByBicicletaId(Integer idBicicleta){
-        List<Aluguel> list = registroAlugueis.values().stream().filter(aluguel -> Objects.equals(aluguel.getBicicleta(), idBicicleta) && aluguel.getAluguelAtivo()).toList();
+    public Optional<Aluguel> findByBicicletaIdHoraFimAluguel(Integer idBicicleta, LocalDateTime horaFim){
+        List<Aluguel> list = registroAlugueis.values().stream().filter(aluguel -> Objects.equals(aluguel.getBicicleta(), idBicicleta) && Objects.equals(aluguel.getHoraFim(), horaFim)).toList();
         if(list.size() > 1){
-            throw new AluguelAtivoException("Bicicleta possui mais de 1 aluguel ativo");
+            throw new AluguelAtivoException("A Busca retornou mais de 1 aluguel ativo");
         }
 
         Aluguel aluguel = list.get(0);
         return Optional.ofNullable(aluguel);
+    }
+
+    public void findByCiclistaIdHoraFimAluguel(Integer idCiclista, LocalDateTime horaFim){
+        List<Aluguel> list = registroAlugueis.values().stream().filter(aluguel -> Objects.equals(aluguel.getCiclista(), idCiclista) && Objects.equals(aluguel.getHoraFim(), horaFim)).toList();
+        if(list.size() > 1){
+            throw new AluguelAtivoException("A Busca retornou mais de 1 aluguel ativo");
+        }
     }
 }

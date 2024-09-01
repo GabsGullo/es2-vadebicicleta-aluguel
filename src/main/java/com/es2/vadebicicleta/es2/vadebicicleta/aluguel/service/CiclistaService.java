@@ -35,7 +35,6 @@ public class CiclistaService {
         validator.validateCiclista(ciclista);
 
         ciclista.setStatus(StatusEnum.AGUARDANDO_CONFIRMACAO);
-        ciclista.setAluguelAtivo(false);
         cartaoDeCreditoService.register(cartaoDeCredito);
 
         Ciclista ciclistaCadastrado = repository.save(ciclista);
@@ -82,19 +81,6 @@ public class CiclistaService {
 
         ciclistaDesativado.setStatus(StatusEnum.ATIVO);
         return repository.save(ciclistaDesativado);
-    }
-
-    public Ciclista alterarStatusAluguel(Integer idCiclista){
-        Ciclista ciclista = getById(idCiclista);
-        Boolean aluguelAtivo = ciclista.getAluguelAtivo();
-
-        if (aluguelAtivo != null) {
-            ciclista.setAluguelAtivo(!aluguelAtivo);
-        } else {
-            ciclista.setAluguelAtivo(Boolean.TRUE);
-        }
-
-        return repository.save(ciclista);
     }
 
 }

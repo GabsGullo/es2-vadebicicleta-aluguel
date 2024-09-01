@@ -3,6 +3,7 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,9 +15,9 @@ public class Aluguel {
     private Integer idAluguel;
     private Boolean aluguelAtivo;
     private Integer bicicleta;
-    private String horaInicio;
+    private LocalDateTime horaInicio;
     private Integer trancaFim;
-    private String horaFim;
+    private LocalDateTime horaFim;
     private BigDecimal cobranca;
     private Integer ciclista;
     private Integer trancaInicio;

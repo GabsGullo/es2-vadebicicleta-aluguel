@@ -7,8 +7,12 @@ import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInPutD
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaOutDTO;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 @Component
 public class CiclistaConverter {
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
 
     public CiclistaOutDTO entityToOutDTO(Ciclista ciclista){
         CiclistaOutDTO dto = new CiclistaOutDTO();
@@ -16,7 +20,7 @@ public class CiclistaConverter {
         dto.setId(ciclista.getId());
         dto.setStatus(String.valueOf(ciclista.getStatus()));
         dto.setNome(ciclista.getNome());
-        dto.setNascimento(ciclista.getNascimento());
+        dto.setNascimento(ciclista.getNascimento().format(dateTimeFormatter));
         dto.setCpf(ciclista.getCpf());
         dto.setPassaporte(ciclista.getPassaporte());
         dto.setNacionalidade(String.valueOf(ciclista.getNacionalidade()));
@@ -30,7 +34,7 @@ public class CiclistaConverter {
         Ciclista ciclista = new Ciclista();
 
         ciclista.setNome(dto.getNome());
-        ciclista.setNascimento(dto.getNascimento());
+        ciclista.setNascimento(LocalDate.parse(dto.getNascimento(), dateTimeFormatter));
         ciclista.setCpf(dto.getCpf());
         ciclista.setPassaporte(dto.getPassaporte());
         ciclista.setNacionalidade(NacionalidadeEnum.valueOf(dto.getNacionalidade()));
@@ -44,7 +48,7 @@ public class CiclistaConverter {
         Ciclista ciclista = new Ciclista();
 
         ciclista.setNome(dto.getNome());
-        ciclista.setNascimento(dto.getNascimento());
+        ciclista.setNascimento(LocalDate.parse(dto.getNascimento(), dateTimeFormatter));
         ciclista.setCpf(dto.getCpf());
         ciclista.setPassaporte(dto.getPassaporte());
         ciclista.setNacionalidade(NacionalidadeEnum.valueOf(dto.getNacionalidade()));

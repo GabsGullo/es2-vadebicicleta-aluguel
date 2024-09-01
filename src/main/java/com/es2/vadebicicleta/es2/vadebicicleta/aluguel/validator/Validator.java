@@ -34,7 +34,6 @@ public class Validator {
         BindingResult result = new BeanPropertyBindingResult(ciclista, CICLISTA);
 
         validateNome(ciclista.getNome(), CICLISTA,result);
-        validateNascimento(ciclista.getNascimento() ,result);
         validateNacionalidade(ciclista.getNacionalidade(), result);
         validateEmail(ciclista.getEmail(), CICLISTA, result);
         validateSenha(ciclista.getSenha(), CICLISTA, result);
@@ -50,7 +49,6 @@ public class Validator {
 
         validateNomeTitular(cartaoDeCredito.getNomeTitular(), result);
         validateNumero(cartaoDeCredito.getNumero(), result);
-        validateValidade(cartaoDeCredito.getValidade(), result);
         validateCvv(cartaoDeCredito.getCvv(), result);
 
         if (result.hasErrors()){
@@ -169,12 +167,6 @@ public class Validator {
         }
     }
 
-    private void validateNascimento(String nascimento, BindingResult result) {
-        if (nascimento == null || nascimento.isEmpty()) {
-            result.addError(new FieldError(CICLISTA, "nascimento", "Nascimento não pode ser nulo ou vazio"));
-        }
-    }
-
     private void validateNacionalidade(NacionalidadeEnum nacionalidadeEnum, BindingResult result) {
         if (nacionalidadeEnum == null) {
             result.addError(new FieldError(CICLISTA, "nacionalidade", "Nacionalidade não pode ser nula"));
@@ -208,16 +200,6 @@ public class Validator {
         assert numero != null;
         if (!numero.matches("\\d{16}")) {
             result.addError(new FieldError(CARTAO, "numero", "O número do cartão de crédito deve conter exatamente 16 dígitos"));
-        }
-    }
-
-    private void validateValidade(String validade, BindingResult result) {
-        if (validade == null || validade.trim().isEmpty()) {
-            result.addError(new FieldError(CARTAO, "validade", "A data de validade não pode ser nula ou vazia"));
-        }
-        assert validade != null;
-        if (!validade.matches("(0[1-9]|1[0-2])/\\d{2}")) {
-            result.addError(new FieldError(CARTAO, "validade", "A data de validade deve estar no formato MM/YY"));
         }
     }
 

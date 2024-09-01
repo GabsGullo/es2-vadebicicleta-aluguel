@@ -1,8 +1,9 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Aluguel;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.AluguelAtivoException;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.EnderecoEmail;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao.ExternoClient;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.AluguelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,21 +11,20 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 @Service
 public class AluguelService {
 
+    private final ExternoClient externoClient;
     private final AluguelRepository repository;
     private final CiclistaService ciclistaService;
 
     @Autowired
-    public AluguelService(AluguelRepository repository, CiclistaService ciclistaService){
+    public AluguelService(AluguelRepository repository, CiclistaService ciclistaService, ExternoClient externoClient){
         this.repository = repository;
         this.ciclistaService = ciclistaService;
+        this.externoClient = externoClient;
     }
 
     public Aluguel realizarAluguel(Integer ciclista, Integer tranca){
@@ -44,13 +44,10 @@ public class AluguelService {
         // Hora de início
         LocalDateTime horaInicio = LocalDateTime.now();
 
-        // Hora de fim (2 horas após o início)
-        LocalDateTime horaFim = horaInicio.plusHours(2);
-
         Aluguel aluguel = Aluguel.builder()
                 .trancaInicio(tranca)
-                .horaInicio(getLocalDateToIso(horaInicio))
-                .horaFim(getLocalDateToIso(horaFim))
+                .horaInicio(horaInicio)
+                .horaFim(null)
                 .cobranca(cobranca)
                 .ciclista(ciclista)
                 .bicicleta(bicicleta)
@@ -59,8 +56,19 @@ public class AluguelService {
         //alterar status bicicleta
         alterarStatusBicicleta();
 
-        //alterar status ciclista
-        ciclistaService.alterarStatusAluguel(ciclista);
+        //enviar mensagem ao ciclista
+        EnderecoEmail enderecoEmail = new EnderecoEmail();
+        enderecoEmail.setAssunto("Aluguel Realizado com Sucesso");
+
+        //pegar totem
+        int totem = getTotemTranca(tranca);
+        String mensagem = "Dados do Aluguel:\n" + "Cobranca: " + cobranca + "\n" +
+                "Hora: " + horaInicio + "\n" +
+                "Totem: " + totem;
+
+        enderecoEmail.setMensagem(mensagem);
+        enderecoEmail.setEmail(ciclistaService.getById(ciclista).getEmail());
+        externoClient.enviarEmail(enderecoEmail);
 
         return repository.register(aluguel);
     }
@@ -73,7 +81,7 @@ public class AluguelService {
 
         //calcular cobranca extra
         LocalDateTime horaDevolucao = LocalDateTime.now();
-        String horaFim = aluguel.getHoraFim();
+        LocalDateTime horaFim = aluguel.getHoraInicio().plusHours(2);
 
         //realiza cobranca
         BigDecimal valor = calculaValorExtra(horaFim, horaDevolucao);
@@ -82,13 +90,12 @@ public class AluguelService {
         }
 
         //atualizar aluguel
-        aluguel.setHoraFim(getLocalDateToIso(horaDevolucao));
+        aluguel.setHoraFim(horaDevolucao);
         aluguel.setCobranca(aluguel.getCobranca().add(valor));
         aluguel.setTrancaFim(idTranca);
         aluguel.setAluguelAtivo(false);
         repository.register(aluguel);
 
-        ciclistaService.alterarStatusAluguel(aluguel.getCiclista());
         alterarStatusBicicleta();
         solicitarFechamentoTranca();
 
@@ -96,11 +103,12 @@ public class AluguelService {
     }
 
     private void verificarAluguelCiclista(Integer ciclista) {
-        boolean aptoAluguel = ciclistaService.getById(ciclista).getAluguelAtivo();
-        if(aptoAluguel){
-            throw new AluguelAtivoException("Ciclista já possui um aluguel ativo");
-        }
+       repository.findByCiclistaIdHoraFimAluguel(ciclista, null);
+    }
 
+    private int getTotemTranca(int tranca){
+        //metodo vazio pois a alteracao do status so sera feita apos a integracao
+        return tranca;
     }
 
     private void validateTranca(){
@@ -128,13 +136,7 @@ public class AluguelService {
         return idBicicleta;
     }
 
-    public String getLocalDateToIso(LocalDateTime dateTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
-        return dateTime.atOffset(ZoneOffset.UTC).format(formatter);
-    }
-
-    private BigDecimal calculaValorExtra(String horaFimIso, LocalDateTime horaDevolucao){
-        LocalDateTime horaFim = parseIsoToLocalDateTime(horaFimIso);
+    private BigDecimal calculaValorExtra(LocalDateTime horaFim, LocalDateTime horaDevolucao){
         long minutosTotais = ChronoUnit.MINUTES.between(horaFim.plusHours(2), horaDevolucao);
 
         if (minutosTotais <= 0) {
@@ -146,13 +148,8 @@ public class AluguelService {
         return periodosMeiaHoraExcedentes.multiply(BigDecimal.valueOf(5));
     }
 
-    private LocalDateTime parseIsoToLocalDateTime(String isoString) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
-        return OffsetDateTime.parse(isoString, formatter).toLocalDateTime();
-    }
-
     public Aluguel getByIdBicicleta(Integer idBicicleta){
-        return repository.findByBicicletaId(idBicicleta).orElseThrow(
+        return repository.findByBicicletaIdHoraFimAluguel(idBicicleta,null).orElseThrow(
                 () -> new NotFoundException("Aluguel não encontrado", HttpStatus.NOT_FOUND.toString()));
     }
 }

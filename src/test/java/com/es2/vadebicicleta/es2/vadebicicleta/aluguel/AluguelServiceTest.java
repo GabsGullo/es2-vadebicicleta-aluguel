@@ -36,8 +36,8 @@ class AluguelServiceTest {
     private Aluguel criarAluguel(Integer trancaInicio, Integer ciclista, Integer bicicleta, BigDecimal cobranca, LocalDateTime horaInicio, LocalDateTime horaFim) {
         return Aluguel.builder()
                 .trancaInicio(trancaInicio)
-                .horaInicio(aluguelService.getLocalDateToIso(horaInicio))
-                .horaFim(aluguelService.getLocalDateToIso(horaFim))
+                .horaInicio(horaInicio)
+                .horaFim(horaFim)
                 .cobranca(cobranca)
                 .ciclista(ciclista)
                 .bicicleta(bicicleta)
@@ -50,7 +50,7 @@ class AluguelServiceTest {
         Integer tranca = 123;
         BigDecimal cobranca = BigDecimal.TEN;
 
-        when(ciclistaService.getById(ciclistaId)).thenReturn(Ciclista.builder().aluguelAtivo(false).build());
+        when(ciclistaService.getById(ciclistaId)).thenReturn(Ciclista.builder().build());
         when(repository.register(any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Aluguel aluguel = aluguelService.realizarAluguel(ciclistaId, tranca);
@@ -59,8 +59,6 @@ class AluguelServiceTest {
         assertEquals(tranca, aluguel.getTrancaInicio());
         assertEquals(ciclistaId, aluguel.getCiclista());
         assertEquals(cobranca, aluguel.getCobranca());
-        assertTrue(aluguel.getHoraInicio().contains("T"));
-        assertTrue(aluguel.getHoraFim().contains("T"));
     }
 
     @Test
@@ -73,7 +71,7 @@ class AluguelServiceTest {
 
         Aluguel aluguel = criarAluguel(tranca, 1, bicicleta, BigDecimal.TEN, horaInicio, horaFim);
 
-        when(repository.findByBicicletaId(bicicleta)).thenReturn(Optional.of(aluguel));
+        when(repository.findByBicicletaIdHoraFimAluguel(bicicleta, horaFim)).thenReturn(Optional.of(aluguel));
         when(repository.register(any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Aluguel resultado = aluguelService.realizarDevolucao(tranca, bicicleta);
