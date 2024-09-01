@@ -77,6 +77,9 @@ public class AluguelService {
         //valida bicicleta
         validateUsoBicicleta();
 
+        //se bicicleta for nova ou em reparo chamar incluir bicicleta no totem
+        alterarStatusBicicleta();
+
         Aluguel aluguel = getByIdBicicleta(idBicicleta);
 
         //calcular cobranca extra
@@ -93,7 +96,6 @@ public class AluguelService {
         aluguel.setHoraFim(horaDevolucao);
         aluguel.setCobranca(aluguel.getCobranca().add(valor));
         aluguel.setTrancaFim(idTranca);
-        aluguel.setAluguelAtivo(false);
         repository.register(aluguel);
 
         alterarStatusBicicleta();

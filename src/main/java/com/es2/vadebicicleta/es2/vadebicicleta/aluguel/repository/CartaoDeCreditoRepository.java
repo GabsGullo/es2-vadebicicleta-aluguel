@@ -4,11 +4,13 @@ import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.CartaoDeCredito;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
 public class CartaoDeCreditoRepository {
-    private static HashMap<Integer, CartaoDeCredito> registroCartao = new HashMap<>();
+    private static final HashMap<Integer, CartaoDeCredito> registroCartao = new HashMap<>();
     private final IdGenerator id;
 
     public CartaoDeCreditoRepository(IdGenerator id) {
@@ -30,6 +32,8 @@ public class CartaoDeCreditoRepository {
     }
 
     public Optional<CartaoDeCredito> findById(Integer idCiclista){
-        return Optional.ofNullable(registroCartao.get(idCiclista));
+         List<CartaoDeCredito> list = registroCartao.values().stream().filter(cartaoDeCredito -> Objects.equals(cartaoDeCredito.getIdCiclista(), idCiclista)).toList();
+         CartaoDeCredito cartaoDeCredito = list.get(0);
+         return Optional.of(cartaoDeCredito);
     }
 }

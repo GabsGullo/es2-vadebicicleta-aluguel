@@ -42,7 +42,6 @@ public class Ciclista {
         private String validade;
         @NotNull
         private String pais;
-
     }
 
 

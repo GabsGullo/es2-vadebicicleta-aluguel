@@ -78,7 +78,6 @@ class AluguelServiceTest {
 
         assertNotNull(resultado);
         assertEquals(bicicleta, resultado.getBicicleta());
-        assertEquals(false, resultado.getAluguelAtivo());
         assertEquals(tranca, resultado.getTrancaFim());
         assertEquals(valorExtra.add(BigDecimal.TEN), resultado.getCobranca());
     }

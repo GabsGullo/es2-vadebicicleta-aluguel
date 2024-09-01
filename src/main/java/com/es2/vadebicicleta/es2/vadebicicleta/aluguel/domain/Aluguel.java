@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 public class Aluguel {
 
     private Integer idAluguel;
-    private Boolean aluguelAtivo;
     private Integer bicicleta;
     private LocalDateTime horaInicio;
     private Integer trancaFim;

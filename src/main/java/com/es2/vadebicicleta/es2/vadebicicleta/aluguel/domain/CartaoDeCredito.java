@@ -17,6 +17,8 @@ public class CartaoDeCredito {
     @NotNull
     private String numero;
     @NotNull
+    private Integer idCiclista;
+    @NotNull
     private LocalDate validade;
     @Size(min = 3,max = 3)
     private String cvv;

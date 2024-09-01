@@ -35,9 +35,10 @@ public class CiclistaService {
         validator.validateCiclista(ciclista);
 
         ciclista.setStatus(StatusEnum.AGUARDANDO_CONFIRMACAO);
-        cartaoDeCreditoService.register(cartaoDeCredito);
-
         Ciclista ciclistaCadastrado = repository.save(ciclista);
+
+        cartaoDeCredito.setIdCiclista(ciclista.getId());
+        cartaoDeCreditoService.register(cartaoDeCredito);
 
         enviarEmail(ciclista);
 
