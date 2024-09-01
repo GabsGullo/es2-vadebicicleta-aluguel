@@ -39,7 +39,7 @@ public class Ciclista {
         @NotNull
         private String numero;
         @NotNull
-        private String validade;
+        private LocalDate validade;
         @NotNull
         private String pais;
     }

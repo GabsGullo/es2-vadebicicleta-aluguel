@@ -7,6 +7,8 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
+import java.time.LocalDate;
+
 @Component
 public class Validator {
     public static final String CICLISTA = "ciclista";
@@ -37,6 +39,7 @@ public class Validator {
         validateNacionalidade(ciclista.getNacionalidade(), result);
         validateEmail(ciclista.getEmail(), CICLISTA, result);
         validateSenha(ciclista.getSenha(), CICLISTA, result);
+        validateNascimento(ciclista.getNascimento(), result);
         validateDocumentos(ciclista.getCpf(), ciclista.getPassaporte(), ciclista.getNacionalidade(), result);
 
         if (result.hasErrors()) {
@@ -53,6 +56,12 @@ public class Validator {
 
         if (result.hasErrors()){
             throw new ValidacaoException(result);
+        }
+    }
+
+    private void validateNascimento(LocalDate nascimento, BindingResult result) {
+        if (nascimento == null) {
+            result.addError(new FieldError(Validator.CICLISTA, "nascimento", "Nascimento não pode ser nulo"));
         }
     }
 
@@ -178,7 +187,7 @@ public class Validator {
             if (passaporte.getNumero() == null || passaporte.getNumero().isEmpty()) {
                 result.addError(new FieldError(CICLISTA, "passaporte.numero", "Número do passaporte não pode ser nulo ou vazio"));
             }
-            if (passaporte.getValidade() == null || passaporte.getValidade().isEmpty()) {
+            if (passaporte.getValidade() == null) {
                 result.addError(new FieldError(CICLISTA, "passaporte.validade", "Validade do passaporte não pode ser nula ou vazia"));
             }
             if (passaporte.getPais() == null || passaporte.getPais().isEmpty()) {

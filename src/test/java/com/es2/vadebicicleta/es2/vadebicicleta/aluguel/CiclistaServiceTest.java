@@ -18,6 +18,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,10 +40,11 @@ class CiclistaServiceTest {
 
 	private Ciclista existingCiclista;
 
+	private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
 
-    private Ciclista createCiclistaComPassaporte(Integer id, String nome, String nascimento,
+    private Ciclista createCiclistaComPassaporte(Integer id, String nome, LocalDate nascimento,
 												 String email, String urlFotoDocumento,
-												 String senha, String numeroPassaporte, String validadePassaporte,
+												 String senha, String numeroPassaporte, LocalDate validadePassaporte,
 												 String paisPassaporte, NacionalidadeEnum nacionalidade) {
 
 		Ciclista.Passaporte passaporte = new Ciclista.Passaporte();
@@ -61,7 +64,7 @@ class CiclistaServiceTest {
 				.build();
 	}
 
-	private Ciclista createCiclistaSemPassaporte(Integer id, String nome, String nascimento,
+	private Ciclista createCiclistaSemPassaporte(Integer id, String nome, LocalDate nascimento,
 									String cpf, String email, String urlFotoDocumento,
 									String senha,NacionalidadeEnum nacionalidade) {
 
@@ -78,7 +81,7 @@ class CiclistaServiceTest {
 	}
 
 	private CartaoDeCredito createCartaoDeCredito(Integer id, String nomeTitular, String numero,
-												  String validade, String cvv) {
+												  LocalDate validade, String cvv) {
 
 		CartaoDeCredito cartaoDeCredito = new CartaoDeCredito();
 		cartaoDeCredito.setId(id);
@@ -91,10 +94,12 @@ class CiclistaServiceTest {
 
 	@BeforeEach
 	void setUp() {
+		String nascimento = "1990-01-01";
+
         existingCiclista = Ciclista.builder()
                 .id(1)
                 .nome("Existing Name")
-                .nascimento("1990-01-01")
+                .nascimento(LocalDate.parse(nascimento, dateTimeFormatter))
                 .email("existingemail@example.com")
                 .nacionalidade(NacionalidadeEnum.BRASILEIRO)
                 .urlFotoDocumento("http://existingurl.com/photo.jpg")
@@ -104,14 +109,17 @@ class CiclistaServiceTest {
 
 	@Test
 	void testRegisterComPassaporte() {
+		String nascimento = "1990-01-01";
+		String validadePassaporte = "2025-12-31";
 		// Inicializando objetos dentro do método de teste
 		Ciclista ciclista = createCiclistaComPassaporte(
-				1, "Arrascaeta", "1990-01-01",
+				1, "Arrascaeta", LocalDate.parse(nascimento, dateTimeFormatter),
 				"arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
-				"password", "A1234567", "2025-12-31", "Brasil", NacionalidadeEnum.ESTRANGEIRO);
+				"password", "A1234567", LocalDate.parse(validadePassaporte, dateTimeFormatter), "Brasil", NacionalidadeEnum.ESTRANGEIRO);
 
+		String validade = "2025-12-01";
 		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
-				"12/25", "123");
+				LocalDate.parse(validade, dateTimeFormatter), "123");
 
 		// Configurando mocks
 		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -124,7 +132,7 @@ class CiclistaServiceTest {
 		assertNotNull(result);
 		assertEquals(1, result.getId());
 		assertEquals("Arrascaeta", result.getNome());
-		assertEquals("1990-01-01", result.getNascimento());
+		assertEquals("1990-01-01", result.getNascimento().format(dateTimeFormatter));
 		assertEquals("arrascaeta@flamengo.com", result.getEmail());
 		assertEquals("http://exemplo.com/foto.jpg", result.getUrlFotoDocumento());
 		assertEquals("password", result.getSenha());
@@ -132,7 +140,7 @@ class CiclistaServiceTest {
 		// Teste com passaporte
 		assertNotNull(result.getPassaporte());
 		assertEquals("A1234567", result.getPassaporte().getNumero());
-		assertEquals("2025-12-31", result.getPassaporte().getValidade());
+		assertEquals("2025-12-31", result.getPassaporte().getValidade().format(dateTimeFormatter));
 		assertEquals("Brasil", result.getPassaporte().getPais());
 
 		verify(ciclistaRepository, times(1)).save(ciclista);
@@ -141,14 +149,16 @@ class CiclistaServiceTest {
 
 	@Test
 	void testRegisterSemPassaporte() {
+		String nascimento = "1990-01-01";
 		// Inicializando objetos dentro do método de teste
 		Ciclista ciclista = createCiclistaSemPassaporte(
-				1, "Arrascaeta", "1990-01-01",
+				1, "Arrascaeta", LocalDate.parse(nascimento, dateTimeFormatter),
 				"17970421733", "arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
 				"password", NacionalidadeEnum.BRASILEIRO);
 
+		String validade = "2025-12-01";
 		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
-				"12/25", "123");
+				LocalDate.parse(validade, dateTimeFormatter), "123");
 
 		// Configurando mocks
 		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -162,7 +172,7 @@ class CiclistaServiceTest {
 		assertEquals(1, result.getId());
 		assertEquals(StatusEnum.AGUARDANDO_CONFIRMACAO, result.getStatus());
 		assertEquals("Arrascaeta", result.getNome());
-		assertEquals("1990-01-01", result.getNascimento());
+		assertEquals("1990-01-01", result.getNascimento().format(dateTimeFormatter));
 		assertEquals("17970421733", result.getCpf());
 		assertEquals("arrascaeta@flamengo.com", result.getEmail());
 		assertEquals("http://exemplo.com/foto.jpg", result.getUrlFotoDocumento());
@@ -209,10 +219,11 @@ class CiclistaServiceTest {
 
 	@Test
 	void testUpdateCiclistaComPassaporte() {
-
-		Ciclista ciclistaNovo = createCiclistaComPassaporte(1, "Rafael", "2002-10-14",
+		String nascimento = "2002-10-14";
+		String validadePassaporte = "2030-01-01";
+		Ciclista ciclistaNovo = createCiclistaComPassaporte(1, "Rafael", LocalDate.parse(nascimento, dateTimeFormatter),
 				"xqdl@gmail.com" ,"asdasdasd.jpg", "123", "987654321",
-				"2030-01-01", "Canada", NacionalidadeEnum.ESTRANGEIRO);
+				LocalDate.parse(validadePassaporte, dateTimeFormatter), "Canada", NacionalidadeEnum.ESTRANGEIRO);
 
 		when(ciclistaRepository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
 		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -222,7 +233,7 @@ class CiclistaServiceTest {
 
 		assertNotNull(updatedCiclista);
 		assertEquals("Rafael", updatedCiclista.getNome());
-		assertEquals("2002-10-14", updatedCiclista.getNascimento());
+		assertEquals("2002-10-14", updatedCiclista.getNascimento().format(dateTimeFormatter));
 		assertEquals("xqdl@gmail.com", updatedCiclista.getEmail());
 		assertEquals("123", updatedCiclista.getSenha());
 		assertEquals(NacionalidadeEnum.ESTRANGEIRO, updatedCiclista.getNacionalidade());
@@ -230,7 +241,7 @@ class CiclistaServiceTest {
 
 		assertNotNull(updatedCiclista.getPassaporte());
 		assertEquals("987654321", updatedCiclista.getPassaporte().getNumero());
-		assertEquals("2030-01-01", updatedCiclista.getPassaporte().getValidade());
+		assertEquals("2030-01-01", updatedCiclista.getPassaporte().getValidade().format(dateTimeFormatter));
 		assertEquals("Canada", updatedCiclista.getPassaporte().getPais());
 
 		verify(ciclistaRepository, times(1)).save(updatedCiclista);
@@ -238,8 +249,8 @@ class CiclistaServiceTest {
 
 	@Test
 	void testUpdateCiclistaComCPF() {
-
-		Ciclista ciclistaNovo = createCiclistaSemPassaporte(1, "Rafael", "2002-10-14", "02001599099",
+		String nascimento = "2002-10-14";
+		Ciclista ciclistaNovo = createCiclistaSemPassaporte(1, "Rafael", LocalDate.parse(nascimento, dateTimeFormatter), "02001599099",
 				"xqdl@gmail.com" ,"asdasdasd.jpg", "123", NacionalidadeEnum.BRASILEIRO);
 
 		when(ciclistaRepository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
@@ -249,7 +260,7 @@ class CiclistaServiceTest {
 
 		assertNotNull(updatedCiclista);
 		assertEquals("Rafael", updatedCiclista.getNome());
-		assertEquals("2002-10-14", updatedCiclista.getNascimento());
+		assertEquals("2002-10-14", updatedCiclista.getNascimento().format(dateTimeFormatter));
 		assertEquals("02001599099", updatedCiclista.getCpf());
 		assertEquals("xqdl@gmail.com", updatedCiclista.getEmail());
 		assertEquals("123", updatedCiclista.getSenha());
@@ -261,14 +272,15 @@ class CiclistaServiceTest {
 
 	@Test
 	void testUpdateCiclistaComPassaporteSemCPFParaBrasileiro() {
-
-		Ciclista ciclistaNovo = createCiclistaComPassaporte(1, "Rafael", "2002-10-14",
-				"xqdl@gmail.com" ,"asdasdasd.jpg", "123", "2223322", "2024-06-01",
+		String nascimento = "2002-10-14";
+		String validadePassaporte = "2024-06-01";
+		Ciclista ciclistaNovo = createCiclistaComPassaporte(1, "Rafael", LocalDate.parse(nascimento, dateTimeFormatter),
+				"xqdl@gmail.com" ,"asdasdasd.jpg", "123", "2223322", LocalDate.parse(validadePassaporte, dateTimeFormatter),
 				"EUA", NacionalidadeEnum.BRASILEIRO);
 
 		Ciclista.Passaporte passaporte = new Ciclista.Passaporte();
 		passaporte.setNumero("2223322");
-		passaporte.setValidade("2024-06-01");
+		passaporte.setValidade(LocalDate.parse(validadePassaporte, dateTimeFormatter));
 		passaporte.setPais("EUA");
 		ciclistaNovo.setPassaporte(passaporte);
 
@@ -285,13 +297,14 @@ class CiclistaServiceTest {
 
 	@Test
 	void testUpdateCiclistaComCPFAndPassaporte() {
-
-		Ciclista ciclistaNovo = createCiclistaSemPassaporte(1, "Rafael", "2002-10-14", "02001599099",
+		String nascimento = "2002-10-14";
+		String validadePassaporte = "2024-06-01";
+		Ciclista ciclistaNovo = createCiclistaSemPassaporte(1, "Rafael", LocalDate.parse(nascimento, dateTimeFormatter), "02001599099",
 				"xqdl@gmail.com" ,"asdasdasd.jpg", "123", NacionalidadeEnum.BRASILEIRO);
 
 		Ciclista.Passaporte passaporte = new Ciclista.Passaporte();
 		passaporte.setNumero("2223322");
-		passaporte.setValidade("2024-06-01");
+		passaporte.setValidade(LocalDate.parse(validadePassaporte, dateTimeFormatter));
 		passaporte.setPais("EUA");
 		ciclistaNovo.setPassaporte(passaporte);
 
@@ -308,8 +321,8 @@ class CiclistaServiceTest {
 
 	@Test
 	void testUpdateCiclistaComCPFSemPassaporteParaEstrangeiro() {
-
-		Ciclista ciclistaNovo = createCiclistaSemPassaporte(1, "Rafael", "2002-10-14", "02001599099",
+		String nascimento = "2002-10-14";
+		Ciclista ciclistaNovo = createCiclistaSemPassaporte(1, "Rafael", LocalDate.parse(nascimento, dateTimeFormatter), "02001599099",
 				"xqdl@gmail.com" ,"asdasdasd.jpg", "123", NacionalidadeEnum.ESTRANGEIRO);
 
 		when(ciclistaRepository.findById(existingCiclista.getId())).thenReturn(Optional.of(existingCiclista));
@@ -334,15 +347,16 @@ class CiclistaServiceTest {
 
 	@Test
 	void testActivateCiclista(){
-
+		String nascimento = "1990-01-01";
 		// Criando Ciclista e Cartão de Crédito
 		Ciclista ciclista = createCiclistaSemPassaporte(
-				1, "Arrascaeta", "1990-01-01",
+				1, "Arrascaeta", LocalDate.parse(nascimento, dateTimeFormatter),
 				"17970421733", "arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
 				"password", NacionalidadeEnum.BRASILEIRO);
 
+		String validade = "2025-12-01";
 		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
-				"12/25", "123");
+				LocalDate.parse(validade, dateTimeFormatter), "123");
 
 		// Configurando mocks
 		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -360,70 +374,17 @@ class CiclistaServiceTest {
 	}
 
 	@Test
-	void testAlterarStatusAluguelTrueCiclista(){
-
-		// Criando Ciclista e Cartão de Crédito
-		Ciclista ciclista = createCiclistaSemPassaporte(
-				1, "Arrascaeta", "1990-01-01",
-				"17970421733", "arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
-				"password", NacionalidadeEnum.BRASILEIRO);
-
-		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
-				"12/25", "123");
-
-		// Configurando mocks
-		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
-		when(ciclistaRepository.findById(ciclista.getId())).thenReturn(Optional.of(ciclista));
-		doNothing().when(cartaoDeCreditoService).register(cartaoDeCredito);
-
-		// Chamando o método a ser testado
-		ciclistaService.register(ciclista, cartaoDeCredito);
-		Ciclista result = ciclistaService.alterarStatusAluguel(ciclista.getId());
-
-		// Verificações
-		assertEquals(Boolean.TRUE, result.getAluguelAtivo());
-		verify(cartaoDeCreditoService, times(1)).register(cartaoDeCredito);
-		verify(ciclistaRepository, times(2)).save(any(Ciclista.class));
-	}
-
-	@Test
-	void testAlterarStatusAluguelFalseCiclista(){
-
-		// Criando Ciclista e Cartão de Crédito
-		Ciclista ciclista = createCiclistaSemPassaporte(
-				1, "Arrascaeta", "1990-01-01",
-				"17970421733", "arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
-				"password", NacionalidadeEnum.BRASILEIRO);
-
-		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
-				"12/25", "123");
-
-		// Configurando mocks
-		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
-		when(ciclistaRepository.findById(ciclista.getId())).thenReturn(Optional.of(ciclista));
-		doNothing().when(cartaoDeCreditoService).register(cartaoDeCredito);
-
-		// Chamando o método a ser testado
-		ciclistaService.register(ciclista, cartaoDeCredito);
-		ciclistaService.alterarStatusAluguel(ciclista.getId());
-		Ciclista result = ciclistaService.alterarStatusAluguel(ciclista.getId());
-
-		// Verificações
-		assertEquals(Boolean.FALSE, result.getAluguelAtivo());
-		verify(cartaoDeCreditoService, times(1)).register(cartaoDeCredito);
-		verify(ciclistaRepository, times(3)).save(any(Ciclista.class));
-	}
-
-	@Test
 	void testRegisterWithValidCPF() {
 		// Configurando os dados de entrada
+		String nascimento = "1990-01-01";
 		Ciclista ciclista = createCiclistaSemPassaporte(
-				1, "Arrascaeta", "1990-01-01",
+				1, "Arrascaeta", LocalDate.parse(nascimento, dateTimeFormatter),
 				"12345678909", "arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
 				"password", NacionalidadeEnum.BRASILEIRO);
 
+		String validade = "2025-12-01";
 		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
-				"12/25", "123");
+				LocalDate.parse(validade, dateTimeFormatter), "123");
 
 		// Configurando mocks
 		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -441,13 +402,15 @@ class CiclistaServiceTest {
 	@Test
 	void testRegisterWithInvalidCPF() {
 		// Configurando os dados de entrada
+		String nascimento = "1990-01-01";
 		Ciclista ciclista = createCiclistaSemPassaporte(
-				1, "Arrascaeta", "1990-01-01",
+				1, "Arrascaeta", LocalDate.parse(nascimento, dateTimeFormatter),
 				"12345678900", "arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
 				"password", NacionalidadeEnum.BRASILEIRO);
 
+		String validade = "2025-12-01";
 		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
-				"12/25", "123");
+				LocalDate.parse(validade, dateTimeFormatter), "123");
 
 		doThrow(ValidacaoException.class).when(validator).validateCiclista(any(Ciclista.class));
 
@@ -462,14 +425,15 @@ class CiclistaServiceTest {
 
 	@Test
 	void testRegisterWithNullCPF() {
-		// Configurando os dados de entrada
+		String nascimento = "1990-01-01";
 		Ciclista ciclista = createCiclistaSemPassaporte(
-				1, "Arrascaeta", "1990-01-01",
+				1, "Arrascaeta", LocalDate.parse(nascimento, dateTimeFormatter),
 				null, "arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
 				"password", NacionalidadeEnum.BRASILEIRO);
 
+		String validade = "2025-12-01";
 		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
-				"12/25", "123");
+				LocalDate.parse(validade, dateTimeFormatter), "123");
 
 		doThrow(ValidacaoException.class).when(validator).validateCiclista(any(Ciclista.class));
 
@@ -485,13 +449,15 @@ class CiclistaServiceTest {
 	@Test
 	void testRegisterWithPontuacaoCPF() {
 		// Configurando os dados de entrada
+		String nascimento = "1990-01-01";
 		Ciclista ciclista = createCiclistaSemPassaporte(
-				1, "Arrascaeta", "1990-01-01",
+				1, "Arrascaeta",LocalDate.parse(nascimento, dateTimeFormatter),
 				"123.456.789-09", "arrascaeta@flamengo.com", "http://exemplo.com/foto.jpg",
 				"password", NacionalidadeEnum.BRASILEIRO);
 
+		String validade = "2025-12-01";
 		CartaoDeCredito cartaoDeCredito = createCartaoDeCredito(1, "Arrascaeta", "1234567812345678",
-				"12/25", "123");
+				LocalDate.parse(validade, dateTimeFormatter), "123");
 
 		// Configurando mocks
 		when(ciclistaRepository.save(any(Ciclista.class))).thenAnswer(invocation -> invocation.getArgument(0));

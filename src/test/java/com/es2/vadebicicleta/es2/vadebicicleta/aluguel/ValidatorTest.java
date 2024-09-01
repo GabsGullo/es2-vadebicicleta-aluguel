@@ -7,12 +7,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class ValidatorTest {
     private Validator validator;
-
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
     @BeforeEach
     void setUp() {
         validator = new Validator();
@@ -51,16 +55,19 @@ class ValidatorTest {
 
     @Test
     void testValidateCiclistaComCamposValidos() {
+        String nascimento = "1995-05-15";
+        String validadePassaporte = "2030-01-01";
+
         Ciclista ciclista = new Ciclista();
         ciclista.setNome("Carlos Silva");
-        ciclista.setNascimento("1995-05-15");
+        ciclista.setNascimento(LocalDate.parse(nascimento, dateTimeFormatter));
         ciclista.setNacionalidade(NacionalidadeEnum.ESTRANGEIRO);
         ciclista.setEmail("carlos.silva@example.com");
         ciclista.setSenha("123");
 
         Ciclista.Passaporte passaporte = new Ciclista.Passaporte();
         passaporte.setNumero("ABC123456");
-        passaporte.setValidade("2030-01-01");
+        passaporte.setValidade(LocalDate.parse(validadePassaporte, dateTimeFormatter));
         passaporte.setPais("Brasil");
 
         ciclista.setCpf(null);
@@ -72,9 +79,11 @@ class ValidatorTest {
 
     @Test
     void testValidateCiclistaSemDocumento() {
+        String nascimento = "1980-01-01";
+
         Ciclista ciclista = new Ciclista();
         ciclista.setNome("João");
-        ciclista.setNascimento("1980-01-01");
+        ciclista.setNascimento(LocalDate.parse(nascimento, dateTimeFormatter));
         ciclista.setNacionalidade(NacionalidadeEnum.ESTRANGEIRO);
         ciclista.setEmail("joao@example.com");
         ciclista.setSenha("senhaForte123");
@@ -88,9 +97,12 @@ class ValidatorTest {
     // Teste para caso onde CPF e passaporte são informados
     @Test
     void testValidateCiclistaComCpfEPassaporte() {
+        String nascimento = "1990-03-20";
+        String validadePassaporte = "2028-07-01";
+
         Ciclista ciclista = new Ciclista();
         ciclista.setNome("Ana Souza");
-        ciclista.setNascimento("1990-03-20");
+        ciclista.setNascimento(LocalDate.parse(nascimento, dateTimeFormatter));
         ciclista.setNacionalidade(NacionalidadeEnum.BRASILEIRO);
         ciclista.setEmail("ana.souza@example.com");
         ciclista.setSenha("senhaSegura123");
@@ -98,7 +110,7 @@ class ValidatorTest {
 
         Ciclista.Passaporte passaporte = new Ciclista.Passaporte();
         passaporte.setNumero("DEF987654");
-        passaporte.setValidade("2028-07-01");
+        passaporte.setValidade(LocalDate.parse(validadePassaporte, dateTimeFormatter));
         passaporte.setPais("Brasil");
 
         ciclista.setPassaporte(passaporte);
@@ -110,9 +122,11 @@ class ValidatorTest {
     // Teste para caso onde CPF não é informado, mas a nacionalidade é brasileira
     @Test
     void testValidateCiclistaSemCpfComNacionalidadeBrasileira() {
+        String nascimento = "1985-12-10";
+
         Ciclista ciclista = new Ciclista();
         ciclista.setNome("Pedro Lima");
-        ciclista.setNascimento("1985-12-10");
+        ciclista.setNascimento(LocalDate.parse(nascimento, dateTimeFormatter));
         ciclista.setNacionalidade(NacionalidadeEnum.BRASILEIRO);
         ciclista.setEmail("pedro.lima@example.com");
         ciclista.setSenha("senhaMuitoSegura123");
@@ -126,9 +140,12 @@ class ValidatorTest {
     // Teste para caso onde CPF é informado, mas a nacionalidade não é brasileira
     @Test
     void testValidateCiclistaComCpfENacionalidadeEstrangeira() {
+        String nascimento = "2001-11-05";
+        String validadePassaporte = "2029-12-31";
+
         Ciclista ciclista = new Ciclista();
         ciclista.setNome("Lucas");
-        ciclista.setNascimento("2001-11-05");
+        ciclista.setNascimento(LocalDate.parse(nascimento, dateTimeFormatter));
         ciclista.setNacionalidade(NacionalidadeEnum.ESTRANGEIRO);
         ciclista.setEmail("lucas@example.com");
         ciclista.setSenha("senhaSuperSegura123");
@@ -136,7 +153,7 @@ class ValidatorTest {
 
         Ciclista.Passaporte passaporte = new Ciclista.Passaporte();
         passaporte.setNumero("GHI654321");
-        passaporte.setValidade("2029-12-31");
+        passaporte.setValidade(LocalDate.parse(validadePassaporte, dateTimeFormatter));
         passaporte.setPais("Espanha");
 
         ciclista.setPassaporte(passaporte);
@@ -147,16 +164,19 @@ class ValidatorTest {
 
     @Test
     void testValidateCiclistaComPassaporteNumeroNuloOuVazio() {
+        String nascimento = "2000-01-01";
+        String validadePassaporte = "2025-12-31";
+
         Ciclista ciclista = new Ciclista();
         ciclista.setNome("Maria");
-        ciclista.setNascimento("2000-01-01");
+        ciclista.setNascimento(LocalDate.parse(nascimento, dateTimeFormatter));
         ciclista.setNacionalidade(NacionalidadeEnum.ESTRANGEIRO);
         ciclista.setEmail("maria@gmail.com");
         ciclista.setSenha("senha123");
 
         Ciclista.Passaporte passaporte = new Ciclista.Passaporte();
         passaporte.setNumero("");
-        passaporte.setValidade("2025-12-31");
+        passaporte.setValidade(LocalDate.parse(validadePassaporte, dateTimeFormatter));
         passaporte.setPais("Brasil");
 
         ciclista.setCpf(null);
@@ -167,36 +187,43 @@ class ValidatorTest {
 
     @Test
     void testValidateCiclistaComPassaporteValidadeNulaOuVazia() {
+        String nascimento = "1995-05-15";
+        String validadePassaporte = "";
+
         Ciclista ciclista = new Ciclista();
         ciclista.setNome("Carlos");
-        ciclista.setNascimento("1995-05-15");
+        ciclista.setNascimento(LocalDate.parse(nascimento, dateTimeFormatter));
         ciclista.setNacionalidade(NacionalidadeEnum.ESTRANGEIRO);
         ciclista.setEmail("carlos.silva@example.com");
         ciclista.setSenha("senhaSegura123");
 
         Ciclista.Passaporte passaporte = new Ciclista.Passaporte();
         passaporte.setNumero("ABC123456");
-        passaporte.setValidade("");
+        passaporte.setValidade(null);
         passaporte.setPais("Brasil");
 
         ciclista.setCpf(null);
         ciclista.setPassaporte(passaporte);
 
+        assertThrows(DateTimeParseException.class, () -> LocalDate.parse(validadePassaporte, dateTimeFormatter));
         assertThrows(ValidacaoException.class, () -> validator.validateCiclista(ciclista));
     }
 
     @Test
     void testValidateCiclistaComPassaportePaisNuloOuVazio() {
+        String nascimento = "2001-11-05";
+        String validadePassaporte = "2025-12-31";
+
         Ciclista ciclista = new Ciclista();
         ciclista.setNome("Lucas");
-        ciclista.setNascimento("2001-11-05");
+        ciclista.setNascimento(LocalDate.parse(nascimento, dateTimeFormatter));
         ciclista.setNacionalidade(NacionalidadeEnum.ESTRANGEIRO);
         ciclista.setEmail("lucas@example.com");
         ciclista.setSenha("senhaSuperSegura123");
 
         Ciclista.Passaporte passaporte = new Ciclista.Passaporte();
         passaporte.setNumero("ABC123456");
-        passaporte.setValidade("2025-12-31");
+        passaporte.setValidade(LocalDate.parse(validadePassaporte, dateTimeFormatter));
         passaporte.setPais("");
 
         ciclista.setCpf(null);
@@ -207,9 +234,11 @@ class ValidatorTest {
 
     @Test
     void testValidateCiclistaComNascimentoNuloOuVazio() {
+        String nascimento = "";
+
         Ciclista ciclista = new Ciclista();
         ciclista.setNome("Ana");
-        ciclista.setNascimento("");
+        ciclista.setNascimento(null);
         ciclista.setNacionalidade(NacionalidadeEnum.BRASILEIRO);
         ciclista.setEmail("ana.silva@example.com");
         ciclista.setSenha("senhaForte123");
@@ -217,13 +246,16 @@ class ValidatorTest {
         ciclista.setPassaporte(null);
 
         assertThrows(ValidacaoException.class, () -> validator.validateCiclista(ciclista));
+        assertThrows(DateTimeParseException.class, () -> LocalDate.parse(nascimento, DateTimeFormatter.ISO_DATE));
     }
 
     @Test
     void testValidateCiclistaComNacionalidadeNula() {
+        String nascimento = "1990-06-15";
+
         Ciclista ciclista = new Ciclista();
         ciclista.setNome("Pedro");
-        ciclista.setNascimento("1990-06-15");
+        ciclista.setNascimento(LocalDate.parse(nascimento, dateTimeFormatter));
         ciclista.setNacionalidade(null);
         ciclista.setEmail("pedro.silva@example.com");
         ciclista.setSenha("senhaForte123");
@@ -235,10 +267,12 @@ class ValidatorTest {
 
     @Test
     void testValidateCartaoDeCreditoComCamposInvalido() {
+        String validade = "2025-12-01";
+
         CartaoDeCredito cartao = new CartaoDeCredito();
         cartao.setNomeTitular("João Silva");
         cartao.setNumero("12345");  // Número inválido
-        cartao.setValidade("2025-12"); // Data invalida
+        cartao.setValidade(LocalDate.parse(validade, dateTimeFormatter)); // Data invalida
         cartao.setCvv("12"); // cvv invalido
 
         assertThrows(ValidacaoException.class, () -> validator.validateCartaoDeCredito(cartao));
