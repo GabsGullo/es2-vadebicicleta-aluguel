@@ -17,7 +17,7 @@ public class Aluguel {
     private LocalDateTime horaInicio;
     private Integer trancaFim;
     private LocalDateTime horaFim;
-    private BigDecimal cobranca;
+    private Long cobranca;
     private Integer ciclista;
     private Integer trancaInicio;
     private LocalDateTime horaCobranca;

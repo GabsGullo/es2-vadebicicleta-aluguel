@@ -1,7 +1,6 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel;
 
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Aluguel;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Ciclista;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.*;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao.ExternoClient;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.AluguelRepository;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.DevolucaoRepository;
@@ -45,7 +44,7 @@ class AluguelServiceTest {
 
 
     // Método de utilitário para criar um objeto Aluguel
-    private Aluguel criarAluguel(Integer trancaInicio, Integer ciclista, Integer bicicleta, BigDecimal cobranca, LocalDateTime horaInicio, LocalDateTime horaFim) {
+    private Aluguel criarAluguel(Integer trancaInicio, Integer ciclista, Integer bicicleta, Long cobranca, LocalDateTime horaInicio, LocalDateTime horaFim) {
         return Aluguel.builder()
                 .trancaInicio(trancaInicio)
                 .horaInicio(horaInicio)
@@ -56,13 +55,24 @@ class AluguelServiceTest {
                 .build();
     }
 
+    private Cobranca criarCobranca(Integer ciclista, BigDecimal valor) {
+        return  Cobranca.builder()
+                .ciclista(Long.valueOf(ciclista))
+                .valor(valor)
+                .build();
+    }
+
     @Test
     void testRealizarAluguel() {
         Integer ciclistaId = 1;
         Integer tranca = 123;
-        BigDecimal cobranca = BigDecimal.TEN;
+        BigDecimal valorCobranca = BigDecimal.TEN;
 
-        when(ciclistaService.getById(ciclistaId)).thenReturn(Ciclista.builder().build());
+        Ciclista ciclista = Ciclista.builder().id(ciclistaId).build();
+        Cobranca cobranca = criarCobranca(ciclistaId,valorCobranca);
+
+        when(ciclistaService.getById(ciclistaId)).thenReturn(ciclista);
+        when(externoClient.realizarCobranca(eq(valorCobranca), eq(ciclistaId))).thenReturn(cobranca);
         when(repository.register(any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Aluguel aluguel = aluguelService.realizarAluguel(ciclistaId, tranca);
@@ -70,27 +80,32 @@ class AluguelServiceTest {
         assertNotNull(aluguel);
         assertEquals(tranca, aluguel.getTrancaInicio());
         assertEquals(ciclistaId, aluguel.getCiclista());
-        assertEquals(cobranca, aluguel.getCobranca());
+        verify(externoClient).realizarCobranca(eq(valorCobranca), eq(ciclistaId));
     }
+
 
     @Test
     void testRealizarDevolucao() {
         Integer tranca = 123;
         Integer bicicleta = 456;
+        Integer ciclistaId = 1;
         LocalDateTime horaInicio = LocalDateTime.now().minusHours(3);
         BigDecimal valorExtra = BigDecimal.valueOf(10);
 
-        Aluguel aluguel = criarAluguel(tranca, 1, bicicleta, BigDecimal.TEN, horaInicio, null);
+        Aluguel aluguel = criarAluguel(tranca, ciclistaId, bicicleta, 1L, horaInicio, null);
 
         when(repository.findByBicicletaIdHoraFimAluguel(bicicleta, null)).thenReturn(Optional.of(aluguel));
+        when(externoClient.realizarCobranca(any(BigDecimal.class), eq(ciclistaId))).thenReturn(criarCobranca(ciclistaId, valorExtra));
         when(ciclistaService.getById(any(Integer.class))).thenReturn(Ciclista.builder().build());
         when(repository.register(any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(devolucaoRepository.register(any(Devolucao.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Aluguel resultado = aluguelService.realizarDevolucao(tranca, bicicleta);
 
         assertNotNull(resultado);
         assertEquals(bicicleta, resultado.getBicicleta());
         assertEquals(tranca, resultado.getTrancaFim());
-        assertEquals(valorExtra.add(BigDecimal.TEN), resultado.getCobranca());
+        verify(externoClient).realizarCobranca(eq(valorExtra), eq(ciclistaId));
     }
+
 }

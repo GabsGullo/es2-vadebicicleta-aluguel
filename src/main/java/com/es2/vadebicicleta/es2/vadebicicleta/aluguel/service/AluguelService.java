@@ -1,8 +1,10 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Aluguel;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Cobranca;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Devolucao;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.EnderecoEmail;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CobrancaDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao.ExternoClient;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.AluguelRepository;
@@ -45,7 +47,7 @@ public class AluguelService {
         verificarAluguelCiclista(ciclista);
 
         //realiza cobranca
-        BigDecimal cobranca = realizarCobranca(BigDecimal.TEN);
+        Cobranca cobranca = externoClient.realizarCobranca(BigDecimal.TEN, ciclista);
 
         // Hora de início
         LocalDateTime horaInicio = LocalDateTime.now();
@@ -54,7 +56,7 @@ public class AluguelService {
                 .trancaInicio(tranca)
                 .horaInicio(horaInicio)
                 .horaFim(null)
-                .cobranca(cobranca)
+                .cobranca(cobranca.getId())
                 .ciclista(ciclista)
                 .bicicleta(bicicleta)
                 .build();
@@ -90,17 +92,23 @@ public class AluguelService {
 
         //calcular cobranca extra
         LocalDateTime horaDevolucao = LocalDateTime.now();
-        LocalDateTime horaFim = aluguel.getHoraInicio();
+        LocalDateTime horaInicio = aluguel.getHoraInicio();
 
         //realiza cobranca
-        BigDecimal valor = calculaValorExtra(horaFim, horaDevolucao);
+        BigDecimal valor = calculaValorExtra(horaInicio, horaDevolucao);
+
+        Cobranca cobrancaExtra = null;
+        LocalDateTime horaCobrancaExtra = null;
         if(valor.floatValue() != 0){
-            realizarCobranca(valor);
+            cobrancaExtra = externoClient.realizarCobranca(valor, aluguel.getCiclista());
+            horaCobrancaExtra = cobrancaExtra.getHoraSolicitacao();
         }
+
+        if(horaCobrancaExtra == null)
+            horaCobrancaExtra = aluguel.getHoraCobranca();
 
         //atualizar aluguel
         aluguel.setHoraFim(horaDevolucao);
-        aluguel.setCobranca(aluguel.getCobranca().add(valor));
         aluguel.setTrancaFim(idTranca);
         repository.register(aluguel);
 
@@ -108,7 +116,7 @@ public class AluguelService {
         Devolucao devolucao = Devolucao.builder()
                 .idAluguel(aluguel.getIdAluguel())
                 .horaDevolucao(horaDevolucao)
-                .horaCobranca(aluguel.getHoraInicio())
+                .horaCobranca(horaCobrancaExtra)
                 .valorExtra(valor)
                 .cartaoDeCredito(cartaoDeCreditoService.getCartaoByCiclistaId(aluguel.getCiclista()))
                 .numeroTranca(idTranca)

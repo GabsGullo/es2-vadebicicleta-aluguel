@@ -20,7 +20,7 @@ public class AluguelDevolucaoDTO {
     @NotNull
     private String horaFim;
     @NotNull
-    private BigDecimal cobranca;
+    private Long cobranca;
     @NotNull
     private Integer ciclista;
 }
