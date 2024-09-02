@@ -72,7 +72,7 @@ class AluguelServiceTest {
         Cobranca cobranca = criarCobranca(ciclistaId,valorCobranca);
 
         when(ciclistaService.getById(ciclistaId)).thenReturn(ciclista);
-        when(externoClient.realizarCobranca(eq(valorCobranca), eq(ciclistaId))).thenReturn(cobranca);
+        when(externoClient.realizarCobranca(valorCobranca, ciclistaId)).thenReturn(cobranca);
         when(repository.register(any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Aluguel aluguel = aluguelService.realizarAluguel(ciclistaId, tranca);
@@ -80,7 +80,7 @@ class AluguelServiceTest {
         assertNotNull(aluguel);
         assertEquals(tranca, aluguel.getTrancaInicio());
         assertEquals(ciclistaId, aluguel.getCiclista());
-        verify(externoClient).realizarCobranca(eq(valorCobranca), eq(ciclistaId));
+        verify(externoClient).realizarCobranca(valorCobranca, ciclistaId);
     }
 
 
@@ -105,7 +105,7 @@ class AluguelServiceTest {
         assertNotNull(resultado);
         assertEquals(bicicleta, resultado.getBicicleta());
         assertEquals(tranca, resultado.getTrancaFim());
-        verify(externoClient).realizarCobranca(eq(valorExtra), eq(ciclistaId));
+        verify(externoClient).realizarCobranca(valorExtra, ciclistaId);
     }
 
 }

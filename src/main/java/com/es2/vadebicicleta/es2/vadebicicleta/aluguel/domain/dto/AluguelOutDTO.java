@@ -2,7 +2,6 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto;
 
 import lombok.*;
 
-import java.math.BigDecimal;
 
 @AllArgsConstructor
 @NoArgsConstructor

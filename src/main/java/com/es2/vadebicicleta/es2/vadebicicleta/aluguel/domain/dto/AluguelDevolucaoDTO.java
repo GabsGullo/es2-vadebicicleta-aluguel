@@ -3,7 +3,6 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.math.BigDecimal;
 
 @Getter
 @Setter
