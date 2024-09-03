@@ -55,15 +55,9 @@ public class AluguelRepository {
             throw new AluguelAtivoException("A Busca retornou mais de 1 aluguel ativo");
         }
 
-        for(Aluguel aluguel : registroAlugueis.values()){
-            System.out.println(aluguel.getIdAluguel());
-        }
-
         if(list.isEmpty())
             return Optional.empty();
 
-        Aluguel aluguel = list.get(0);
-        System.out.println(aluguel.getIdAluguel());
         return Optional.ofNullable(list.get(0));
     }
 }
