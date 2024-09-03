@@ -33,6 +33,9 @@ public class CartaoDeCreditoRepository {
 
     public Optional<CartaoDeCredito> findById(Integer idCiclista){
          List<CartaoDeCredito> list = registroCartao.values().stream().filter(cartaoDeCredito -> Objects.equals(cartaoDeCredito.getIdCiclista(), idCiclista)).toList();
+        if(list.isEmpty())
+            return Optional.empty();
+
          CartaoDeCredito cartaoDeCredito = list.get(0);
          return Optional.of(cartaoDeCredito);
     }
