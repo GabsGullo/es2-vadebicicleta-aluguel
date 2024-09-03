@@ -49,7 +49,7 @@ public class CiclistaService {
 
         EnderecoEmail email = new EnderecoEmail();
         email.setAssunto("Cadastro");
-        email.setMensagem("Cadastro concluido com sucesso");
+        email.setMensagem("Clique no link para confirmar seu cadastro\n\n54.144.22.151:8080/ciclista/"+ciclista.getId()+"/ativar");
         email.setEmail(ciclista.getEmail());
         externoClient.enviarEmail(email);
 

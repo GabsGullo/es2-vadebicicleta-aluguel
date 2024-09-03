@@ -60,5 +60,4 @@ public class CiclistaController {
         return ResponseEntity.ok().body(ciclistaAtualizado);
     }
 
-
 }

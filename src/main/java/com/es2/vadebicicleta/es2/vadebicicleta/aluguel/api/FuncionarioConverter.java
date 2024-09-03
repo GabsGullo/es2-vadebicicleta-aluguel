@@ -1,5 +1,6 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.api;
 
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.FuncaoEnum;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Funcionario;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.FuncionarioOutDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.FuncionarioInDTO;
@@ -31,7 +32,7 @@ public class FuncionarioConverter {
         funcionario.setEmail(dto.getEmail());
         funcionario.setNome(dto.getNome());
         funcionario.setIdade(dto.getIdade());
-        funcionario.setFuncao(dto.getFuncao());
+        funcionario.setFuncao(FuncaoEnum.valueOf(dto.getFuncao()));
         funcionario.setCpf(dto.getCpf());
 
         return funcionario;

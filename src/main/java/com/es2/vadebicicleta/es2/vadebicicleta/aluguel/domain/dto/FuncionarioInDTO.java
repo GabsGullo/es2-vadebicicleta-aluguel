@@ -26,7 +26,7 @@ public class FuncionarioInDTO implements ConfirmPasswordInterface {
     @NotNull
     private Integer idade;
     @NotBlank
-    private FuncaoEnum funcao;
+    private String funcao;
     @CPF
     private String cpf;
 
