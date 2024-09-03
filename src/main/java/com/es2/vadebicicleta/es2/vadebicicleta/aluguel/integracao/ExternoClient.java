@@ -28,9 +28,8 @@ public class ExternoClient {
         this.converter = converter;
     }
 
-    public EnderecoEmail enviarEmail(EnderecoEmail email) {
-        ResponseEntity<EnderecoEmail> response = template.postForEntity(url+"/enviarEmail", email, EnderecoEmail.class);
-        return response.getBody();
+    public void enviarEmail(EnderecoEmail email) {
+        template.postForEntity(url+"/enviarEmail", email, Void.class);
     }
 
     public Cobranca realizarCobranca(BigDecimal valor, Integer ciclista){

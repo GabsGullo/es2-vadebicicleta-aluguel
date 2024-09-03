@@ -1,8 +1,6 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.*;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CobrancaDTO;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.AluguelAtivoException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.UnprocessableEntityException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao.EquipamentoClient;
@@ -80,6 +78,9 @@ public class AluguelService {
 
         //pedir abretura tranca
         tranca = equipamentoClient.socilitarDestrancamento(idTranca, idBicicleta);
+        if(tranca == null){
+            throw new UnprocessableEntityException("Dados para solicitação de trancamento", "422");
+        }
 
         //enviar mensagem ao ciclista
         EnderecoEmail enderecoEmail = new EnderecoEmail();
@@ -98,10 +99,23 @@ public class AluguelService {
 
     public Aluguel realizarDevolucao(Integer idTranca, Integer idBicicleta){
         //valida bicicleta
-        validateUsoBicicleta();
+        Bicicleta bicicleta = equipamentoClient.getBicicleta(idBicicleta);
+        if(bicicleta == null){
+            throw new NotFoundException("Bicicleta não existe", HttpStatus.NOT_FOUND.toString());
+        }
+
+        Tranca tranca = equipamentoClient.getTranca(idTranca);
+        if(tranca == null){
+            throw new NotFoundException("Tranca não existe", HttpStatus.NOT_FOUND.toString());
+        }
 
         //se bicicleta for nova ou em reparo chamar incluir bicicleta no totem
-        alterarStatusBicicleta();
+        if(bicicleta.getStatus().equals("NOVA") || bicicleta.getStatus().equals("EM_REPARO")){
+            Integer response = equipamentoClient.incluirBicicletaRede(idTranca, idBicicleta, bicicleta.getFuncionario());
+            if(response == null){
+                throw new UnprocessableEntityException("Erro nos dados para inclusão", "422");
+            }
+        }
 
         Aluguel aluguel = getByIdBicicleta(idBicicleta);
 
@@ -112,7 +126,7 @@ public class AluguelService {
         //realiza cobranca
         BigDecimal valor = calculaValorExtra(horaInicio, horaDevolucao);
 
-        Cobranca cobrancaExtra = null;
+        Cobranca cobrancaExtra;
         LocalDateTime horaCobrancaExtra = null;
         if(valor.floatValue() != 0){
             cobrancaExtra = externoClient.realizarCobranca(valor, aluguel.getCiclista());
@@ -140,8 +154,10 @@ public class AluguelService {
 
         devolucaoRepository.register(devolucao);
 
-        alterarStatusBicicleta();
-        solicitarFechamentoTranca();
+        tranca = equipamentoClient.socilitarTrancamento(idTranca, idBicicleta);
+        if(tranca == null){
+            throw new UnprocessableEntityException("Dados para solicitação de trancamento", "422");
+        }
 
         // Enviar mensagem ao ciclista
         EnderecoEmail enderecoEmail = new EnderecoEmail();
@@ -179,32 +195,6 @@ public class AluguelService {
             enderecoEmail.setEmail(ciclista.getEmail());
             externoClient.enviarEmail(enderecoEmail);
         }
-    }
-
-    private int getTotemTranca(int tranca){
-        //metodo vazio pois a alteracao do status so sera feita apos a integracao
-        return tranca;
-    }
-
-    private void solicitarFechamentoTranca(){
-        //metodo vazio pois a validacao so sera feita apos a integracao
-    }
-
-    private void validateUsoBicicleta(){
-        //metodo vazio pois a validacao so sera feita apos a integracao
-    }
-
-    private void alterarStatusBicicleta(){
-        //metodo vazio pois a alteracao do status so sera feita apos a integracao
-    }
-
-    private BigDecimal realizarCobranca(BigDecimal valor){
-        //metodo vazio pois a cobranca so sera feita apos a integracao
-        return valor;
-    }
-
-    private int getBicicleta(Integer idBicicleta){
-        return idBicicleta;
     }
 
     private BigDecimal calculaValorExtra(LocalDateTime horaFim, LocalDateTime horaDevolucao){
