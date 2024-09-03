@@ -1,6 +1,5 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Aluguel;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.AluguelAtivoException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.AluguelRepository;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.IdGenerator;
 import org.junit.jupiter.api.Test;
