@@ -1,6 +1,7 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.*;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao.EquipamentoClient;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao.ExternoClient;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.AluguelRepository;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.DevolucaoRepository;
@@ -37,6 +38,9 @@ class AluguelServiceTest {
     private CiclistaService ciclistaService;
 
     @Mock
+    private EquipamentoClient equipamentoClient;
+
+    @Mock
     private CartaoDeCreditoService cartaoDeCreditoService;
 
     @InjectMocks
@@ -69,10 +73,13 @@ class AluguelServiceTest {
         BigDecimal valorCobranca = BigDecimal.TEN;
 
         Ciclista ciclista = Ciclista.builder().id(ciclistaId).build();
-        Cobranca cobranca = criarCobranca(ciclistaId,valorCobranca);
+        Cobranca cobranca = criarCobranca(ciclistaId, valorCobranca);
 
         when(ciclistaService.getById(ciclistaId)).thenReturn(ciclista);
         when(externoClient.realizarCobranca(valorCobranca, ciclistaId)).thenReturn(cobranca);
+        when(equipamentoClient.getTranca(any(Integer.class))).thenReturn(Tranca.builder().bicicleta(1).build());
+        when(equipamentoClient.getBicicleta(any(Integer.class))).thenReturn(Bicicleta.builder().status("DISPONIVEL").build());
+        when(equipamentoClient.socilitarDestrancamento(any(Integer.class), any(Integer.class))).thenReturn(Tranca.builder().build());
         when(repository.register(any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Aluguel aluguel = aluguelService.realizarAluguel(ciclistaId, tranca);
@@ -82,7 +89,6 @@ class AluguelServiceTest {
         assertEquals(ciclistaId, aluguel.getCiclista());
         verify(externoClient).realizarCobranca(valorCobranca, ciclistaId);
     }
-
 
     @Test
     void testRealizarDevolucao() {
@@ -99,6 +105,9 @@ class AluguelServiceTest {
         when(ciclistaService.getById(any(Integer.class))).thenReturn(Ciclista.builder().build());
         when(repository.register(any(Aluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(devolucaoRepository.register(any(Devolucao.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(equipamentoClient.getBicicleta(any(Integer.class))).thenReturn(Bicicleta.builder().funcionario(1).status("EM_USO").build());
+        when(equipamentoClient.getTranca(any(Integer.class))).thenReturn(Tranca.builder().build());
+        when(equipamentoClient.socilitarTrancamento(any(Integer.class), any(Integer.class))).thenReturn(Tranca.builder().build());
 
         Aluguel resultado = aluguelService.realizarDevolucao(tranca, bicicleta);
 
