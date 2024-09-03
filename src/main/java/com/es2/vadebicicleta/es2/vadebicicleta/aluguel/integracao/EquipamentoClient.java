@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 public class EquipamentoClient {
     @Value("${vadbicicleta.externo.url}")
     private String url;
-    private final String trancaUrl = "/tranca/";
+    private static final String trancaUrl = "/tranca/";
     private final RestTemplate template;
 
     @Autowired
