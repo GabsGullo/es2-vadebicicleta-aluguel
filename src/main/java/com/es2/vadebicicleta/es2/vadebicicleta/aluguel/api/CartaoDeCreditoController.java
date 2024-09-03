@@ -2,6 +2,7 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.api;
 
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.CartaoDeCredito;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CartaoDeCreditoDTO;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CartaoDeCreditoGetDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.CartaoDeCreditoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,10 @@ public class CartaoDeCreditoController {
     }
 
     @GetMapping("cartaoDeCredito/{idCiclista}")
-    public ResponseEntity<CartaoDeCredito>getCartao(@PathVariable Integer idCiclista){
+    public ResponseEntity<CartaoDeCreditoGetDTO>getCartao(@PathVariable Integer idCiclista){
         CartaoDeCredito cartaoDeCredito = service.getCartaoByCiclistaId(idCiclista);
-        return ResponseEntity.ok().body(cartaoDeCredito);
+        CartaoDeCreditoGetDTO cartaoDeCreditoGetDTO = converter.entityToOutDto(cartaoDeCredito);
+        return ResponseEntity.ok().body(cartaoDeCreditoGetDTO);
     }
 
     @PutMapping("cartaoDeCredito/{idCiclista}")

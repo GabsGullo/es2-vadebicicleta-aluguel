@@ -3,6 +3,7 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.api;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.CartaoDeCredito;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CartaoDeCreditoDTO;
 
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CartaoDeCreditoGetDTO;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -23,9 +24,10 @@ public class CartaoDeCreditoConverter {
         return cartaoDeCredito;
     }
 
-    public CartaoDeCreditoDTO entityToOutDto(CartaoDeCredito cartaoDeCredito){
-        CartaoDeCreditoDTO cartaoDeCreditoDTO = new CartaoDeCreditoDTO();
+    public CartaoDeCreditoGetDTO entityToOutDto(CartaoDeCredito cartaoDeCredito){
+        CartaoDeCreditoGetDTO cartaoDeCreditoDTO = new CartaoDeCreditoGetDTO();
 
+        cartaoDeCreditoDTO.setId(cartaoDeCredito.getId());
         cartaoDeCreditoDTO.setNomeTitular(cartaoDeCredito.getNomeTitular());
         cartaoDeCreditoDTO.setNumero(cartaoDeCredito.getNumero());
         cartaoDeCreditoDTO.setValidade(cartaoDeCredito.getValidade().format(dateTimeFormatter));
