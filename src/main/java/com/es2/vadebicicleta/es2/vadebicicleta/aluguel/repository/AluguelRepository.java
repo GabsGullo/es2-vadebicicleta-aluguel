@@ -42,14 +42,21 @@ public class AluguelRepository {
             throw new AluguelAtivoException("A Busca retornou mais de 1 aluguel ativo");
         }
 
-        Aluguel aluguel = list.get(0);
-        return Optional.ofNullable(aluguel);
+        if(list.isEmpty())
+            return Optional.empty();
+
+        return Optional.ofNullable(list.get(0));
     }
 
-    public void findByCiclistaIdHoraFimAluguel(Integer idCiclista, LocalDateTime horaFim){
+    public Optional<Aluguel> findByCiclistaIdHoraFimAluguel(Integer idCiclista, LocalDateTime horaFim){
         List<Aluguel> list = registroAlugueis.values().stream().filter(aluguel -> Objects.equals(aluguel.getCiclista(), idCiclista) && Objects.equals(aluguel.getHoraFim(), horaFim)).toList();
         if(list.size() > 1){
             throw new AluguelAtivoException("A Busca retornou mais de 1 aluguel ativo");
         }
+
+        if(list.isEmpty())
+            return Optional.empty();
+
+        return Optional.ofNullable(list.get(0));
     }
 }

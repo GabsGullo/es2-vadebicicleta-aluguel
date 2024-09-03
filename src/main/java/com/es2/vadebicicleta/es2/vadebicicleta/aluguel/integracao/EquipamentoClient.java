@@ -1,0 +1,48 @@
+package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao;
+
+
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Bicicleta;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Tranca;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+
+@Component
+public class EquipamentoClient {
+    @Value("${vadbicicleta.externo.url}")
+    private String url;
+
+    private final RestTemplate template;
+
+    @Autowired
+    public EquipamentoClient(RestTemplate template){
+        this.template = template;
+    }
+
+    public Tranca getTranca(Integer idTranca){
+        ResponseEntity<Tranca> response = template.getForEntity(url+"/tranca/"+idTranca, Tranca.class);
+        if(response.getStatusCode().equals(HttpStatusCode.valueOf(404)))
+            return null;
+
+        return response.getBody();
+    }
+
+    public Bicicleta getBicicleta(Integer idBicicleta){
+        ResponseEntity<Bicicleta> response = template.getForEntity(url+"/bicicleta/"+idBicicleta, Bicicleta.class);
+        if(response.getStatusCode().equals(HttpStatusCode.valueOf(404)))
+            return null;
+
+        return response.getBody();
+    }
+
+    public Tranca socilitarDestrancamento(Integer idTranca, Integer idBicicleta){
+        ResponseEntity<Tranca> response = template.postForEntity(url+"/tranca/"+idTranca+"/destrancar", idBicicleta, Tranca.class);
+        if(response.getStatusCode().equals(HttpStatusCode.valueOf(404)))
+            return null;
+
+        return response.getBody();
+    }
+}

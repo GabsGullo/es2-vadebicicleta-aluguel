@@ -1,11 +1,11 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service;
 
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Aluguel;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Cobranca;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Devolucao;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.EnderecoEmail;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.*;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CobrancaDTO;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.AluguelAtivoException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.NotFoundException;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.UnprocessableEntityException;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao.EquipamentoClient;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.integracao.ExternoClient;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.AluguelRepository;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.DevolucaoRepository;
@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class AluguelService {
@@ -25,23 +27,37 @@ public class AluguelService {
     private final CiclistaService ciclistaService;
     private final CartaoDeCreditoService cartaoDeCreditoService;
     private final DevolucaoRepository devolucaoRepository;
+    private final EquipamentoClient equipamentoClient;
 
     @Autowired
-    public AluguelService(AluguelRepository repository, CiclistaService ciclistaService, ExternoClient externoClient, DevolucaoRepository devolucaoRepository, CartaoDeCreditoService cartaoDeCreditoService){
+    public AluguelService(AluguelRepository repository, CiclistaService ciclistaService, ExternoClient externoClient,
+                          DevolucaoRepository devolucaoRepository, CartaoDeCreditoService cartaoDeCreditoService,
+                          EquipamentoClient equipamentoClient){
         this.repository = repository;
         this.ciclistaService = ciclistaService;
         this.externoClient = externoClient;
         this.devolucaoRepository = devolucaoRepository;
         this.cartaoDeCreditoService = cartaoDeCreditoService;
+        this.equipamentoClient = equipamentoClient;
     }
 
-    public Aluguel realizarAluguel(Integer ciclista, Integer tranca){
+    public Aluguel realizarAluguel(Integer ciclista, Integer idTranca){
         //verifica a tranca
-        validateTranca();
+        Tranca tranca = equipamentoClient.getTranca(idTranca);
+        if(tranca == null){
+            throw new NotFoundException("Tranca não existe", HttpStatus.NOT_FOUND.toString());
+        }
 
-        //verificar se bicicleta esta em uso
-        int bicicleta = getBicicleta(1);
-        validateUsoBicicleta();
+        //verificar se bicicleta esta apta
+        Integer idBicicleta = tranca.getBicicleta();
+        Bicicleta bicicleta = equipamentoClient.getBicicleta(idBicicleta);
+        if(bicicleta == null){
+            throw new NotFoundException("Bicicleta não existe", HttpStatus.NOT_FOUND.toString());
+        }
+
+        if(!Objects.equals(bicicleta.getStatus(), "DISPONIVEL")){
+            throw new UnprocessableEntityException("Bicicleta não pode ser alugada", "422");
+        }
 
         //verifica o ciclista
         verificarAluguelCiclista(ciclista);
@@ -53,26 +69,25 @@ public class AluguelService {
         LocalDateTime horaInicio = LocalDateTime.now();
 
         Aluguel aluguel = Aluguel.builder()
-                .trancaInicio(tranca)
+                .trancaInicio(idTranca)
                 .horaInicio(horaInicio)
                 .horaFim(null)
                 .cobranca(cobranca.getId())
                 .ciclista(ciclista)
-                .bicicleta(bicicleta)
+                .bicicleta(idBicicleta)
+                .cartaoDeCredito(cartaoDeCreditoService.getCartaoByCiclistaId(ciclista))
                 .build();
 
-        //alterar status bicicleta
-        alterarStatusBicicleta();
+        //pedir abretura tranca
+        tranca = equipamentoClient.socilitarDestrancamento(idTranca, idBicicleta);
 
         //enviar mensagem ao ciclista
         EnderecoEmail enderecoEmail = new EnderecoEmail();
         enderecoEmail.setAssunto("Aluguel Realizado com Sucesso");
 
-        //pegar totem
-        int totem = getTotemTranca(tranca);
         String mensagem = "Dados do Aluguel:\n" + "Cobranca: " + cobranca + "\n" +
                 "Hora: " + horaInicio + "\n" +
-                "Totem: " + totem;
+                "Totem: " + tranca.getLocalizacao();
 
         enderecoEmail.setMensagem(mensagem);
         enderecoEmail.setEmail(ciclistaService.getById(ciclista).getEmail());
@@ -147,17 +162,28 @@ public class AluguelService {
         return aluguel;
     }
 
-    private void verificarAluguelCiclista(Integer ciclista) {
-       repository.findByCiclistaIdHoraFimAluguel(ciclista, null);
+    private void verificarAluguelCiclista(Integer idCiclista) {
+
+        Optional<Aluguel> aluguel = repository.findByCiclistaIdHoraFimAluguel(idCiclista, null);
+        if(aluguel.isPresent()){
+            Ciclista ciclista = ciclistaService.getById(idCiclista);
+            Tranca tranca = equipamentoClient.getTranca(aluguel.get().getTrancaInicio());
+            EnderecoEmail enderecoEmail = new EnderecoEmail();
+
+            enderecoEmail.setAssunto("Dados do Aluguel Ativo");
+            String mensagem = "Dados do Aluguel:\n" + "Cobranca: " + aluguel.get().getCobranca()+ "\n" +
+                    "Hora: " + aluguel.get().getHoraInicio() + "\n" +
+                    "Totem: " + tranca.getLocalizacao();
+
+            enderecoEmail.setMensagem(mensagem);
+            enderecoEmail.setEmail(ciclista.getEmail());
+            externoClient.enviarEmail(enderecoEmail);
+        }
     }
 
     private int getTotemTranca(int tranca){
         //metodo vazio pois a alteracao do status so sera feita apos a integracao
         return tranca;
-    }
-
-    private void validateTranca(){
-        //metodo vazio pois a validacao so sera feita apos a integracao
     }
 
     private void solicitarFechamentoTranca(){

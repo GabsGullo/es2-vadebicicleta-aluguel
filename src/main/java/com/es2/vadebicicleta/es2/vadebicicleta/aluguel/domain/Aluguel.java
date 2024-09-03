@@ -20,5 +20,6 @@ public class Aluguel {
     private Integer ciclista;
     private Integer trancaInicio;
     private LocalDateTime horaCobranca;
+    private CartaoDeCredito cartaoDeCredito;
 }
 
