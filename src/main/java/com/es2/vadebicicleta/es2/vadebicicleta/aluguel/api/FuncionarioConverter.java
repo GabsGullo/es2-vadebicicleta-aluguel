@@ -19,7 +19,7 @@ public class FuncionarioConverter {
         dto.setSenha(funcionario.getSenha());
         dto.setConfirmacaoSenha(funcionario.getConfirmacaoSenha());
         dto.setIdade(funcionario.getIdade());
-        dto.setFuncao(funcionario.getFuncao());
+        dto.setFuncao(funcionario.getFuncao().toString());
 
         return dto;
     }

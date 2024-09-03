@@ -1,6 +1,5 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto;
 
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.FuncaoEnum;
 import lombok.*;
 
 @Getter
@@ -14,6 +13,6 @@ public class FuncionarioOutDTO {
         private String email;
         private String nome;
         private Integer idade;
-        private FuncaoEnum funcao;
+        private String funcao;
         private String cpf;
 }
