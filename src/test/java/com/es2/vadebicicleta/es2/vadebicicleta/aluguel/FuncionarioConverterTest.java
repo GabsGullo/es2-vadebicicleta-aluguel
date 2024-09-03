@@ -40,7 +40,7 @@ class FuncionarioConverterTest {
         assertEquals(funcionario.getSenha(), dto.getSenha());
         assertEquals(funcionario.getConfirmacaoSenha(), dto.getConfirmacaoSenha());
         assertEquals(funcionario.getIdade(), dto.getIdade());
-        assertEquals(funcionario.getFuncao(), dto.getFuncao());
+        assertEquals(funcionario.getFuncao(), FuncaoEnum.valueOf(dto.getFuncao()));
     }
 
     @Test
@@ -49,7 +49,7 @@ class FuncionarioConverterTest {
         dto.setEmail("joao.silva@example.com");
         dto.setNome("João Silva");
         dto.setIdade(30);
-        dto.setFuncao(FuncaoEnum.REPARADOR);
+        dto.setFuncao(String.valueOf(FuncaoEnum.REPARADOR));
         dto.setCpf("123.456.789-00");
 
         Funcionario funcionario = funcionarioConverter.inDtoToEntity(dto);
@@ -57,7 +57,7 @@ class FuncionarioConverterTest {
         assertEquals(dto.getEmail(), funcionario.getEmail());
         assertEquals(dto.getNome(), funcionario.getNome());
         assertEquals(dto.getIdade(), funcionario.getIdade());
-        assertEquals(dto.getFuncao(), funcionario.getFuncao());
+        assertEquals(dto.getFuncao(), funcionario.getFuncao().toString());
         assertEquals(dto.getCpf(), funcionario.getCpf());
     }
 }
