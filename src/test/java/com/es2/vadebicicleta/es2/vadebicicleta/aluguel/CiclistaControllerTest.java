@@ -9,12 +9,12 @@ import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaOutDTO
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.CiclistaInPutDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.RegistoCartaoCiclistaDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.CiclistaService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,7 +51,7 @@ class CiclistaControllerTest {
 
         // Verificando o resultado
         assertEquals(ciclistaOutDTO, response.getBody());
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
     }
 
     @Test
@@ -72,7 +72,7 @@ class CiclistaControllerTest {
 
         // Verificando o resultado
         assertEquals(ciclistaOutDTO, response.getBody());
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
     }
 
     @Test
@@ -92,7 +92,7 @@ class CiclistaControllerTest {
 
         // Verificando o resultado
         assertEquals(ciclistaOutDTO, response.getBody());
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
     }
 
     @Test
@@ -110,6 +110,6 @@ class CiclistaControllerTest {
 
         // Verificando o resultado
         assertEquals(ciclistaOutDTO, response.getBody());
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
     }
 }

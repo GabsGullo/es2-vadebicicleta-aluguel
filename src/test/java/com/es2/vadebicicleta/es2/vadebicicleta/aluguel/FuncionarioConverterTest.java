@@ -20,7 +20,7 @@ class FuncionarioConverterTest {
     }
 
     @Test
-    public void testEntityToOutDTO() {
+    void testEntityToOutDTO() {
         Funcionario funcionario = new Funcionario();
         funcionario.setMatricula("12345");
         funcionario.setNome("João Silva");
@@ -44,7 +44,7 @@ class FuncionarioConverterTest {
     }
 
     @Test
-    public void testInDtoToEntity() {
+    void testInDtoToEntity() {
         FuncionarioInDTO dto = new FuncionarioInDTO();
         dto.setEmail("joao.silva@example.com");
         dto.setNome("João Silva");

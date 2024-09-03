@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
@@ -32,19 +33,19 @@ public class FuncionarioControllerTest {
     private FuncionarioController funcionarioController;
 
     @Test
-    public void testGetFuncionarios() {
+    void testGetFuncionarios() {
         Funcionario funcionario = new Funcionario();
         when(funcionarioService.getAllFuncionarios()).thenReturn(Collections.singletonList(funcionario));
 
         ResponseEntity<List<Funcionario>> response = funcionarioController.getFuncionarios();
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
         assertEquals(1, response.getBody().size());
         verify(funcionarioService, times(1)).getAllFuncionarios();
     }
 
     @Test
-    public void testGetFuncionario() {
+    void testGetFuncionario() {
         Integer idFuncionario = 1;
         Funcionario funcionario = new Funcionario();
         FuncionarioOutDTO funcionarioOutDTO = new FuncionarioOutDTO();
@@ -54,14 +55,14 @@ public class FuncionarioControllerTest {
 
         ResponseEntity<FuncionarioOutDTO> response = funcionarioController.getFuncionario(idFuncionario);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
         assertEquals(funcionarioOutDTO, response.getBody());
         verify(funcionarioService, times(1)).getById(idFuncionario);
         verify(funcionarioConverter, times(1)).entityToOutDTO(funcionario);
     }
 
     @Test
-    public void testPostFuncionario() {
+    void testPostFuncionario() {
         FuncionarioInDTO dto = new FuncionarioInDTO();
         Funcionario funcionario = new Funcionario();
         Funcionario funcionarioCadastrado = new Funcionario();
@@ -73,7 +74,7 @@ public class FuncionarioControllerTest {
 
         ResponseEntity<FuncionarioOutDTO> response = funcionarioController.postFuncionario(dto);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
         assertEquals(funcionarioOutDTO, response.getBody());
         verify(funcionarioConverter, times(1)).inDtoToEntity(dto);
         verify(funcionarioService, times(1)).save(funcionario);
@@ -81,7 +82,7 @@ public class FuncionarioControllerTest {
     }
 
     @Test
-    public void testPutFuncionario() {
+    void testPutFuncionario() {
         Integer idFuncionario = 1;
         FuncionarioInDTO funcionarioNovoDTO = new FuncionarioInDTO();
         Funcionario funcionarioNovo = new Funcionario();
@@ -94,7 +95,7 @@ public class FuncionarioControllerTest {
 
         ResponseEntity<FuncionarioOutDTO> response = funcionarioController.putFuncionario(funcionarioNovoDTO, idFuncionario);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
         assertEquals(funcionarioAtualizado, response.getBody());
         verify(funcionarioConverter, times(1)).inDtoToEntity(funcionarioNovoDTO);
         verify(funcionarioService, times(1)).update(funcionarioNovo, idFuncionario);
@@ -102,12 +103,12 @@ public class FuncionarioControllerTest {
     }
 
     @Test
-    public void testDeleteFuncionario() {
+    void testDeleteFuncionario() {
         Integer idFuncionario = 1;
 
         ResponseEntity<Object> response = funcionarioController.deleteFuncionario(idFuncionario);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
         verify(funcionarioService, times(1)).delete(idFuncionario);
     }
 }
