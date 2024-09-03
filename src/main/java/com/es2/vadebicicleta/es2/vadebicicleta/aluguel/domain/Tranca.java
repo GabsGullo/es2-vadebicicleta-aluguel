@@ -2,8 +2,6 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Setter
 @Getter
 @AllArgsConstructor

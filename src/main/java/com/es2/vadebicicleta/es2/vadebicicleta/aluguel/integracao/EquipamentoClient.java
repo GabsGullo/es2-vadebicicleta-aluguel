@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 public class EquipamentoClient {
     @Value("${vadbicicleta.externo.url}")
     private String url;
-
+    private final String trancaUrl = "/tranca/";
     private final RestTemplate template;
 
     @Autowired
@@ -24,7 +24,7 @@ public class EquipamentoClient {
     }
 
     public Tranca getTranca(Integer idTranca){
-        ResponseEntity<Tranca> response = template.getForEntity(url+"/tranca/"+idTranca, Tranca.class);
+        ResponseEntity<Tranca> response = template.getForEntity(url+trancaUrl+idTranca, Tranca.class);
         if(response.getStatusCode().equals(HttpStatusCode.valueOf(404)))
             return null;
 
@@ -32,7 +32,7 @@ public class EquipamentoClient {
     }
 
     public Bicicleta getBicicleta(Integer idBicicleta){
-        ResponseEntity<Bicicleta> response = template.getForEntity(url+"/bicicleta/"+idBicicleta, Bicicleta.class);
+        ResponseEntity<Bicicleta> response = template.getForEntity(url+trancaUrl+idBicicleta, Bicicleta.class);
         if(response.getStatusCode().equals(HttpStatusCode.valueOf(404)))
             return null;
 
@@ -40,7 +40,7 @@ public class EquipamentoClient {
     }
 
     public Tranca socilitarDestrancamento(Integer idTranca, Integer idBicicleta){
-        ResponseEntity<Tranca> response = template.postForEntity(url+"/tranca/"+idTranca+"/destrancar", idBicicleta, Tranca.class);
+        ResponseEntity<Tranca> response = template.postForEntity(url+trancaUrl+idTranca+"/destrancar", idBicicleta, Tranca.class);
         if(response.getStatusCode().equals(HttpStatusCode.valueOf(404)) || response.getStatusCode().equals(HttpStatusCode.valueOf(422)))
             return null;
 
