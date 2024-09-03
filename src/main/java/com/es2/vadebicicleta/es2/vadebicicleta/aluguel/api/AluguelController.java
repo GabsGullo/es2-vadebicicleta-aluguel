@@ -3,11 +3,13 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.api;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Aluguel;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.AluguelDevolucaoDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.AluguelOutDTO;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.AluguelRegistroDTO;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto.DevolucaoRegistroDTO;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.AluguelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -23,15 +25,15 @@ public class AluguelController {
     }
 
     @PostMapping("/aluguel")
-    public ResponseEntity<AluguelOutDTO> realizarAluguel(Integer ciclista, Integer tranca){
-        Aluguel aluguelRealizado = service.realizarAluguel(ciclista, tranca);
+    public ResponseEntity<AluguelOutDTO> realizarAluguel(@RequestBody AluguelRegistroDTO aluguelRegistroDTO){
+        Aluguel aluguelRealizado = service.realizarAluguel(aluguelRegistroDTO.getCiclista(), aluguelRegistroDTO.getTrancaInicio());
         AluguelOutDTO aluguelOutDTO = converter.aluguelToOutDTO(aluguelRealizado);
         return ResponseEntity.ok().body(aluguelOutDTO);
     }
 
     @PostMapping("/devolucao")
-    public ResponseEntity<AluguelDevolucaoDTO> realizarDevolucao(Integer idTranca, Integer idBicicleta){
-        Aluguel aluguelFinalizado = service.realizarDevolucao(idTranca, idBicicleta);
+    public ResponseEntity<AluguelDevolucaoDTO> realizarDevolucao(@RequestBody DevolucaoRegistroDTO devolucaoRegistroDTO){
+        Aluguel aluguelFinalizado = service.realizarDevolucao(devolucaoRegistroDTO.getIdTranca(), devolucaoRegistroDTO.getIdBicicleta());
         AluguelDevolucaoDTO devolucaoDTO = converter.aluguelToDevolucao(aluguelFinalizado);
         return ResponseEntity.ok().body(devolucaoDTO);
     }
