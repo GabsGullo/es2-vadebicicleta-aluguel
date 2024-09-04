@@ -16,6 +16,7 @@ public class EquipamentoClient {
     @Value("${vadbicicleta.equipamento.url}")
     private String url;
     private static final String TRANCA_URL = "/tranca/";
+    private static final String BICICLETA_URL = "/bicicleta/";
     private final RestTemplate template;
 
     @Autowired
@@ -32,7 +33,7 @@ public class EquipamentoClient {
     }
 
     public Bicicleta getBicicleta(Integer idBicicleta){
-        ResponseEntity<Bicicleta> response = template.getForEntity(url+ TRANCA_URL +idBicicleta, Bicicleta.class);
+        ResponseEntity<Bicicleta> response = template.getForEntity(url+ BICICLETA_URL +idBicicleta, Bicicleta.class);
         if(response.getStatusCode().equals(HttpStatusCode.valueOf(404)))
             return null;
 
@@ -49,7 +50,7 @@ public class EquipamentoClient {
 
     public Integer incluirBicicletaRede(Integer idTranca, Integer idBicicleta, Integer idFuncionario){
         IncluirBicicletaDTO requestBody = new IncluirBicicletaDTO(idTranca,idBicicleta,idFuncionario);
-        ResponseEntity<Void> response = template.postForEntity(url+"/bicicleta/integrarNaRede", requestBody, Void.class);
+        ResponseEntity<Void> response = template.postForEntity(url+ BICICLETA_URL + "integrarNaRede", requestBody, Void.class);
         if(response.getStatusCode().equals(HttpStatusCode.valueOf(422))){
             return null;
         }
