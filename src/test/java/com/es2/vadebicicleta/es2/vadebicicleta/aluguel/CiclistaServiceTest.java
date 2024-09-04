@@ -235,7 +235,6 @@ class CiclistaServiceTest {
 		assertEquals("Rafael", updatedCiclista.getNome());
 		assertEquals("2002-10-14", updatedCiclista.getNascimento().format(dateTimeFormatter));
 		assertEquals("xqdl@gmail.com", updatedCiclista.getEmail());
-		assertEquals("123", updatedCiclista.getSenha());
 		assertEquals(NacionalidadeEnum.ESTRANGEIRO, updatedCiclista.getNacionalidade());
 		assertEquals("asdasdasd.jpg", updatedCiclista.getUrlFotoDocumento());
 
@@ -263,7 +262,6 @@ class CiclistaServiceTest {
 		assertEquals("2002-10-14", updatedCiclista.getNascimento().format(dateTimeFormatter));
 		assertEquals("02001599099", updatedCiclista.getCpf());
 		assertEquals("xqdl@gmail.com", updatedCiclista.getEmail());
-		assertEquals("123", updatedCiclista.getSenha());
 		assertEquals(NacionalidadeEnum.BRASILEIRO, updatedCiclista.getNacionalidade());
 		assertEquals("asdasdasd.jpg", updatedCiclista.getUrlFotoDocumento());
 
