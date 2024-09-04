@@ -5,7 +5,6 @@ import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.AluguelService;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.CartaoDeCreditoService;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.CiclistaService;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.service.FuncionarioService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

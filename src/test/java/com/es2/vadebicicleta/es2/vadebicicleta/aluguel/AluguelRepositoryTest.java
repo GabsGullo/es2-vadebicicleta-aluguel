@@ -188,7 +188,8 @@ class AluguelRepositoryTest {
         aluguelRepository.register(aluguel2);
 
         assertThrows(AluguelAtivoException.class, () -> {
-            aluguelRepository.findByBicicletaIdHoraFimAluguel(1, aluguel1.getHoraFim());
+            LocalDateTime horaFim = aluguel1.getHoraFim();
+            aluguelRepository.findByBicicletaIdHoraFimAluguel(1, horaFim);
         });
 
     }
