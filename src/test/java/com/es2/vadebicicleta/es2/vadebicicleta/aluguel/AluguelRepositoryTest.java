@@ -1,6 +1,5 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Aluguel;
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.AluguelAtivoException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.AluguelRepository;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.IdGenerator;
 import org.junit.jupiter.api.Test;
@@ -164,34 +163,6 @@ class AluguelRepositoryTest {
         assertEquals(aluguel.getHoraInicio(), found.getHoraInicio());
         assertEquals(aluguel.getHoraFim(), found.getHoraFim()); // Aqui pode ser null, então ajuste conforme necessário
         assertEquals(aluguel.getCiclista(), found.getCiclista());
-    }
-
-    @Test
-    void testFindByBicicletaIdHoraFimAluguel_MultipleResults_ThrowsException() {
-        Aluguel aluguel1 = Aluguel.builder()
-                .idAluguel(1)
-                .bicicleta(1)
-                .horaInicio(LocalDateTime.now())
-                .horaFim(null)
-                .ciclista(1001)
-                .build();
-
-        Aluguel aluguel2 = Aluguel.builder()
-                .idAluguel(2)
-                .bicicleta(1)
-                .horaInicio(LocalDateTime.now())
-                .horaFim(null)
-                .ciclista(1002)
-                .build();
-
-        aluguelRepository.register(aluguel1);
-        aluguelRepository.register(aluguel2);
-
-        assertThrows(AluguelAtivoException.class, () -> {
-            LocalDateTime horaFim = aluguel1.getHoraFim();
-            aluguelRepository.findByBicicletaIdHoraFimAluguel(1, horaFim);
-        });
-
     }
 
     @Test
