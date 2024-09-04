@@ -18,12 +18,12 @@ import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GlobalExceptionHandlerTest {
+class GlobalExceptionHandlerTest {
 
     private final GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler();
 
     @Test
-    public void testHandleNotFoundException() {
+    void testHandleNotFoundException() {
         NotFoundException exception = new NotFoundException("Recurso não encontrado", "404");
         ResponseEntity<ExceptionResponse> responseEntity = globalExceptionHandler.handleNotFoundException(exception);
 
@@ -33,7 +33,7 @@ public class GlobalExceptionHandlerTest {
     }
 
     @Test
-    public void testHandleIllegalArgumentException() {
+    void testHandleIllegalArgumentException() {
         IllegalArgumentException exception = new IllegalArgumentException("Argumento ilegal");
         ResponseEntity<ExceptionResponse> responseEntity = globalExceptionHandler.handleIllegalArgumentException(exception);
 
@@ -43,7 +43,7 @@ public class GlobalExceptionHandlerTest {
     }
 
     @Test
-    public void testHandleMethodArgumentNotValidException() {
+    void testHandleMethodArgumentNotValidException() {
         Object objeto = new Object();
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(objeto, "objeto");
         bindingResult.addError(new FieldError("objeto", "campo1", "Erro no campo 1"));
@@ -77,7 +77,7 @@ public class GlobalExceptionHandlerTest {
 
 
     @Test
-    public void testHandleValidacaoException() {
+    void testHandleValidacaoException() {
         // Criando um BindingResult com erros de validação.
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(new Object(), "objeto");
         bindingResult.addError(new FieldError("objeto", "campo", "Erro de validação"));
@@ -100,7 +100,7 @@ public class GlobalExceptionHandlerTest {
 
 
     @Test
-    public void testHandleAluguelAtivoException() {
+    void testHandleAluguelAtivoException() {
         AluguelAtivoException exception = new AluguelAtivoException("Aluguel ativo não pode ser cancelado");
         ResponseEntity<ExceptionResponse> responseEntity = globalExceptionHandler.handleAluguelAtivoException(exception);
 
@@ -110,7 +110,7 @@ public class GlobalExceptionHandlerTest {
     }
 
     @Test
-    public void testHandleDateTimeParseException() {
+    void testHandleDateTimeParseException() {
         DateTimeParseException exception = new DateTimeParseException("Data inválida", "data", 0);
         ResponseEntity<ExceptionResponse> responseEntity = globalExceptionHandler.handleDataInvalidaException(exception);
 
