@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public class CartaoDeCreditoRepository {
-    private static final HashMap<Integer, CartaoDeCredito> registroCartao = new HashMap<>();
+    private final HashMap<Integer, CartaoDeCredito> registroCartao = new HashMap<>();
     private final IdGenerator id;
 
     public CartaoDeCreditoRepository(IdGenerator id) {

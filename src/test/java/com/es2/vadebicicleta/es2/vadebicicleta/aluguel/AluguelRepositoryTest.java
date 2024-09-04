@@ -1,5 +1,6 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.Aluguel;
+import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.AluguelAtivoException;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.AluguelRepository;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.repository.IdGenerator;
 import org.junit.jupiter.api.Test;
@@ -165,32 +166,32 @@ class AluguelRepositoryTest {
         assertEquals(aluguel.getCiclista(), found.getCiclista());
     }
 
-//    @Test
-//    void testFindByBicicletaIdHoraFimAluguel_MultipleResults_ThrowsException() {
-//        Aluguel aluguel1 = Aluguel.builder()
-//                .idAluguel(1)
-//                .bicicleta(1)
-//                .horaInicio(LocalDateTime.now())
-//                .horaFim(null)
-//                .ciclista(1001)
-//                .build();
-//
-//        Aluguel aluguel2 = Aluguel.builder()
-//                .idAluguel(2)
-//                .bicicleta(1)
-//                .horaInicio(LocalDateTime.now())
-//                .horaFim(null)
-//                .ciclista(1002)
-//                .build();
-//
-//        Aluguel aluguelRegistrado1 = aluguelRepository.register(aluguel1);
-//        Aluguel aluguelRegistrado2 = aluguelRepository.register(aluguel2);
-//
-//        assertThrows(AluguelAtivoException.class, () -> {
-//            aluguelRepository.findByBicicletaIdHoraFimAluguel(1, aluguel1.getHoraFim());
-//        });
-//
-//    }
+    @Test
+    void testFindByBicicletaIdHoraFimAluguel_MultipleResults_ThrowsException() {
+        Aluguel aluguel1 = Aluguel.builder()
+                .idAluguel(1)
+                .bicicleta(1)
+                .horaInicio(LocalDateTime.now())
+                .horaFim(null)
+                .ciclista(1001)
+                .build();
+
+        Aluguel aluguel2 = Aluguel.builder()
+                .idAluguel(2)
+                .bicicleta(1)
+                .horaInicio(LocalDateTime.now())
+                .horaFim(null)
+                .ciclista(1002)
+                .build();
+
+        aluguelRepository.register(aluguel1);
+        aluguelRepository.register(aluguel2);
+
+        assertThrows(AluguelAtivoException.class, () -> {
+            aluguelRepository.findByBicicletaIdHoraFimAluguel(1, aluguel1.getHoraFim());
+        });
+
+    }
 
     @Test
     void testFindByBicicletaIdHoraFimAluguel_NoResults() {

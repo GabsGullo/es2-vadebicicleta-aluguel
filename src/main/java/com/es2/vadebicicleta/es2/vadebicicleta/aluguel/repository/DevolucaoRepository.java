@@ -8,7 +8,7 @@ import java.util.HashMap;
 @Repository
 public class DevolucaoRepository {
 
-    private static final HashMap<Integer, Devolucao> registroDevolucoes = new HashMap<>();
+    private final HashMap<Integer, Devolucao> registroDevolucoes = new HashMap<>();
     private final IdGenerator id;
 
     public DevolucaoRepository(IdGenerator id) {

@@ -34,11 +34,11 @@ public class CiclistaService {
     public Ciclista register(@Valid Ciclista ciclista, @Valid CartaoDeCredito cartaoDeCredito){
         validator.validateCiclista(ciclista);
 
-        ciclista.setStatus(StatusEnum.AGUARDANDO_CONFIRMACAO);
-        Ciclista ciclistaCadastrado = repository.save(ciclista);
-
         cartaoDeCredito.setIdCiclista(ciclista.getId());
         cartaoDeCreditoService.register(cartaoDeCredito);
+
+        ciclista.setStatus(StatusEnum.AGUARDANDO_CONFIRMACAO);
+        Ciclista ciclistaCadastrado = repository.save(ciclista);
 
         enviarEmail(ciclista);
 

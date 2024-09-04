@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 public class AluguelRepository {
 
-    private static final HashMap<Integer, Aluguel> registroAlugueis = new HashMap<>();
+    private final HashMap<Integer, Aluguel> registroAlugueis = new HashMap<>();
     private final IdGenerator id;
 
     public AluguelRepository(IdGenerator id) {

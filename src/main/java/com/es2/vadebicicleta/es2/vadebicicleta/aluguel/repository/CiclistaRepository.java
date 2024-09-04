@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public class CiclistaRepository {
-    private static final HashMap<Integer, Ciclista> registroCiclistas = new HashMap<>();
+    private final HashMap<Integer, Ciclista> registroCiclistas = new HashMap<>();
     private final IdGenerator id;
 
     public CiclistaRepository(IdGenerator id) {

@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public class FuncionarioRepository {
 
-    private static HashMap<Integer, Funcionario> registroFuncionarios = new HashMap<>();
+    private final HashMap<Integer, Funcionario> registroFuncionarios = new HashMap<>();
     private final IdGenerator id;
     private final IdGenerator matricula;
 
