@@ -21,4 +21,8 @@ public class DevolucaoRepository {
         registroDevolucoes.put(idDevolucao, devolucao);
         return devolucao;
     }
+
+    public void clear(){
+        registroDevolucoes.clear();
+    }
 }

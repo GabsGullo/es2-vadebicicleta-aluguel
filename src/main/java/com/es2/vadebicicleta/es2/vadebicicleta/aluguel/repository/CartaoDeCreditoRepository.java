@@ -39,4 +39,8 @@ public class CartaoDeCreditoRepository {
          CartaoDeCredito cartaoDeCredito = list.get(0);
          return Optional.of(cartaoDeCredito);
     }
+
+    public void clear(){
+        registroCartao.clear();
+    }
 }

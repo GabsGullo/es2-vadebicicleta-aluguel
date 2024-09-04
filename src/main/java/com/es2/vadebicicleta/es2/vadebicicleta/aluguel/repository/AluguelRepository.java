@@ -60,4 +60,8 @@ public class AluguelRepository {
 
         return Optional.ofNullable(list.get(0));
     }
+
+    public void clear(){
+        registroAlugueis.clear();
+    }
 }

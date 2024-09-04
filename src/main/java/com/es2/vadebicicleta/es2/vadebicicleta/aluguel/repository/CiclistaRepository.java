@@ -32,4 +32,8 @@ public class CiclistaRepository {
     public Optional<Ciclista> findById(Integer idCiclista){
         return Optional.ofNullable(registroCiclistas.get(idCiclista));
     }
+
+    public void clear(){
+        registroCiclistas.clear();
+    }
 }

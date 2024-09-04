@@ -42,4 +42,8 @@ public class CartaoDeCreditoService {
         validator.validateCartaoDeCredito(cartaoDeCreditoCadastrado);
         repository.save(cartaoDeCreditoCadastrado);
     }
+
+    public void clear(){
+        repository.clear();
+    }
 }

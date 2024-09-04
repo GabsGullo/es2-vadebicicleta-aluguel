@@ -13,7 +13,6 @@ import java.util.List;
 
 @Service
 public class FuncionarioService {
-    public static final String OBJECT_NAME = "funcionario";
     private final FuncionarioRepository repository;
     private final Validator validator;
 
@@ -69,5 +68,7 @@ public class FuncionarioService {
         return retorno;
     }
 
-
+    public void clear(){
+        repository.clear();
+    }
 }

@@ -49,4 +49,8 @@ public class FuncionarioRepository {
     public Object delete(Integer idFuncionario){
         return registroFuncionarios.remove(idFuncionario);
     }
+
+    public void clear(){
+        registroFuncionarios.clear();
+    }
 }

@@ -47,4 +47,13 @@ public class IdGenerator {
         return idAluguel;
     }
 
+    public void clear(){
+        idDevolucao = 0;
+        idCartao = 0;
+        idAluguel = 0;
+        idFuncionario = 0;
+        idCiclista = 0;
+        matricula = 0;
+    }
+
 }

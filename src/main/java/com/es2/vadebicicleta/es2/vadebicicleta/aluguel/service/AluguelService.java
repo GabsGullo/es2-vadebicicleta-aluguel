@@ -213,4 +213,8 @@ public class AluguelService {
         return repository.findByBicicletaIdHoraFimAluguel(idBicicleta,null).orElseThrow(
                 () -> new NotFoundException("Aluguel não encontrado", HttpStatus.NOT_FOUND.toString()));
     }
+
+    public void clear(){
+        repository.clear();
+    }
 }
