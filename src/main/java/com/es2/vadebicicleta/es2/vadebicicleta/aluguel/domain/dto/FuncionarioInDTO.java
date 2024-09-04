@@ -1,6 +1,5 @@
 package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.dto;
 
-import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.domain.FuncaoEnum;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ConfirmPassword;
 import com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception.ConfirmPasswordInterface;
 import jakarta.validation.constraints.Email;

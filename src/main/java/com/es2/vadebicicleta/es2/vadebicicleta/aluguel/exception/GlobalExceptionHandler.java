@@ -2,8 +2,6 @@ package com.es2.vadebicicleta.es2.vadebicicleta.aluguel.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,21 +9,19 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
+    public ResponseEntity<ExceptionResponse> handleNotFoundException(NotFoundException ex) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(ex.getMessage(), ex.getCodigo());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionResponse);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Object> handleMethodArgumentException(MethodArgumentTypeMismatchException ex) {
+    public ResponseEntity<ExceptionResponse> handleMethodArgumentException(MethodArgumentTypeMismatchException ex) {
         String mensagem;
         if(ex.getName().equals("idCiclista"))
             mensagem = "id do ciclista invalida";
@@ -37,13 +33,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex) {
+    public ResponseEntity<ExceptionResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(ex.getMessage(), "422");
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(exceptionResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleMethodArgumentException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<List<ExceptionResponse>> handleMethodArgumentException(MethodArgumentNotValidException ex) {
         List<ExceptionResponse> errors = new ArrayList<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
             String errorMessage = error.getDefaultMessage();
@@ -54,7 +50,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ValidacaoException.class)
-    public ResponseEntity<Object> handleValidacaoException(ValidacaoException ex) {
+    public ResponseEntity<List<ExceptionResponse>> handleValidacaoException(ValidacaoException ex) {
         List<ExceptionResponse> errors = new ArrayList<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
             String errorMessage = error.getDefaultMessage();
@@ -65,13 +61,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AluguelAtivoException.class)
-    public ResponseEntity<Object> handleAluguelAtivoException(AluguelAtivoException ex) {
+    public ResponseEntity<ExceptionResponse> handleAluguelAtivoException(AluguelAtivoException ex) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(ex.getMessage(), "422");
         return ResponseEntity.status(HttpStatus.CONFLICT).body(exceptionResponse);
     }
 
     @ExceptionHandler(DateTimeParseException.class)
-    public ResponseEntity<Object> handleDataInvalidaException(DateTimeParseException ex){
+    public ResponseEntity<ExceptionResponse> handleDataInvalidaException(DateTimeParseException ex){
         ExceptionResponse exceptionResponse = new ExceptionResponse("Data Invalida", "422");
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(exceptionResponse);
     }
